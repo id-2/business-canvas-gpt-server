@@ -2,6 +2,7 @@ import { User } from './user'
 import type { UserDto } from './user-dto'
 import { Email } from './value-objects/email/email'
 import { Name } from './value-objects/name/name'
+import { Password } from './value-objects/password/password'
 
 const privateFactory = <T=any>(Cls: any, ...args: any[]): T => {
   return new Cls(...args)
@@ -24,5 +25,11 @@ describe('User Entity', () => {
     const createSpy = jest.spyOn(Email, 'create')
     User.create(makeFakeUserDto())
     expect(createSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
+
+  it('Should call Password with correct value', () => {
+    const createSpy = jest.spyOn(Password, 'create')
+    User.create(makeFakeUserDto())
+    expect(createSpy).toHaveBeenCalledWith('any_password')
   })
 })
