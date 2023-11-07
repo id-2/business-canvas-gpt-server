@@ -32,4 +32,9 @@ describe('Name ValueObject', () => {
     const sut = Name.create('any  name    any  name')
     expect(sut.value).toEqual({ name: 'any name any name' })
   })
+
+  it('Should return an Name if name is valid', () => {
+    const sut = Name.create('valid name')
+    expect(sut.value).toEqual({ name: 'valid name' })
+  })
 })
