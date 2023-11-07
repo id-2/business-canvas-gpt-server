@@ -1,0 +1,22 @@
+import { type Either, left, right } from '../../../../../shared/either'
+import { InvalidPasswordError } from '../../errors'
+
+export class Password {
+  private constructor (private readonly password: string) {
+    Object.freeze(this)
+  }
+
+  static create (password: string): Either<InvalidPasswordError, Password> {
+    if (!this.validate(password)) {
+      return left(new InvalidPasswordError(password))
+    }
+    return right(new Password(password))
+  }
+
+  private static validate (password: string): boolean {
+    if (password.length < 8) {
+      return false
+    }
+    return true
+  }
+}
