@@ -12,7 +12,8 @@
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:unit": "npm test -- --watch -c jest-unit-config.ts",
     "test:verbose-unit": "jest --passWithNoTests --runInBand -c jest-unit-config.ts",
-    "test:integration": "npm test -- --watch -c jest-integration-config.ts"
+    "test:integration": "npm test -- --watch -c jest-integration-config.ts",
+    "test:verbose": "jest --passWithNoTests --runInBand"
   },
   "devDependencies": {
     "@types/jest": "^29.5.7",
