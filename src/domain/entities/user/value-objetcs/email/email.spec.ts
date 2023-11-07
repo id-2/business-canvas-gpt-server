@@ -24,4 +24,9 @@ describe('Email ValueObject', () => {
     const sut = Email.create('@mail.com')
     expect(sut.value).toEqual(new InvalidEmailError('@mail.com'))
   })
+
+  it('Should return InvalidEmailError if email invalid character in local part', () => {
+    const sut = Email.create('any email@mail.com')
+    expect(sut.value).toEqual(new InvalidEmailError('any email@mail.com'))
+  })
 })
