@@ -7,4 +7,10 @@ describe('Password ValueObject', () => {
     const sut = Password.create(password)
     expect(sut.value).toEqual(new InvalidPasswordError(password))
   })
+
+  it('Should return InvalidPasswordError if password is more than 128 characters', () => {
+    const password = 'a'.repeat(129)
+    const sut = Password.create(password)
+    expect(sut.value).toEqual(new InvalidPasswordError(password))
+  })
 })
