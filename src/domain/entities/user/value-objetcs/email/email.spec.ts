@@ -51,4 +51,9 @@ describe('Email ValueObject', () => {
     const sut = Email.create('  any_email@mail.com   ')
     expect(sut.value).toEqual({ email: 'any_email@mail.com' })
   })
+
+  it('Should return Email if email is valid', () => {
+    const sut = Email.create('valid_email@mail.com')
+    expect(sut.value).toEqual({ email: 'valid_email@mail.com' })
+  })
 })
