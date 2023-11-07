@@ -18,4 +18,9 @@ describe('Password ValueObject', () => {
     const sut = Password.create('12345678')
     expect(sut.value).toEqual(new InvalidPasswordError('12345678'))
   })
+
+  it('Should return InvalidPasswordError if password contains only letters', () => {
+    const sut = Password.create('abcdefgh')
+    expect(sut.value).toEqual(new InvalidPasswordError('abcdefgh'))
+  })
 })
