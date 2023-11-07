@@ -10,5 +10,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "git-commit-msg-linter": "^5.0.4"
   }
 }
