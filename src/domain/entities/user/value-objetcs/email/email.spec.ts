@@ -46,4 +46,9 @@ describe('Email ValueObject', () => {
     const sut = Email.create(email)
     expect(sut.value).toEqual(new InvalidEmailError(email))
   })
+
+  it('Should remove the spaces at the beginning and at the end of the email', () => {
+    const sut = Email.create('  any_email@mail.com   ')
+    expect(sut.value).toEqual({ email: 'any_email@mail.com' })
+  })
 })
