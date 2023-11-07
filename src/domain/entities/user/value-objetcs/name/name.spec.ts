@@ -2,14 +2,19 @@ import { InvalidNameError } from '../../errors'
 import { Name } from './name'
 
 describe('Name ValueObject', () => {
-  it('Should return InvalidNameError if length of name is less than 3 characters', () => {
+  it('Should return InvalidNameError if name is less than 3 characters', () => {
     const sut = Name.create('ab')
     expect(sut.value).toEqual(new InvalidNameError('ab'))
   })
 
-  it('Should return InvalidNameError if length of name is greater than 50 characters', () => {
+  it('Should return InvalidNameError if name greater than 50 characters', () => {
     const name = 'a'.repeat(51)
     const sut = Name.create(name)
     expect(sut.value).toEqual(new InvalidNameError(name))
+  })
+
+  it('Should remove the spaces at the beginning and at the end of the name', () => {
+    const sut = Name.create(' any name ')
+    expect(sut.value).toEqual({ name: 'any name' })
   })
 })
