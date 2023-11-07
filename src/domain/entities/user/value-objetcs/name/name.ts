@@ -10,6 +10,7 @@ export class Name {
     if (!Name.validade(name)) {
       return left(new InvalidNameError(name))
     }
+    name = name.trim()
     return right(new Name(name))
   }
 
