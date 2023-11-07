@@ -21,6 +21,10 @@ export class Email {
     if (!regexTester.test(email)) {
       return false
     }
+    const [account] = email.split('@')
+    if (account.length > 64) {
+      return false
+    }
     return true
   }
 }
