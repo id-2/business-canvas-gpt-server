@@ -17,4 +17,9 @@ describe('Name ValueObject', () => {
     const sut = Name.create(' any name ')
     expect(sut.value).toEqual({ name: 'any name' })
   })
+
+  it('Should return InvalidNameError if name contains number', () => {
+    const sut = Name.create('any 0 name')
+    expect(sut.value).toEqual(new InvalidNameError('any 0 name'))
+  })
 })
