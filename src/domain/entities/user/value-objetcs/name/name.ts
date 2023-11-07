@@ -18,6 +18,10 @@ export class Name {
     if (name.length < 3 || name.length > 50) {
       return false
     }
+    const regex = /^.*[!@#$%^&*(),.?":{}|<>0-9_].*$/
+    if (regex.test(name)) {
+      return false
+    }
     return true
   }
 }
