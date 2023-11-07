@@ -14,7 +14,6 @@
     ]
   },
   "ignorePatterns": [
-    "jest.config.ts",
-    "jest-unit-config.ts"
+    "jest.config.ts", "jest-unit-config.ts", "jest-integration-config.ts"
   ]
 }
