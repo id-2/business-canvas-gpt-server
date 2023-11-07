@@ -27,4 +27,9 @@ describe('Name ValueObject', () => {
     const sut = Name.create('invalid_name*')
     expect(sut.value).toEqual(new InvalidNameError('invalid_name*'))
   })
+
+  it('Should remove spaces between words if have any', () => {
+    const sut = Name.create('any  name    any  name')
+    expect(sut.value).toEqual({ name: 'any name any name' })
+  })
 })
