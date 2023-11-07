@@ -7,4 +7,9 @@ describe('Email ValueObject', () => {
     const sut = Email.create(email)
     expect(sut.value).toEqual(new InvalidEmailError(email))
   })
+
+  it('Should return InvalidEmailError if email without the at-sign', () => {
+    const sut = Email.create('any_emailmail.com')
+    expect(sut.value).toEqual(new InvalidEmailError('any_emailmail.com'))
+  })
 })
