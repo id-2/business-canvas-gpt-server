@@ -22,4 +22,9 @@ describe('Name ValueObject', () => {
     const sut = Name.create('any 0 name')
     expect(sut.value).toEqual(new InvalidNameError('any 0 name'))
   })
+
+  it('Should return InvalidNameError if name contains special character', () => {
+    const sut = Name.create('invalid_name*')
+    expect(sut.value).toEqual(new InvalidNameError('invalid_name*'))
+  })
 })
