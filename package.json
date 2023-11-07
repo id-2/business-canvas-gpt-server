@@ -9,7 +9,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
+    "test:unit": "npm test -- --watch -c jest-unit-config.ts"
   },
   "devDependencies": {
     "@types/jest": "^29.5.7",

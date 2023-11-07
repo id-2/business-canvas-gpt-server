@@ -12,5 +12,9 @@
     "project": [
       "./tsconfig.json"
     ]
-  }
+  },
+  "ignorePatterns": [
+    "jest.config.ts",
+    "jest-unit-config.ts"
+  ]
 }
