@@ -67,4 +67,13 @@ describe('User Entity', () => {
     const sut = User.create(makeFakeUserDto())
     expect(sut.value).toEqual(new InvalidPasswordError('any_password'))
   })
+
+  it('Should return a new User if all data is valid', () => {
+    const sut = User.create(makeFakeUserDto())
+    expect(sut.value).toEqual({
+      name: { name: 'any_name' },
+      email: { email: 'any_email@mail.com' },
+      password: { password: 'any_password' }
+    })
+  })
 })
