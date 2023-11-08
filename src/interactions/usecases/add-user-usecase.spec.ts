@@ -1,12 +1,13 @@
 import type { FetchUserByEmailRepo } from '../contracts/db'
 import type { UserModel } from '@/domain/models/db-models'
 import type { Hasher } from '../contracts/cryptography'
-import type { HashedModel, IdModel } from '@/domain/models/output-models'
+import type { AccessTokenModel, HashedModel, IdModel } from '@/domain/models/output-models'
+import type { IdBuilder } from '../contracts/id/id-builder'
 import { User, type UserDto } from '@/domain/entities/user'
 import { AddUserUseCase } from './add-user-usecase'
 import { left, right } from '@/shared/either'
 import { EmailInUseError } from '@/domain/errors'
-import { type IdBuilder } from '../contracts/id/id-builder'
+import { type AccessTokenBuilder } from '@/domain/contracts'
 
 jest.mock('@/domain/entities/user/user', () => ({
   User: {
@@ -62,22 +63,33 @@ const makeIdBuilder = (): IdBuilder => {
   return new IdBuilderStub()
 }
 
+const makeAccessTokenBuilder = (): AccessTokenBuilder => {
+  class AccessTokenBuilderStub implements AccessTokenBuilder {
+    async perform (value: string): Promise<AccessTokenModel> {
+      return { token: 'any_token' }
+    }
+  }
+  return new AccessTokenBuilderStub()
+}
+
 interface SutTypes {
   sut: AddUserUseCase
   fetchUserByEmailRepoStub: FetchUserByEmailRepo
   hasherStub: Hasher
   idBuilderStub: IdBuilder
+  accessTokenBuilderStub: AccessTokenBuilder
 }
 
 const makeSut = (): SutTypes => {
   const fetchUserByEmailRepoStub = makeFetchUserByEmailRepo()
   const hasherStub = makeHasher()
   const idBuilderStub = makeIdBuilder()
+  const accessTokenBuilderStub = makeAccessTokenBuilder()
   const sut = new AddUserUseCase(
-    fetchUserByEmailRepoStub, hasherStub, idBuilderStub
+    fetchUserByEmailRepoStub, hasherStub, idBuilderStub, accessTokenBuilderStub
   )
   return {
-    sut, fetchUserByEmailRepoStub, hasherStub, idBuilderStub
+    sut, fetchUserByEmailRepoStub, hasherStub, idBuilderStub, accessTokenBuilderStub
   }
 }
 
@@ -162,5 +174,12 @@ describe('AddUser UseCase', () => {
     })
     const promise = sut.perform(makeFakeUserDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call AccessTokenBuilder with correct Id', async () => {
+    const { sut, accessTokenBuilderStub } = makeSut()
+    const buildSpy = jest.spyOn(accessTokenBuilderStub, 'perform')
+    await sut.perform(makeFakeUserDto())
+    expect(buildSpy).toHaveBeenCalledWith('any_id')
   })
 })
