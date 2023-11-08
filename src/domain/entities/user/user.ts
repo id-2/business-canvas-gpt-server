@@ -18,7 +18,10 @@ export class User {
     if (emailOrError.isLeft()) {
       return left(emailOrError.value)
     }
-    Password.create(data.password)
+    const passwordOrError = Password.create(data.password)
+    if (passwordOrError.isLeft()) {
+      return left(passwordOrError.value)
+    }
     return right(
       new User(nameOrError.value as unknown as Name)
     )
