@@ -1,6 +1,7 @@
 import type { AddUserRes, AddUser } from '@/domain/contracts'
 import type { FetchUserByEmailRepo } from '../contracts/db'
 import type { Hasher } from '../contracts/cryptography'
+import type { IdBuilder } from '../contracts/id/id-builder'
 import { User, type UserDto } from '@/domain/entities/user'
 import { left, right } from '@/shared/either'
 import { EmailInUseError } from '@/domain/errors'
@@ -8,7 +9,8 @@ import { EmailInUseError } from '@/domain/errors'
 export class AddUserUseCase implements AddUser {
   constructor (
     private readonly fetchUserByEmailRepo: FetchUserByEmailRepo,
-    private readonly hasher: Hasher
+    private readonly hasher: Hasher,
+    private readonly idBuilder: IdBuilder
   ) {}
 
   async perform (dto: UserDto): Promise<AddUserRes> {
@@ -21,6 +23,7 @@ export class AddUserUseCase implements AddUser {
       return left(new EmailInUseError(dto.email))
     }
     await this.hasher.hashing(dto.password)
+    this.idBuilder.build()
     return right({ token: '' })
   }
 }
