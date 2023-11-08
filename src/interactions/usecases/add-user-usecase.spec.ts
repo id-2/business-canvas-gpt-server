@@ -69,6 +69,15 @@ describe('AddUser UseCase', () => {
     expect(result.value).toEqual(new Error('any_message'))
   })
 
+  it('Should throw if User Entity throws', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(User, 'create').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.perform(makeFakeUserDto())
+    await expect(promise).rejects.toThrow()
+  })
+
   it('Should call FetchUserByEmailRepo with correct email', async () => {
     const { sut, fetchUserByEmailRepoStub } = makeSut()
     const fetchByEmailSpy = jest.spyOn(fetchUserByEmailRepoStub, 'fetchByEmail')
