@@ -182,4 +182,13 @@ describe('AddUser UseCase', () => {
     await sut.perform(makeFakeUserDto())
     expect(buildSpy).toHaveBeenCalledWith('any_id')
   })
+
+  it('Should throw if AccessTokenBuilder throws', async () => {
+    const { sut, accessTokenBuilderStub } = makeSut()
+    jest.spyOn(accessTokenBuilderStub, 'perform').mockImplementation(() => {
+      throw new Error()
+    })
+    const promise = sut.perform(makeFakeUserDto())
+    await expect(promise).rejects.toThrow()
+  })
 })
