@@ -11,16 +11,13 @@ export class User {
 
   static create (data: UserDto): Either<Error, User> {
     const nameOrError = Name.create(data.name)
-    if (nameOrError.isLeft()) {
-      return left(nameOrError.value)
-    }
     const emailOrError = Email.create(data.email)
-    if (emailOrError.isLeft()) {
-      return left(emailOrError.value)
-    }
     const passwordOrError = Password.create(data.password)
-    if (passwordOrError.isLeft()) {
-      return left(passwordOrError.value)
+    const results = [nameOrError, emailOrError, passwordOrError]
+    for (const result of results) {
+      if (result.isLeft()) {
+        return left(result.value)
+      }
     }
     return right(
       new User(nameOrError.value as unknown as Name)
