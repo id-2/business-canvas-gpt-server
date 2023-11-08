@@ -1,5 +1,7 @@
 import type { FetchUserByEmailRepo } from '../contracts/db'
 import type { UserModel } from '@/domain/models/db-models'
+import type { Hasher } from '../contracts/cryptography'
+import type { HashedModel } from '@/domain/models/output-models'
 import { User, type UserDto } from '@/domain/entities/user'
 import { AddUserUseCase } from './add-user-usecase'
 import { left, right } from '@/shared/either'
@@ -41,15 +43,26 @@ const makeFetchUserByEmailRepo = (): FetchUserByEmailRepo => {
   return new FetchUserByEmailRepoStub()
 }
 
+const makeHasher = (): Hasher => {
+  class HasherStub implements Hasher {
+    async hashing (value: string): Promise<HashedModel> {
+      return await Promise.resolve({ hash: 'hashed_password' })
+    }
+  }
+  return new HasherStub()
+}
+
 interface SutTypes {
   sut: AddUserUseCase
   fetchUserByEmailRepoStub: FetchUserByEmailRepo
+  hasherStub: Hasher
 }
 
 const makeSut = (): SutTypes => {
   const fetchUserByEmailRepoStub = makeFetchUserByEmailRepo()
-  const sut = new AddUserUseCase(fetchUserByEmailRepoStub)
-  return { sut, fetchUserByEmailRepoStub }
+  const hasherStub = makeHasher()
+  const sut = new AddUserUseCase(fetchUserByEmailRepoStub, hasherStub)
+  return { sut, fetchUserByEmailRepoStub, hasherStub }
 }
 
 describe('AddUser UseCase', () => {
@@ -101,5 +114,12 @@ describe('AddUser UseCase', () => {
     )
     const promise = sut.perform(makeFakeUserDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call Hasher with correct password', async () => {
+    const { sut, hasherStub } = makeSut()
+    const hashingSpy = jest.spyOn(hasherStub, 'hashing')
+    await sut.perform(makeFakeUserDto())
+    expect(hashingSpy).toHaveBeenCalledWith('any_password')
   })
 })
