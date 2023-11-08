@@ -1,11 +1,12 @@
 import type { FetchUserByEmailRepo } from '../contracts/db'
 import type { UserModel } from '@/domain/models/db-models'
 import type { Hasher } from '../contracts/cryptography'
-import type { HashedModel } from '@/domain/models/output-models'
+import type { HashedModel, IdModel } from '@/domain/models/output-models'
 import { User, type UserDto } from '@/domain/entities/user'
 import { AddUserUseCase } from './add-user-usecase'
 import { left, right } from '@/shared/either'
 import { EmailInUseError } from '@/domain/errors'
+import { type IdBuilder } from '../contracts/id/id-builder'
 
 jest.mock('@/domain/entities/user/user', () => ({
   User: {
@@ -52,17 +53,32 @@ const makeHasher = (): Hasher => {
   return new HasherStub()
 }
 
+const makeIdBuilder = (): IdBuilder => {
+  class IdBuilderStub implements IdBuilder {
+    build (): IdModel {
+      return { id: 'any_id' }
+    }
+  }
+  return new IdBuilderStub()
+}
+
 interface SutTypes {
   sut: AddUserUseCase
   fetchUserByEmailRepoStub: FetchUserByEmailRepo
   hasherStub: Hasher
+  idBuilderStub: IdBuilder
 }
 
 const makeSut = (): SutTypes => {
   const fetchUserByEmailRepoStub = makeFetchUserByEmailRepo()
   const hasherStub = makeHasher()
-  const sut = new AddUserUseCase(fetchUserByEmailRepoStub, hasherStub)
-  return { sut, fetchUserByEmailRepoStub, hasherStub }
+  const idBuilderStub = makeIdBuilder()
+  const sut = new AddUserUseCase(
+    fetchUserByEmailRepoStub, hasherStub, idBuilderStub
+  )
+  return {
+    sut, fetchUserByEmailRepoStub, hasherStub, idBuilderStub
+  }
 }
 
 describe('AddUser UseCase', () => {
@@ -130,5 +146,12 @@ describe('AddUser UseCase', () => {
     )
     const promise = sut.perform(makeFakeUserDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call IdBuilder', async () => {
+    const { sut, idBuilderStub } = makeSut()
+    const buildSpy = jest.spyOn(idBuilderStub, 'build')
+    await sut.perform(makeFakeUserDto())
+    expect(buildSpy).toHaveBeenCalled()
   })
 })
