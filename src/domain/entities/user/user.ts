@@ -5,7 +5,11 @@ import { Password } from './value-objects/password/password'
 import type { UserDto } from './user-dto'
 
 export class User {
-  private constructor (private readonly name: Name) {
+  private constructor (
+    private readonly name: Name,
+    private readonly email: Email,
+    private readonly password: Password
+  ) {
     Object.freeze(this)
   }
 
@@ -20,7 +24,11 @@ export class User {
       }
     }
     return right(
-      new User(nameOrError.value as unknown as Name)
+      new User(
+        nameOrError.value as Name,
+        emailOrError.value as Email,
+        passwordOrError.value as Password
+      )
     )
   }
 }
