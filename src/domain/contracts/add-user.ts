@@ -1,11 +1,11 @@
+import type { InvalidEmailError, InvalidNameError, InvalidPasswordError } from '../entities/user/errors'
 import type { Either } from '@/shared/either'
 import type { UserDto } from '../entities/user'
-import type { InvalidEmailError, InvalidNameError, InvalidPasswordError } from '../entities/user/errors'
-import type { AccessToken } from '../models/output-models'
+import type { AccessTokenModel } from '../models/output-models'
 import type { EmailInUseError } from '../errors'
 
 export type AddUserRes = Either<
-InvalidNameError | InvalidEmailError | InvalidPasswordError | EmailInUseError, AccessToken
+InvalidNameError | InvalidEmailError | InvalidPasswordError | EmailInUseError, AccessTokenModel
 >
 
 export interface AddUser {
