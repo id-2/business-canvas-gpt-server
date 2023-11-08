@@ -1,9 +1,7 @@
+import type { UserDto } from './user-dto'
 import { left, right } from '@/shared/either'
 import { User } from './user'
-import type { UserDto } from './user-dto'
-import { Email } from './value-objects/email/email'
-import { Name } from './value-objects/name/name'
-import { Password } from './value-objects/password/password'
+import { Email, Name, Password } from './value-objects'
 import { InvalidEmailError, InvalidNameError, InvalidPasswordError } from './errors'
 
 const privateFactory = <T=any>(Cls: any, ...args: any[]): T => {

@@ -1,7 +1,5 @@
 import { right, type Either, left } from '@/shared/either'
-import { Name } from './value-objects/name/name'
-import { Email } from './value-objects/email/email'
-import { Password } from './value-objects/password/password'
+import { Name, Email, Password } from './value-objects'
 import type { UserDto } from './user-dto'
 
 export class User {
