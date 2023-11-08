@@ -4,7 +4,7 @@ import type { UserDto } from './user-dto'
 import { Email } from './value-objects/email/email'
 import { Name } from './value-objects/name/name'
 import { Password } from './value-objects/password/password'
-import { InvalidEmailError, InvalidNameError } from './errors'
+import { InvalidEmailError, InvalidNameError, InvalidPasswordError } from './errors'
 
 const privateFactory = <T=any>(Cls: any, ...args: any[]): T => {
   return new Cls(...args)
@@ -58,5 +58,13 @@ describe('User Entity', () => {
     const createSpy = jest.spyOn(Password, 'create')
     User.create(makeFakeUserDto())
     expect(createSpy).toHaveBeenCalledWith('any_password')
+  })
+
+  it('Should return InvalidPasswordError if Password return InvalidPasswordError', () => {
+    jest.spyOn(Password, 'create').mockReturnValueOnce(
+      left(new InvalidPasswordError('any_password'))
+    )
+    const sut = User.create(makeFakeUserDto())
+    expect(sut.value).toEqual(new InvalidPasswordError('any_password'))
   })
 })
