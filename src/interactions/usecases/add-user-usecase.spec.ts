@@ -3,6 +3,7 @@ import type { UserModel } from '@/domain/models/db-models'
 import { User, type UserDto } from '@/domain/entities/user'
 import { AddUserUseCase } from './add-user-usecase'
 import { left, right } from '@/shared/either'
+import { EmailInUseError } from '@/domain/errors'
 
 jest.mock('@/domain/entities/user/user', () => ({
   User: {
@@ -20,6 +21,15 @@ const makeFakeUserDto = (): UserDto => ({
   name: 'any_name',
   email: 'any_email@mail.com',
   password: 'any_password'
+})
+
+const makeFakeUserModel = (): UserModel => ({
+  id: 'any_id',
+  name: 'any name',
+  email: 'any_email@mail.com',
+  password: 'hashed_password',
+  roleId: 'any_role_id',
+  createdAt: new Date()
 })
 
 const makeFetchUserByEmailRepo = (): FetchUserByEmailRepo => {
@@ -64,5 +74,14 @@ describe('AddUser UseCase', () => {
     const fetchByEmailSpy = jest.spyOn(fetchUserByEmailRepoStub, 'fetchByEmail')
     await sut.perform(makeFakeUserDto())
     expect(fetchByEmailSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
+
+  it('Should return EmailInUseError if FetchUserByEmailRepo return an UserModel', async () => {
+    const { sut, fetchUserByEmailRepoStub } = makeSut()
+    jest.spyOn(fetchUserByEmailRepoStub, 'fetchByEmail').mockReturnValueOnce(
+      Promise.resolve(makeFakeUserModel())
+    )
+    const result = await sut.perform(makeFakeUserDto())
+    expect(result.value).toEqual(new EmailInUseError('any_email@mail.com'))
   })
 })
