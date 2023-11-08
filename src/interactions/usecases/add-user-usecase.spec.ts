@@ -1,14 +1,17 @@
 import { User, type UserDto } from '@/domain/entities/user'
 import { AddUserUseCase } from './add-user-usecase'
+import { left, right } from '@/shared/either'
 
 jest.mock('@/domain/entities/user/user', () => ({
   ...jest.requireActual('@/domain/entities/user/user'),
   User: {
-    create: jest.fn(() => ({
-      name: 'any_name',
-      email: 'any_email@mail.com',
-      password: 'any_password'
-    }))
+    create: jest.fn(() => {
+      return right({
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        password: 'any_password'
+      })
+    })
   }
 }))
 
@@ -33,5 +36,14 @@ describe('AddUser UseCase', () => {
     const createSpy = jest.spyOn(User, 'create')
     await sut.perform(makeFakeUserDto())
     expect(createSpy).toHaveBeenCalledWith(makeFakeUserDto())
+  })
+
+  it('Should return a Error if create User fails', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(User, 'create').mockReturnValueOnce(
+      left(new Error('any_message'))
+    )
+    const result = await sut.perform(makeFakeUserDto())
+    expect(result.value).toEqual(new Error('any_message'))
   })
 })
