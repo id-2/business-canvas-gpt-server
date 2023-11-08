@@ -1,4 +1,4 @@
-import { right, type Either } from '@/shared/either'
+import { right, type Either, left } from '@/shared/either'
 import { Name } from './value-objects/name/name'
 import { Email } from './value-objects/email/email'
 import { Password } from './value-objects/password/password'
@@ -11,6 +11,9 @@ export class User {
 
   static create (data: UserDto): Either<Error, User> {
     const nameOrError = Name.create(data.name)
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value)
+    }
     Email.create(data.email)
     Password.create(data.password)
     return right(
