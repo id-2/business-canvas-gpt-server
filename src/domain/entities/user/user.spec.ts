@@ -4,7 +4,7 @@ import type { UserDto } from './user-dto'
 import { Email } from './value-objects/email/email'
 import { Name } from './value-objects/name/name'
 import { Password } from './value-objects/password/password'
-import { InvalidNameError } from './errors'
+import { InvalidEmailError, InvalidNameError } from './errors'
 
 const privateFactory = <T=any>(Cls: any, ...args: any[]): T => {
   return new Cls(...args)
@@ -19,7 +19,11 @@ const makeFakeUserDto = (): UserDto => ({
 describe('User Entity', () => {
   beforeAll(() => {
     const fakeName = privateFactory<Name>(Name, 'any_name')
+    const fakeEmail = privateFactory<Email>(Email, 'any_email@mail.com')
+    const fakePassword = privateFactory<Password>(Password, 'any_password')
     jest.spyOn(Name, 'create').mockReturnValue(right(fakeName))
+    jest.spyOn(Email, 'create').mockReturnValue(right(fakeEmail))
+    jest.spyOn(Password, 'create').mockReturnValue(right(fakePassword))
   })
 
   it('Should call Name with correct value', () => {
@@ -40,6 +44,14 @@ describe('User Entity', () => {
     const createSpy = jest.spyOn(Email, 'create')
     User.create(makeFakeUserDto())
     expect(createSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
+
+  it('Should return InvalidEmailError if Email return InvalidEmailError', () => {
+    jest.spyOn(Email, 'create').mockReturnValueOnce(
+      left(new InvalidEmailError('any_email@mail.com'))
+    )
+    const sut = User.create(makeFakeUserDto())
+    expect(sut.value).toEqual(new InvalidEmailError('any_email@mail.com'))
   })
 
   it('Should call Password with correct value', () => {
