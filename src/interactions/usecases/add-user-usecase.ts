@@ -11,8 +11,8 @@ export class AddUserUseCase implements AddUser {
     private readonly fetchUserByEmailRepo: FetchUserByEmailRepo,
     private readonly hasher: Hasher,
     private readonly idBuilder: IdBuilder,
-    private readonly accessTokenBuilder: AccessTokenBuilder,
-    private readonly addUserRepo: AddUserRepo
+    private readonly addUserRepo: AddUserRepo,
+    private readonly accessTokenBuilder: AccessTokenBuilder
   ) {}
 
   async perform (dto: AddUserDto): Promise<AddUserRes> {
@@ -27,10 +27,10 @@ export class AddUserUseCase implements AddUser {
     }
     const { hash } = await this.hasher.hashing(dto.password)
     const { id } = this.idBuilder.build()
-    await this.accessTokenBuilder.perform(id)
     await this.addUserRepo.add({
       id, name, email, password: hash, roleName, createdAt: new Date()
     })
-    return right({ token: '' })
+    const { token } = await this.accessTokenBuilder.perform(id)
+    return right({ token })
   }
 }
