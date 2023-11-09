@@ -9,7 +9,9 @@ const config: Config = {
   roots: ['<rootDir>/src'],
   clearMocks: true,
   collectCoverageFrom: [
-    '<rootDir>/src/**/*.ts'
+    '<rootDir>/src/**/*.ts',
+    '!<rootDir>/src/**/index.ts',
+    '!<rootDir>/src/shared/either.ts'
   ],
   testEnvironment: 'node',
   transform: {
