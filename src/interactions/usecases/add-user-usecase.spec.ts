@@ -1,13 +1,13 @@
+import type { AccessTokenModel, HashedModel, IdModel } from '@/domain/models/output-models'
+import type { AddUserDto, AccessTokenBuilder } from '@/domain/contracts'
 import type { FetchUserByEmailRepo } from '../contracts/db'
+import type { IdBuilder } from '../contracts/id/id-builder'
 import type { UserModel } from '@/domain/models/db-models'
 import type { Hasher } from '../contracts/cryptography'
-import type { AccessTokenModel, HashedModel, IdModel } from '@/domain/models/output-models'
-import type { IdBuilder } from '../contracts/id/id-builder'
-import { User, type UserDto } from '@/domain/entities/user'
+import { User } from '@/domain/entities/user'
 import { AddUserUseCase } from './add-user-usecase'
 import { left, right } from '@/shared/either'
 import { EmailInUseError } from '@/domain/errors'
-import { type AccessTokenBuilder } from '@/domain/contracts'
 
 jest.mock('@/domain/entities/user/user', () => ({
   User: {
@@ -21,10 +21,11 @@ jest.mock('@/domain/entities/user/user', () => ({
   }
 }))
 
-const makeFakeUserDto = (): UserDto => ({
+const makeFakeUserDto = (): AddUserDto => ({
   name: 'any_name',
   email: 'any_email@mail.com',
-  password: 'any_password'
+  password: 'any_password',
+  roleName: 'user'
 })
 
 const makeFakeUserModel = (): UserModel => ({
@@ -98,7 +99,11 @@ describe('AddUser UseCase', () => {
     const { sut } = makeSut()
     const createSpy = jest.spyOn(User, 'create')
     await sut.perform(makeFakeUserDto())
-    expect(createSpy).toHaveBeenCalledWith(makeFakeUserDto())
+    expect(createSpy).toHaveBeenCalledWith({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password'
+    })
   })
 
   it('Should return a Error if create User fails', async () => {
@@ -178,9 +183,9 @@ describe('AddUser UseCase', () => {
 
   it('Should call AccessTokenBuilder with correct Id', async () => {
     const { sut, accessTokenBuilderStub } = makeSut()
-    const buildSpy = jest.spyOn(accessTokenBuilderStub, 'perform')
+    const performSpy = jest.spyOn(accessTokenBuilderStub, 'perform')
     await sut.perform(makeFakeUserDto())
-    expect(buildSpy).toHaveBeenCalledWith('any_id')
+    expect(performSpy).toHaveBeenCalledWith('any_id')
   })
 
   it('Should throw if AccessTokenBuilder throws', async () => {
