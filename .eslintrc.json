@@ -17,6 +17,7 @@
     "jest.config.ts", "jest-unit-config.ts", "jest-integration-config.ts"
   ],
   "rules": {
-    "@typescript-eslint/strict-boolean-expressions": "off"
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "valid-typeof": "off"
   }
 }
