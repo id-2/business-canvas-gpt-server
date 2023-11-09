@@ -4,6 +4,8 @@ import { right, type Either, left } from '@/shared/either'
 import { SignUpController } from './signup-controller'
 import { badRequest, serverError } from '@/presentation/helpers/http/http-helpers'
 import { ServerError } from '@/presentation/errors'
+import { type AddUser, type AddUserRes } from '@/domain/contracts'
+import { type UserDto } from '@/domain/entities/user'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -23,15 +25,26 @@ const makeValidationComposite = (): Validation => {
   return new ValidationStub()
 }
 
+const makeAddUser = (): AddUser => {
+  class AddUserStub implements AddUser {
+    async perform (account: UserDto): Promise<AddUserRes> {
+      return await Promise.resolve(right({ token: 'any_token' }))
+    }
+  }
+  return new AddUserStub()
+}
+
 interface SutTypes {
   sut: SignUpController
   validationStub: Validation
+  addUserStub: AddUser
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidationComposite()
-  const sut = new SignUpController(validationStub)
-  return { sut, validationStub }
+  const addUserStub = makeAddUser()
+  const sut = new SignUpController(validationStub, addUserStub)
+  return { sut, validationStub, addUserStub }
 }
 
 describe('SignUp Controller', () => {
@@ -60,5 +73,16 @@ describe('SignUp Controller', () => {
     const error = new Error()
     error.stack = 'any_stack'
     expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
+  })
+
+  it('Should call AddUser with correct values', async () => {
+    const { sut, addUserStub } = makeSut()
+    const performSpy = jest.spyOn(addUserStub, 'perform')
+    await sut.handle(makeFakeRequest())
+    expect(performSpy).toHaveBeenCalledWith({
+      name: 'any_name',
+      email: 'any_email@mail.com',
+      password: 'any_password'
+    })
   })
 })
