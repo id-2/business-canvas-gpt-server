@@ -1,6 +1,6 @@
 import type { AccessTokenModel, HashedModel, IdModel } from '@/domain/models/output-models'
 import type { AddUserDto, AccessTokenBuilder } from '@/domain/contracts'
-import type { FetchUserByEmailRepo } from '../contracts/db'
+import type { AddUserRepo, FetchUserByEmailRepo } from '../contracts/db'
 import type { IdBuilder } from '../contracts/id/id-builder'
 import type { UserModel } from '@/domain/models/db-models'
 import type { Hasher } from '../contracts/cryptography'
@@ -30,10 +30,10 @@ const makeFakeUserDto = (): AddUserDto => ({
 
 const makeFakeUserModel = (): UserModel => ({
   id: 'any_id',
-  name: 'any name',
+  name: 'any_name',
   email: 'any_email@mail.com',
   password: 'hashed_password',
-  roleId: 'any_role_id',
+  roleName: 'user',
   createdAt: new Date()
 })
 
@@ -73,12 +73,22 @@ const makeAccessTokenBuilder = (): AccessTokenBuilder => {
   return new AccessTokenBuilderStub()
 }
 
+const makeAddUserRepo = (): AddUserRepo => {
+  class AddUserRepoStub implements AddUserRepo {
+    async add (data: UserModel): Promise<void> {
+      await Promise.resolve()
+    }
+  }
+  return new AddUserRepoStub()
+}
+
 interface SutTypes {
   sut: AddUserUseCase
   fetchUserByEmailRepoStub: FetchUserByEmailRepo
   hasherStub: Hasher
   idBuilderStub: IdBuilder
   accessTokenBuilderStub: AccessTokenBuilder
+  addUserRepoStub: AddUserRepo
 }
 
 const makeSut = (): SutTypes => {
@@ -86,11 +96,21 @@ const makeSut = (): SutTypes => {
   const hasherStub = makeHasher()
   const idBuilderStub = makeIdBuilder()
   const accessTokenBuilderStub = makeAccessTokenBuilder()
+  const addUserRepoStub = makeAddUserRepo()
   const sut = new AddUserUseCase(
-    fetchUserByEmailRepoStub, hasherStub, idBuilderStub, accessTokenBuilderStub
+    fetchUserByEmailRepoStub,
+    hasherStub,
+    idBuilderStub,
+    accessTokenBuilderStub,
+    addUserRepoStub
   )
   return {
-    sut, fetchUserByEmailRepoStub, hasherStub, idBuilderStub, accessTokenBuilderStub
+    sut,
+    fetchUserByEmailRepoStub,
+    hasherStub,
+    idBuilderStub,
+    accessTokenBuilderStub,
+    addUserRepoStub
   }
 }
 
@@ -195,5 +215,12 @@ describe('AddUser UseCase', () => {
     })
     const promise = sut.perform(makeFakeUserDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call AddUserRepo with correct values', async () => {
+    const { sut, addUserRepoStub } = makeSut()
+    const addSpy = jest.spyOn(addUserRepoStub, 'add')
+    await sut.perform(makeFakeUserDto())
+    expect(addSpy).toHaveBeenCalledWith(makeFakeUserModel())
   })
 })
