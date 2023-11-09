@@ -2,7 +2,7 @@ import type { Validation } from '@/presentation/contracts'
 import { type Either, left, right } from '@/shared/either'
 import { InvalidTypeError } from '@/presentation/errors'
 
-export type FieldType = 'string' | 'number' | 'boolean' | 'array'
+type FieldType = 'string' | 'number' | 'boolean' | 'array'
 
 export class TypeValidation implements Validation {
   constructor (
