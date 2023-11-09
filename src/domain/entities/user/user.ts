@@ -1,6 +1,7 @@
-import { right, type Either, left } from '@/shared/either'
-import { Name, Email, Password } from './value-objects'
 import type { UserDto } from './user-dto'
+import type { UserRes } from './user-response'
+import { right, left } from '@/shared/either'
+import { Name, Email, Password } from './value-objects'
 
 export class User {
   private constructor (
@@ -11,7 +12,7 @@ export class User {
     Object.freeze(this)
   }
 
-  static create (data: UserDto): Either<Error, User> {
+  static create (data: UserDto): UserRes {
     const nameOrError = Name.create(data.name)
     const emailOrError = Email.create(data.email)
     const passwordOrError = Password.create(data.password)

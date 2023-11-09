@@ -1,8 +1,8 @@
 import type { UserDto } from './user-dto'
+import { InvalidEmailError, InvalidNameError, InvalidPasswordError } from './errors'
+import { Email, Name, Password } from './value-objects'
 import { left, right } from '@/shared/either'
 import { User } from './user'
-import { Email, Name, Password } from './value-objects'
-import { InvalidEmailError, InvalidNameError, InvalidPasswordError } from './errors'
 
 jest.mock('@/domain/entities/user/value-objects/name/name', () => ({
   Name: {
