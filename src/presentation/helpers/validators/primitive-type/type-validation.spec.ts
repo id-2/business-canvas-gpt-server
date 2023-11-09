@@ -14,4 +14,12 @@ describe('Type Validation', () => {
     })
     expect(result).toEqual(left(new InvalidTypeError('field')))
   })
+
+  it('Should return right result if validation is a success', () => {
+    const sut = makeSut('field', 'string')
+    const result = sut.validate({
+      field: 'any_value', otherField: 'other_value'
+    })
+    expect(result.isRight()).toBe(true)
+  })
 })
