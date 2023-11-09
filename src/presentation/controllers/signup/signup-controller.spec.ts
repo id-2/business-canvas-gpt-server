@@ -1,11 +1,11 @@
 import type { Validation } from '@/presentation/contracts/validation'
 import type { HttpRequest } from '@/presentation/http/http'
+import type { AddUser, AddUserRes } from '@/domain/contracts'
+import type { UserDto } from '@/domain/entities/user'
 import { right, type Either, left } from '@/shared/either'
+import { badRequest, created, serverError } from '@/presentation/helpers/http/http-helpers'
 import { SignUpController } from './signup-controller'
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helpers'
 import { ServerError } from '@/presentation/errors'
-import { type AddUser, type AddUserRes } from '@/domain/contracts'
-import { type UserDto } from '@/domain/entities/user'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -103,5 +103,11 @@ describe('SignUp Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     const error = new Error()
     expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
+  })
+
+  it('Should return 201 if AddUser is a success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(created({ token: 'any_token' }))
   })
 })
