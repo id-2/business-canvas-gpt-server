@@ -31,4 +31,13 @@ describe('AccessTokenBuilder UseCase', () => {
       value: 'any_value', expiresInHours: 48
     })
   })
+
+  it('Should throw if Encrypter throws', async () => {
+    const { sut, encrypterStub } = makeSut()
+    jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform('any_value')
+    await expect(promise).rejects.toThrow()
+  })
 })
