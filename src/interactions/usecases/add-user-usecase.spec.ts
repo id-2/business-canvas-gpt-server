@@ -8,6 +8,7 @@ import { User } from '@/domain/entities/user'
 import { AddUserUseCase } from './add-user-usecase'
 import { left, right } from '@/shared/either'
 import { EmailInUseError } from '@/domain/errors'
+import MockDate from 'mockdate'
 
 jest.mock('@/domain/entities/user/user', () => ({
   User: {
@@ -115,6 +116,14 @@ const makeSut = (): SutTypes => {
 }
 
 describe('AddUser UseCase', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+
+  afterAll(() => {
+    MockDate.reset()
+  })
+
   it('Should call User Entity with correct values', async () => {
     const { sut } = makeSut()
     const createSpy = jest.spyOn(User, 'create')
