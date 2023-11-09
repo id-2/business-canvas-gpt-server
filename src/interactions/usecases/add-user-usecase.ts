@@ -1,8 +1,8 @@
-import type { AccessTokenBuilder, AddUser, AddUserDto, AddUserRes } from '@/domain/contracts'
+import type { AccessTokenBuilder, AddUser, AddUserRes } from '@/domain/contracts'
 import type { AddUserRepo, FetchUserByEmailRepo } from '../contracts/db'
 import type { Hasher } from '../contracts/cryptography'
 import type { IdBuilder } from '../contracts/id/id-builder'
-import { User } from '@/domain/entities/user'
+import { User, type UserDto } from '@/domain/entities/user'
 import { EmailInUseError } from '@/domain/errors'
 import { left, right } from '@/shared/either'
 
@@ -15,20 +15,20 @@ export class AddUserUseCase implements AddUser {
     private readonly accessTokenBuilder: AccessTokenBuilder
   ) {}
 
-  async perform (dto: AddUserDto): Promise<AddUserRes> {
-    const { email, name, password, roleName } = dto
-    const userResult = User.create({ email, name, password })
+  async perform (dto: UserDto): Promise<AddUserRes> {
+    const userResult = User.create(dto)
     if (userResult.isLeft()) {
       return left(userResult.value)
     }
+    const { email, name, password } = dto
     const user = await this.fetchUserByEmailRepo.fetchByEmail(email)
     if (user) {
       return left(new EmailInUseError(email))
     }
-    const { hash } = await this.hasher.hashing(dto.password)
+    const { hash } = await this.hasher.hashing(password)
     const { id } = this.idBuilder.build()
     await this.addUserRepo.add({
-      id, name, email, password: hash, roleName, createdAt: new Date()
+      id, name, email, password: hash, role: 'user', createdAt: new Date()
     })
     const { token } = await this.accessTokenBuilder.perform(id)
     return right({ token })

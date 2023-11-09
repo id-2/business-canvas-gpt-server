@@ -1,10 +1,10 @@
 import type { AccessTokenModel, HashedModel, IdModel } from '@/domain/models/output-models'
-import type { AddUserDto, AccessTokenBuilder } from '@/domain/contracts'
+import type { AccessTokenBuilder } from '@/domain/contracts'
 import type { AddUserRepo, FetchUserByEmailRepo } from '../contracts/db'
 import type { IdBuilder } from '../contracts/id/id-builder'
 import type { UserModel } from '@/domain/models/db-models'
 import type { Hasher } from '../contracts/cryptography'
-import { User } from '@/domain/entities/user'
+import { User, type UserDto } from '@/domain/entities/user'
 import { AddUserUseCase } from './add-user-usecase'
 import { left, right } from '@/shared/either'
 import { EmailInUseError } from '@/domain/errors'
@@ -22,11 +22,10 @@ jest.mock('@/domain/entities/user/user', () => ({
   }
 }))
 
-const makeFakeUserDto = (): AddUserDto => ({
+const makeFakeUserDto = (): UserDto => ({
   name: 'any_name',
   email: 'any_email@mail.com',
-  password: 'any_password',
-  roleName: 'user'
+  password: 'any_password'
 })
 
 const makeFakeUserModel = (): UserModel => ({
@@ -34,7 +33,7 @@ const makeFakeUserModel = (): UserModel => ({
   name: 'any_name',
   email: 'any_email@mail.com',
   password: 'hashed_password',
-  roleName: 'user',
+  role: 'user',
   createdAt: new Date()
 })
 
