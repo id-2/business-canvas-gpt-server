@@ -16,7 +16,10 @@ export class SignUpController implements Controller {
         return badRequest(validationResult.value)
       }
       const { name, email, password } = httpRequest.body
-      await this.addUser.perform({ name, email, password })
+      const addUserResult = await this.addUser.perform({ name, email, password })
+      if (addUserResult.isLeft()) {
+        return badRequest(addUserResult.value)
+      }
       return { statusCode: 0, body: '' }
     } catch (error: any) {
       return serverError(error)
