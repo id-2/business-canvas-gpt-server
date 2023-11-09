@@ -10,7 +10,7 @@ export class JwtAdapter implements Encrypter {
     if (data.expiresInHours && data.expiresInHours > 0) {
       expiresIn = data.expiresInHours.toString() + 'h'
     }
-    jwt.sign({ id: data.value }, this.secretKey, { expiresIn })
+    jwt.sign({ value: data.value }, this.secretKey, { expiresIn })
     return { token: '' }
   }
 }
