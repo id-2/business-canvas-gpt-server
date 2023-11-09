@@ -54,4 +54,10 @@ describe('Jwt Adapter', () => {
     const promise = sut.encrypt({ value: 'any_value' })
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should return AccessTokenModel if sign is a success', async () => {
+    const sut = makeSut()
+    const accessToken = await sut.encrypt({ value: 'any_id' })
+    expect(accessToken).toEqual({ token: 'any_token' })
+  })
 })
