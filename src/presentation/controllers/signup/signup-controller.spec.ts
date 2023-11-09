@@ -2,7 +2,8 @@ import type { Validation } from '@/presentation/contracts/validation'
 import type { HttpRequest } from '@/presentation/http/http'
 import { right, type Either, left } from '@/shared/either'
 import { SignUpController } from './signup-controller'
-import { badRequest } from '@/presentation/helpers/http/http-helpers'
+import { badRequest, serverError } from '@/presentation/helpers/http/http-helpers'
+import { ServerError } from '@/presentation/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
@@ -48,5 +49,16 @@ describe('SignUp Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
+
+  it('Should return 500 if Validation throws', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    const error = new Error()
+    error.stack = 'any_stack'
+    expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
   })
 })
