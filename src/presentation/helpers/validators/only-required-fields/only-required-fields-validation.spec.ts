@@ -16,4 +16,13 @@ describe('OnlyRequiredField Validation', () => {
     })
     expect(result).toEqual(left(new UnnecessaryFieldError('anotherField')))
   })
+
+  it('Should return right result if input contain only required fields', () => {
+    const sut = makeSut()
+    const result = sut.validate({
+      field: 'any_value',
+      otherField: 'other_value'
+    })
+    expect(result.isRight()).toBe(true)
+  })
 })
