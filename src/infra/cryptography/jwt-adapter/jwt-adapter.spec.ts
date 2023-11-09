@@ -17,32 +17,41 @@ describe('Jwt Adapter', () => {
   it('Should call sign with correct values', async () => {
     const sut = makeSut()
     const signSpy = jest.spyOn(jwt, 'sign')
-    await sut.encrypt({ value: 'any_id', expiresInHours: 48 })
+    await sut.encrypt({ value: 'any_value', expiresInHours: 48 })
     expect(signSpy).toHaveBeenCalledWith(
-      { id: 'any_id' }, 'any_secret', { expiresIn: '48h' }
+      { value: 'any_value' }, 'any_secret', { expiresIn: '48h' }
     )
   })
 
   it('Should call sign without expires in hours', async () => {
     const sut = makeSut()
     const signSpy = jest.spyOn(jwt, 'sign')
-    await sut.encrypt({ value: 'any_id' })
+    await sut.encrypt({ value: 'any_value' })
     expect(signSpy).toHaveBeenCalledWith(
-      { id: 'any_id' }, 'any_secret', { expiresIn }
+      { value: 'any_value' }, 'any_secret', { expiresIn }
     )
   })
 
   it('Should call sign with expiresIn undefined if expires in hours is equal 0', async () => {
     const sut = makeSut()
     const signSpy = jest.spyOn(jwt, 'sign')
-    await sut.encrypt({ value: 'any_id', expiresInHours: 0 })
-    expect(signSpy).toHaveBeenCalledWith({ id: 'any_id' }, 'any_secret', { expiresIn })
+    await sut.encrypt({ value: 'any_value', expiresInHours: 0 })
+    expect(signSpy).toHaveBeenCalledWith({ value: 'any_value' }, 'any_secret', { expiresIn })
   })
 
   it('Should call sign with expiresIn undefined if expires in hours is less than 0', async () => {
     const sut = makeSut()
     const signSpy = jest.spyOn(jwt, 'sign')
-    await sut.encrypt({ value: 'any_id', expiresInHours: -1 })
-    expect(signSpy).toHaveBeenCalledWith({ id: 'any_id' }, 'any_secret', { expiresIn })
+    await sut.encrypt({ value: 'any_value', expiresInHours: -1 })
+    expect(signSpy).toHaveBeenCalledWith({ value: 'any_value' }, 'any_secret', { expiresIn })
+  })
+
+  it('Should throw if sign throws', async () => {
+    const sut = makeSut()
+    jest.spyOn(jwt, 'sign').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.encrypt({ value: 'any_value' })
+    await expect(promise).rejects.toThrow()
   })
 })
