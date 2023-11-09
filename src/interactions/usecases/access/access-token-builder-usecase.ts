@@ -6,7 +6,6 @@ export class AccessTokenBuilderUseCase implements AccessTokenBuilder {
   constructor (private readonly encrypter: Encrypter) {}
 
   async perform (value: string): Promise<AccessTokenModel> {
-    await this.encrypter.encrypt({ value, expiresInHours: 48 })
-    return { token: '' }
+    return await this.encrypter.encrypt({ value, expiresInHours: 48 })
   }
 }
