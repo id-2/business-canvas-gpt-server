@@ -31,4 +31,11 @@ describe('Jwt Adapter', () => {
       { id: 'any_id' }, 'any_secret', { expiresIn }
     )
   })
+
+  it('Should call sign with expiresIn undefined if expires in hours is equal 0', async () => {
+    const sut = makeSut()
+    const signSpy = jest.spyOn(jwt, 'sign')
+    await sut.encrypt({ value: 'any_id', expiresInHours: 0 })
+    expect(signSpy).toHaveBeenCalledWith({ id: 'any_id' }, 'any_secret', { expiresIn })
+  })
 })
