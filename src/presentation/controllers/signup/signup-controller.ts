@@ -1,7 +1,7 @@
 import type { Controller, Validation } from '@/presentation/contracts'
 import type { HttpRequest, HttpResponse } from '@/presentation/http/http'
 import type { AddUser } from '@/domain/contracts'
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helpers'
+import { badRequest, created, serverError } from '@/presentation/helpers/http/http-helpers'
 
 export class SignUpController implements Controller {
   constructor (
@@ -20,7 +20,7 @@ export class SignUpController implements Controller {
       if (addUserResult.isLeft()) {
         return badRequest(addUserResult.value)
       }
-      return { statusCode: 0, body: '' }
+      return created({ token: addUserResult.value.token })
     } catch (error: any) {
       return serverError(error)
     }
