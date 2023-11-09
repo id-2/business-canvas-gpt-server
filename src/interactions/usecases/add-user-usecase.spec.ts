@@ -208,11 +208,11 @@ describe('AddUser UseCase', () => {
     expect(performSpy).toHaveBeenCalledWith('any_id')
   })
 
-  it('Should throw if AccessTokenBuilder throws', async () => {
+  it('Should throw if AddUserRepo throws', async () => {
     const { sut, accessTokenBuilderStub } = makeSut()
-    jest.spyOn(accessTokenBuilderStub, 'perform').mockImplementation(() => {
-      throw new Error()
-    })
+    jest.spyOn(accessTokenBuilderStub, 'perform').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
     const promise = sut.perform(makeFakeUserDto())
     await expect(promise).rejects.toThrow()
   })
@@ -222,5 +222,14 @@ describe('AddUser UseCase', () => {
     const addSpy = jest.spyOn(addUserRepoStub, 'add')
     await sut.perform(makeFakeUserDto())
     expect(addSpy).toHaveBeenCalledWith(makeFakeUserModel())
+  })
+
+  it('Should throw if AddUserRepo throws', async () => {
+    const { sut, addUserRepoStub } = makeSut()
+    jest.spyOn(addUserRepoStub, 'add').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeUserDto())
+    await expect(promise).rejects.toThrow()
   })
 })
