@@ -7,7 +7,7 @@ export class JwtAdapter implements Encrypter {
 
   async encrypt (data: EncrypterDto): Promise<AccessTokenModel> {
     let expiresIn: string | undefined
-    if (data.expiresInHours) {
+    if (data.expiresInHours && data.expiresInHours > 0) {
       expiresIn = data.expiresInHours.toString() + 'h'
     }
     jwt.sign({ id: data.value }, this.secretKey, { expiresIn })
