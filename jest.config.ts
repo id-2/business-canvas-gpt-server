@@ -11,7 +11,9 @@ const config: Config = {
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts',
     '!<rootDir>/src/**/index.ts',
-    '!<rootDir>/src/shared/either.ts'
+    '!<rootDir>/src/shared/either.ts',
+    '!<rootDir>/src/main/{configs,adapters}/**/*.ts',
+    '!<rootDir>/src/main/server.ts',
   ],
   testEnvironment: 'node',
   transform: {
