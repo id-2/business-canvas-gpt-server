@@ -4,7 +4,7 @@ import * as uuid from 'uuid'
 
 export class UuidAdapter implements IdBuilder {
   build (): IdModel {
-    uuid.v4()
-    return { id: '' }
+    const id = uuid.v4()
+    return { id }
   }
 }
