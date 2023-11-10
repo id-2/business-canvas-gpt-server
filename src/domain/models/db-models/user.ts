@@ -6,4 +6,5 @@ export interface UserModel extends BaseModel {
   email: string
   password: string
   role: Role
+  updatedAt: Date
 }

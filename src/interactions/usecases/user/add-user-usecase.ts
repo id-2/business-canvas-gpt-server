@@ -27,8 +27,9 @@ export class AddUserUseCase implements AddUser {
     }
     const { hash } = await this.hasher.hashing(password)
     const { id } = this.idBuilder.build()
+    const date = new Date()
     await this.addUserRepo.add({
-      id, name, email, password: hash, role: 'user', createdAt: new Date()
+      id, name, email, password: hash, role: 'user', createdAt: date, updatedAt: date
     })
     const { token } = await this.accessTokenBuilder.perform(id)
     return right({ token })
