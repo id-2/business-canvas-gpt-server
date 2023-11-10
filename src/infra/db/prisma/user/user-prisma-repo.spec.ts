@@ -26,14 +26,29 @@ describe('UserPrisma Repo', () => {
     )
   })
 
+  beforeEach(async () => {
+    await prismock.user.deleteMany()
+  })
+
   afterAll(() => {
     MockDate.reset()
   })
 
-  it('Should create new User', async () => {
-    const sut = new UserPrismaRepo()
-    await sut.add(makeFakeUserModel())
-    const user = await prismock.user.findUnique({ where: { id: 'any_id' } })
-    expect(user).toEqual(makeFakeUserModel())
+  describe('add()', () => {
+    it('Should create new User', async () => {
+      const sut = new UserPrismaRepo()
+      await sut.add(makeFakeUserModel())
+      const user = await prismock.user.findUnique({ where: { id: 'any_id' } })
+      expect(user).toEqual(makeFakeUserModel())
+    })
+  })
+
+  describe('fetchByEmail()', () => {
+    it('Should return an User if findUnique() is a success', async () => {
+      const sut = new UserPrismaRepo()
+      await prismock.user.create({ data: makeFakeUserModel() })
+      const user = await sut.fetchByEmail('any_email@mail.com')
+      expect(user).toEqual(makeFakeUserModel())
+    })
   })
 })
