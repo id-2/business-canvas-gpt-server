@@ -40,4 +40,13 @@ describe('Auth UseCase', () => {
     const result = await sut.perform(makeFakeAuthDto())
     expect(result.value).toEqual(new InvalidEmailError('any_email@mail.com'))
   })
+
+  it('Should throw if Email Value Object throws', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(Email, 'create').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.perform(makeFakeAuthDto())
+    await expect(promise).rejects.toThrow()
+  })
 })
