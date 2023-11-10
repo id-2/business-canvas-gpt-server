@@ -1,5 +1,5 @@
 import type { Validation } from '@/presentation/contracts'
-import { CompareFieldsValidation } from '@/presentation/helpers/validators/compare-fields/compare-fields-validation'
+import { CompareFieldsValidation } from '@/presentation/helpers/validators'
 
 export const compareFieldsValidationFactory = (
   fieldName: string, fieldNameToCompare: string
