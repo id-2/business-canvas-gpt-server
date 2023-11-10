@@ -34,7 +34,8 @@ const makeFakeUserModel = (): UserModel => ({
   email: 'any_email@mail.com',
   password: 'hashed_password',
   role: 'user',
-  createdAt: new Date()
+  createdAt: new Date(),
+  updatedAt: new Date()
 })
 
 const makeFetchUserByEmailRepo = (): FetchUserByEmailRepo => {
