@@ -55,5 +55,8 @@
   },
   "_moduleAliases": {
     "@": "src"
+  },
+  "prisma": {
+    "schema": "./src/infra/db/prisma/schema/schema.prisma"
   }
 }
