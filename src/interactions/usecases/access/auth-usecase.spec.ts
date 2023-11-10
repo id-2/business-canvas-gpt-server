@@ -1,7 +1,8 @@
 import type { AuthDto } from '@/domain/contracts'
 import { AuthUseCase } from './auth-usecase'
 import { Email } from '@/domain/entities/user/value-objects'
-import { right } from '@/shared/either'
+import { left, right } from '@/shared/either'
+import { InvalidEmailError } from '@/domain/entities/user/errors'
 
 jest.mock('@/domain/entities/user/value-objects/email/email', () => ({
   Email: {
@@ -26,8 +27,17 @@ const makeSut = (): SutTypes => {
 describe('Auth UseCase', () => {
   it('Should call Email Value Object with correct email', async () => {
     const { sut } = makeSut()
-    const validateEmailSpy = jest.spyOn(Email, 'create')
+    const createSpy = jest.spyOn(Email, 'create')
     await sut.perform(makeFakeAuthDto())
-    expect(validateEmailSpy).toHaveBeenCalledWith('any_email@mail.com')
+    expect(createSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
+
+  it('Should return InvalidEmailError if Email Value Object returns InvalidEmailError', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(Email, 'create').mockReturnValueOnce(
+      left(new InvalidEmailError('any_email@mail.com'))
+    )
+    const result = await sut.perform(makeFakeAuthDto())
+    expect(result.value).toEqual(new InvalidEmailError('any_email@mail.com'))
   })
 })
