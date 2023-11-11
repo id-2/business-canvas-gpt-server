@@ -82,5 +82,11 @@ describe('Bcrypt Adapter', () => {
       const promise = sut.comparer(makeHashComparerData())
       await expect(promise).rejects.toThrow()
     })
+
+    it('Should return true if bcrypt compare is a success', async () => {
+      const sut = makeSut()
+      const result = await sut.comparer(makeHashComparerData())
+      expect(result).toBe(true)
+    })
   })
 })
