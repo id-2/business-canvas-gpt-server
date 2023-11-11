@@ -3,7 +3,7 @@ import type { Validation } from '@/presentation/contracts/validation'
 import type { HttpRequest } from '@/presentation/http/http'
 import { right, type Either, left } from '@/shared/either'
 import { LoginController } from './login-controller'
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helpers'
+import { badRequest, ok, serverError } from '@/presentation/helpers/http/http-helpers'
 import { ServerError } from '@/presentation/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -100,5 +100,11 @@ describe('Login Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     const error = new Error()
     expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
+  })
+
+  it('Should return 200 if Auth is a success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok({ token: 'any_token' }))
   })
 })
