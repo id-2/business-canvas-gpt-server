@@ -1,21 +1,27 @@
 import type { Auth, AuthDto, AuthRes } from '@/domain/contracts'
 import type { FetchUserByEmailRepo } from '@/interactions/contracts/db'
+import type { HashComparer } from '@/interactions/contracts/cryptography'
 import { InvalidCredentialsError } from '@/domain/errors'
 import { left, right } from '@/shared/either'
 import { Email } from '@/domain/entities/user/value-objects'
 
 export class AuthUseCase implements Auth {
-  constructor (private readonly fetchUserByEmailRepo: FetchUserByEmailRepo) {}
+  constructor (
+    private readonly fetchUserByEmailRepo: FetchUserByEmailRepo,
+    private readonly hashComparer: HashComparer
+  ) {}
 
   async perform (dto: AuthDto): Promise<AuthRes> {
-    const emailResult = Email.create(dto.email)
+    const { email, password } = dto
+    const emailResult = Email.create(email)
     if (emailResult.isLeft()) {
       return left(emailResult.value)
     }
-    const user = await this.fetchUserByEmailRepo.fetchByEmail(dto.email)
+    const user = await this.fetchUserByEmailRepo.fetchByEmail(email)
     if (!user) {
       return left(new InvalidCredentialsError())
     }
+    await this.hashComparer.comparer({ value: password, hash: user.password })
     return right({ token: '' })
   }
 }
