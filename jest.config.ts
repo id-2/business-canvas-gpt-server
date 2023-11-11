@@ -21,7 +21,10 @@ const config: Config = {
   },
   moduleNameMapper: {
     '@/(.*)': '<rootDir>/src/$1'
-  }
+  },
+  setupFiles:[
+    '<rootDir>/src/infra/cache/redis/helpers/test-env-vars/jest-set-env-vars.ts'
+  ]
 }
 
 export default config
