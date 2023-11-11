@@ -2,8 +2,9 @@ import type { Auth, AuthDto, AuthRes } from '@/domain/contracts'
 import type { Validation } from '@/presentation/contracts/validation'
 import type { HttpRequest } from '@/presentation/http/http'
 import { right, type Either, left } from '@/shared/either'
+import { badRequest, ok, serverError, unauthorized } from '@/presentation/helpers/http/http-helpers'
+import { InvalidCredentialsError } from '@/domain/errors'
 import { LoginController } from './login-controller'
-import { badRequest, ok, serverError } from '@/presentation/helpers/http/http-helpers'
 import { ServerError } from '@/presentation/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -90,6 +91,15 @@ describe('Login Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
+
+  it('Should return 401 if Auth returns InvalidCredentialsError', async () => {
+    const { sut, authStub } = makeSut()
+    jest.spyOn(authStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new InvalidCredentialsError()))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(unauthorized(new InvalidCredentialsError()))
   })
 
   it('Should return 500 if Auth throws', async () => {
