@@ -1,5 +1,5 @@
 import { type Validation } from '@/presentation/contracts'
-import { compareFieldsValidationFactory, onlyRequiredFieldsValidationFactory, requiredFieldValidationFactory, typeValidationFactory, validationCompositeFactory } from '../validations'
+import { compareFieldsValidationFactory, onlyRequiredFieldsValidationFactory, requiredFieldValidationFactory, typeValidationFactory, validationCompositeFactory } from '../../validations'
 
 export const signUpValidationFactory = (): Validation => {
   const validations: Validation[] = []

@@ -1,7 +1,7 @@
 import { type Validation } from '@/presentation/contracts'
 import { ValidationComposite } from '@/presentation/helpers/validators'
 import { signUpValidationFactory } from './signup-validation-factory'
-import { compareFieldsValidationFactory, onlyRequiredFieldsValidationFactory, requiredFieldValidationFactory, typeValidationFactory } from '../validations'
+import { compareFieldsValidationFactory, onlyRequiredFieldsValidationFactory, requiredFieldValidationFactory, typeValidationFactory } from '../../validations'
 
 jest.mock('@/presentation/helpers/validators/composite/validation-composite')
 
