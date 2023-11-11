@@ -7,7 +7,7 @@ export class QuestionRedisCache implements FetchAllQuestionsRepo {
     const redis = RedisHelper.getInstance()
     const questionsJson = await redis.get('questions')
     if (!questionsJson) {
-      return []
+      return null
     }
     const questions: QuestionModel[] = JSON.parse(questionsJson)
     return questions
