@@ -82,4 +82,13 @@ describe('Login Controller', () => {
       email: 'any_email@mail.com', password: 'any_password'
     })
   })
+
+  it('Should return 400 if Auth fails', async () => {
+    const { sut, authStub } = makeSut()
+    jest.spyOn(authStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new Error('any_message')))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
 })
