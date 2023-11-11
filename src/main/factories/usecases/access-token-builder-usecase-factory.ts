@@ -1,5 +1,5 @@
 import type { AccessTokenBuilder } from '@/domain/contracts'
-import { AccessTokenBuilderUseCase } from '@/interactions/usecases/access/access-token-builder-usecase'
+import { AccessTokenBuilderUseCase } from '@/interactions/usecases/access/access-token-builder/access-token-builder-usecase'
 import { jwtAdapterFactory } from '../infra/cryptography/jwt-adapter-factory'
 
 export const accessTokenBuilderUseCaseFactory = (): AccessTokenBuilder => {
