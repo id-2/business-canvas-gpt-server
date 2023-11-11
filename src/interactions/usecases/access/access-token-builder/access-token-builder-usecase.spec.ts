@@ -2,13 +2,13 @@ import type { Encrypter, EncrypterDto } from '@/interactions/contracts/cryptogra
 import type { AccessTokenModel } from '@/domain/models/output-models'
 import { AccessTokenBuilderUseCase } from './access-token-builder-usecase'
 
-const makeAccessTokenEncrypter = (): Encrypter => {
-  class AccessTokenEcrypterStub implements Encrypter {
+const makeEncrypter = (): Encrypter => {
+  class EcrypterStub implements Encrypter {
     async encrypt (data: EncrypterDto): Promise<AccessTokenModel> {
       return { token: 'any_token' }
     }
   }
-  return new AccessTokenEcrypterStub()
+  return new EcrypterStub()
 }
 
 interface SutTypes {
@@ -17,7 +17,7 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const encrypterStub = makeAccessTokenEncrypter()
+  const encrypterStub = makeEncrypter()
   const sut = new AccessTokenBuilderUseCase(encrypterStub)
   return { sut, encrypterStub }
 }
