@@ -53,4 +53,10 @@ describe('FetchQuestions UseCase', () => {
     const promise = sut.perform()
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should return QuestionModel list if FetchAllQuestionsRepo is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform()
+    expect(result.value).toEqual(makeFakeQuestions())
+  })
 })
