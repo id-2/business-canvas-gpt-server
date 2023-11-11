@@ -41,4 +41,11 @@ describe('StockSymbolsRedis Cache', () => {
     const questions = await sut.fetchAll() as QuestionModel[]
     expect(questions).toEqual(null)
   })
+
+  it('Should return empty list if questions is empty list', async () => {
+    const sut = makeSut()
+    await redis.set('questions', JSON.stringify([]))
+    const questions = await sut.fetchAll() as QuestionModel[]
+    expect(questions.length).toBe(0)
+  })
 })
