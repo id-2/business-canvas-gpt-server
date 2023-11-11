@@ -1,5 +1,6 @@
 import type { Controller, Validation } from '@/presentation/contracts'
 import type { HttpRequest, HttpResponse } from '@/presentation/http/http'
+import { badRequest } from '@/presentation/helpers/http/http-helpers'
 
 export class LoginController implements Controller {
   constructor (
@@ -7,7 +8,10 @@ export class LoginController implements Controller {
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    this.validationComposite.validate(httpRequest.body)
+    const validationResult = this.validationComposite.validate(httpRequest.body)
+    if (validationResult.isLeft()) {
+      return badRequest(validationResult.value)
+    }
     return { statusCode: 0, body: '' }
   }
 }
