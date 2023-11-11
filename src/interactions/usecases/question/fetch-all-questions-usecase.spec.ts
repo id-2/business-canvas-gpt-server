@@ -1,6 +1,6 @@
 import type { QuestionModel } from '@/domain/models/db-models'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
-import { FetchQuestionsUseCase } from './fetch-questions-usecase'
+import { FetchAllQuestionsUseCase } from './fetch-all-questions-usecase'
 import { QuestionsNotFoundError } from '@/domain/errors'
 
 const makeFakeQuestions = (): QuestionModel[] => ([
@@ -18,17 +18,17 @@ const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
 }
 
 interface SutTypes {
-  sut: FetchQuestionsUseCase
+  sut: FetchAllQuestionsUseCase
   fetchAllQuestionsRepoStub: FetchAllQuestionsRepo
 }
 
 const makeSut = (): SutTypes => {
   const fetchAllQuestionsRepoStub = makeFetchAllQuestionsRepo()
-  const sut = new FetchQuestionsUseCase(fetchAllQuestionsRepoStub)
+  const sut = new FetchAllQuestionsUseCase(fetchAllQuestionsRepoStub)
   return { sut, fetchAllQuestionsRepoStub }
 }
 
-describe('FetchQuestions UseCase', () => {
+describe('FetchAllQuestions UseCase', () => {
   it('Should call FetchAllQuestionsRepo', async () => {
     const { sut, fetchAllQuestionsRepoStub } = makeSut()
     const fetchAllSpy = jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll')
