@@ -128,4 +128,13 @@ describe('Auth UseCase', () => {
     const result = await sut.perform(makeFakeAuthDto())
     expect(result.value).toEqual(new InvalidCredentialsError())
   })
+
+  it('Should throw if HashComparer throws', async () => {
+    const { sut, hashComparerStub } = makeSut()
+    jest.spyOn(hashComparerStub, 'comparer').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeAuthDto())
+    await expect(promise).rejects.toThrow()
+  })
 })
