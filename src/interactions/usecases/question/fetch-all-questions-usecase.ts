@@ -8,7 +8,7 @@ export class FetchAllQuestionsUseCase implements FetchAllQuestions {
 
   async perform (): Promise<FetchAllQuestionsRes> {
     const questions = await this.fetchAllQuestionsRepo.fetchAll()
-    if (questions.length === 0) {
+    if (!questions || questions.length === 0) {
       return left(new QuestionsNotFoundError())
     }
     return right(questions)

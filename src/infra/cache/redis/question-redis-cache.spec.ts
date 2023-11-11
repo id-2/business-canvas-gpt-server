@@ -38,7 +38,7 @@ describe('StockSymbolsRedis Cache', () => {
 
   it('Should return empty list if no question is found', async () => {
     const sut = makeSut()
-    const symbols = await sut.fetchAll()
+    const symbols = await sut.fetchAll() as QuestionModel[]
     expect(symbols.length).toBe(0)
   })
 })

@@ -10,7 +10,7 @@ const makeFakeQuestions = (): QuestionModel[] => ([
 
 const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
   class FetchAllQuestionsRepoStub implements FetchAllQuestionsRepo {
-    async fetchAll (): Promise<QuestionModel[]> {
+    async fetchAll (): Promise<null | QuestionModel[]> {
       return await Promise.resolve(makeFakeQuestions())
     }
   }
