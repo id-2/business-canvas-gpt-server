@@ -2,8 +2,9 @@ import type { FetchQuestions, FetchQuestionsRes } from '@/domain/contracts'
 import type { QuestionModel } from '@/domain/models/db-models'
 import { FetchQuestionsController } from './fetch-questions-controller'
 import { left, right } from '@/shared/either'
-import { notFound } from '@/presentation/helpers/http/http-helpers'
+import { notFound, serverError } from '@/presentation/helpers/http/http-helpers'
 import { QuestionsNotFoundError } from '@/domain/errors'
+import { ServerError } from '@/presentation/errors'
 
 const makeFakeQuestions = (): QuestionModel[] => ([
   { id: 'any_id', content: 'any_content' },
@@ -43,7 +44,18 @@ describe('FetchQuestions UseCase', () => {
     jest.spyOn(fetchQuestionsStub, 'perform').mockReturnValueOnce(
       Promise.resolve(left(new QuestionsNotFoundError()))
     )
-    const HttpResponse = await sut.handle({})
-    expect(HttpResponse).toEqual(notFound(new QuestionsNotFoundError()))
+    const httpResponse = await sut.handle({})
+    expect(httpResponse).toEqual(notFound(new QuestionsNotFoundError()))
+  })
+
+  it('Should return 500 if FetchQuestions throws', async () => {
+    const { sut, fetchQuestionsStub } = makeSut()
+    jest.spyOn(fetchQuestionsStub, 'perform').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const httpResponse = await sut.handle({})
+    const error = new Error()
+    error.stack = 'any_stack'
+    expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
   })
 })
