@@ -1,7 +1,8 @@
 import type { ComparerDto, HashComparer } from '@/interactions/contracts/cryptography'
+import type { AccessTokenBuilder, AuthDto } from '@/domain/contracts'
 import type { FetchUserByEmailRepo } from '@/interactions/contracts/db'
+import type { AccessTokenModel } from '@/domain/models/output-models'
 import type { UserModel } from '@/domain/models/db-models'
-import type { AuthDto } from '@/domain/contracts'
 import { AuthUseCase } from './auth-usecase'
 import { Email } from '@/domain/entities/user/value-objects'
 import { left, right } from '@/shared/either'
@@ -47,17 +48,32 @@ const makeHashComparer = (): HashComparer => {
   return new HashComparerStub()
 }
 
+const makeAccessTokenBuilder = (): AccessTokenBuilder => {
+  class AccessTokenBuilderStub implements AccessTokenBuilder {
+    async perform (value: string): Promise<AccessTokenModel> {
+      return { token: 'any_token' }
+    }
+  }
+  return new AccessTokenBuilderStub()
+}
+
 interface SutTypes {
   sut: AuthUseCase
   fetchUserByEmailRepoStub: FetchUserByEmailRepo
   hashComparerStub: HashComparer
+  accessTokenBuilderStub: AccessTokenBuilder
 }
 
 const makeSut = (): SutTypes => {
   const fetchUserByEmailRepoStub = makeFetchUserByEmailRepo()
   const hashComparerStub = makeHashComparer()
-  const sut = new AuthUseCase(fetchUserByEmailRepoStub, hashComparerStub)
-  return { sut, fetchUserByEmailRepoStub, hashComparerStub }
+  const accessTokenBuilderStub = makeAccessTokenBuilder()
+  const sut = new AuthUseCase(
+    fetchUserByEmailRepoStub, hashComparerStub, accessTokenBuilderStub
+  )
+  return {
+    sut, fetchUserByEmailRepoStub, hashComparerStub, accessTokenBuilderStub
+  }
 }
 
 describe('Auth UseCase', () => {
@@ -136,5 +152,12 @@ describe('Auth UseCase', () => {
     )
     const promise = sut.perform(makeFakeAuthDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call AccessTokenBuilder with correct user Id', async () => {
+    const { sut, accessTokenBuilderStub } = makeSut()
+    const performSpy = jest.spyOn(accessTokenBuilderStub, 'perform')
+    await sut.perform(makeFakeAuthDto())
+    expect(performSpy).toHaveBeenCalledWith('any_id')
   })
 })
