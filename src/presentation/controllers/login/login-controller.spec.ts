@@ -1,3 +1,4 @@
+import type { Auth, AuthDto, AuthRes } from '@/domain/contracts'
 import type { Validation } from '@/presentation/contracts/validation'
 import type { HttpRequest } from '@/presentation/http/http'
 import { right, type Either, left } from '@/shared/either'
@@ -21,15 +22,26 @@ const makeValidation = (): Validation => {
   return new ValidationStub()
 }
 
+const makeAuth = (): Auth => {
+  class AuthStub implements Auth {
+    async perform (dto: AuthDto): Promise<AuthRes> {
+      return await Promise.resolve(right({ token: 'any_token' }))
+    }
+  }
+  return new AuthStub()
+}
+
 interface SutTypes {
   sut: LoginController
   validationStub: Validation
+  authStub: Auth
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidation()
-  const sut = new LoginController(validationStub)
-  return { sut, validationStub }
+  const authStub = makeAuth()
+  const sut = new LoginController(validationStub, authStub)
+  return { sut, validationStub, authStub }
 }
 
 describe('Login Controller', () => {
@@ -60,5 +72,14 @@ describe('Login Controller', () => {
     const error = new Error()
     error.stack = 'any_stack'
     expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
+  })
+
+  it('Should call Auth with correct values', async () => {
+    const { sut, authStub } = makeSut()
+    const performSpy = jest.spyOn(authStub, 'perform')
+    await sut.handle(makeFakeRequest())
+    expect(performSpy).toHaveBeenCalledWith({
+      email: 'any_email@mail.com', password: 'any_password'
+    })
   })
 })
