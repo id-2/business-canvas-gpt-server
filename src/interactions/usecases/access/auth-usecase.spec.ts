@@ -1,3 +1,4 @@
+import type { ComparerDto, HashComparer } from '@/interactions/contracts/cryptography'
 import type { FetchUserByEmailRepo } from '@/interactions/contracts/db'
 import type { UserModel } from '@/domain/models/db-models'
 import type { AuthDto } from '@/domain/contracts'
@@ -37,15 +38,26 @@ const makeFetchUserByEmailRepo = (): FetchUserByEmailRepo => {
   return new FetchUserByEmailRepoStub()
 }
 
+const makeHashComparer = (): HashComparer => {
+  class HashComparerStub implements HashComparer {
+    async comparer (dto: ComparerDto): Promise<boolean> {
+      return await Promise.resolve(true)
+    }
+  }
+  return new HashComparerStub()
+}
+
 interface SutTypes {
   sut: AuthUseCase
   fetchUserByEmailRepoStub: FetchUserByEmailRepo
+  hashComparerStub: HashComparer
 }
 
 const makeSut = (): SutTypes => {
   const fetchUserByEmailRepoStub = makeFetchUserByEmailRepo()
-  const sut = new AuthUseCase(fetchUserByEmailRepoStub)
-  return { sut, fetchUserByEmailRepoStub }
+  const hashComparerStub = makeHashComparer()
+  const sut = new AuthUseCase(fetchUserByEmailRepoStub, hashComparerStub)
+  return { sut, fetchUserByEmailRepoStub, hashComparerStub }
 }
 
 describe('Auth UseCase', () => {
@@ -97,5 +109,14 @@ describe('Auth UseCase', () => {
     )
     const promise = sut.perform(makeFakeAuthDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call HashComparer with correct values', async () => {
+    const { sut, hashComparerStub } = makeSut()
+    const comparerSpy = jest.spyOn(hashComparerStub, 'comparer')
+    await sut.perform(makeFakeAuthDto())
+    expect(comparerSpy).toHaveBeenCalledWith({
+      value: 'any_password', hash: 'hashed_password'
+    })
   })
 })
