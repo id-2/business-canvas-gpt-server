@@ -18,4 +18,10 @@ describe('RedisHelper', () => {
     expect(config.port).toBe(6379)
     expect(config.password).toBe('')
   })
+
+  it('Should call the connect method if the Redis instance has not yet been created', () => {
+    const connectSpy = jest.spyOn(sut, 'connect')
+    sut.getInstance()
+    expect(connectSpy).toHaveBeenCalled()
+  })
 })
