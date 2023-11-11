@@ -29,10 +29,16 @@ describe('StockSymbolsRedis Cache', () => {
     await redis.flushall()
   })
 
-  it('Should fetch all questions', async () => {
+  it('Should fetch all questions on success', async () => {
     const sut = makeSut()
     await redis.set('questions', JSON.stringify(makeFakeQuestions()))
     const questions = await sut.fetchAll()
     expect(questions).toEqual(makeFakeQuestions())
+  })
+
+  it('Should return empty list if no question is found', async () => {
+    const sut = makeSut()
+    const symbols = await sut.fetchAll()
+    expect(symbols.length).toBe(0)
   })
 })
