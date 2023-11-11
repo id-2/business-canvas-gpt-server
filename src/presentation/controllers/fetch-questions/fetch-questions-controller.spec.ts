@@ -1,7 +1,9 @@
 import type { FetchQuestions, FetchQuestionsRes } from '@/domain/contracts'
 import type { QuestionModel } from '@/domain/models/db-models'
 import { FetchQuestionsController } from './fetch-questions-controller'
-import { right } from '@/shared/either'
+import { left, right } from '@/shared/either'
+import { notFound } from '@/presentation/helpers/http/http-helpers'
+import { QuestionsNotFoundError } from '@/domain/errors'
 
 const makeFakeQuestions = (): QuestionModel[] => ([
   { id: 'any_id', content: 'any_content' },
@@ -34,5 +36,14 @@ describe('FetchQuestions UseCase', () => {
     const performSpy = jest.spyOn(fetchQuestionsStub, 'perform')
     await sut.handle({})
     expect(performSpy).toHaveBeenCalled()
+  })
+
+  it('Should return 404 if FetchQuestions returns QuestionsNotFoundError', async () => {
+    const { sut, fetchQuestionsStub } = makeSut()
+    jest.spyOn(fetchQuestionsStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new QuestionsNotFoundError()))
+    )
+    const HttpResponse = await sut.handle({})
+    expect(HttpResponse).toEqual(notFound(new QuestionsNotFoundError()))
   })
 })
