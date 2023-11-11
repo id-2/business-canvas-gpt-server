@@ -21,7 +21,12 @@ export class AuthUseCase implements Auth {
     if (!user) {
       return left(new InvalidCredentialsError())
     }
-    await this.hashComparer.comparer({ value: password, hash: user.password })
+    const comparerResult = await this.hashComparer.comparer({
+      value: password, hash: user.password
+    })
+    if (!comparerResult) {
+      return left(new InvalidCredentialsError())
+    }
     return right({ token: '' })
   }
 }
