@@ -5,6 +5,7 @@ import { AuthUseCase } from './auth-usecase'
 import { Email } from '@/domain/entities/user/value-objects'
 import { left, right } from '@/shared/either'
 import { InvalidEmailError } from '@/domain/entities/user/errors'
+import { InvalidCredentialsError } from '@/domain/errors'
 
 jest.mock('@/domain/entities/user/value-objects/email/email', () => ({
   Email: {
@@ -78,5 +79,14 @@ describe('Auth UseCase', () => {
     const fetchByEmailSpy = jest.spyOn(fetchUserByEmailRepoStub, 'fetchByEmail')
     await sut.perform(makeFakeAuthDto())
     expect(fetchByEmailSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
+
+  it('Should return InvalidCredentialsError if FetchUserByEmailRepo returns null', async () => {
+    const { sut, fetchUserByEmailRepoStub } = makeSut()
+    jest.spyOn(fetchUserByEmailRepoStub, 'fetchByEmail').mockReturnValueOnce(
+      Promise.resolve(null)
+    )
+    const result = await sut.perform(makeFakeAuthDto())
+    expect(result.value).toEqual(new InvalidCredentialsError())
   })
 })
