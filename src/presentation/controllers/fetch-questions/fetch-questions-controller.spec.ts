@@ -1,9 +1,9 @@
 import type { FetchQuestions, FetchQuestionsRes } from '@/domain/contracts'
 import type { QuestionModel } from '@/domain/models/db-models'
+import { notFound, ok, serverError } from '@/presentation/helpers/http/http-helpers'
 import { FetchQuestionsController } from './fetch-questions-controller'
-import { left, right } from '@/shared/either'
-import { notFound, serverError } from '@/presentation/helpers/http/http-helpers'
 import { QuestionsNotFoundError } from '@/domain/errors'
+import { left, right } from '@/shared/either'
 import { ServerError } from '@/presentation/errors'
 
 const makeFakeQuestions = (): QuestionModel[] => ([
@@ -57,5 +57,11 @@ describe('FetchQuestions UseCase', () => {
     const error = new Error()
     error.stack = 'any_stack'
     expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
+  })
+
+  it('Should return 200 if FetchQuestions is a success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({})
+    expect(httpResponse).toEqual(ok(makeFakeQuestions()))
   })
 })
