@@ -51,9 +51,9 @@ model Component {
 }
 
 model Question {
-  id              String   @id(map: "PK_QUESTION") @unique(map: "UQ_QUESTION_ID") @db.VarChar(150)
-  questionContent String   @map("question_content") @db.VarChar(250)
-  Answer          Answer[]
+  id      String   @id(map: "PK_QUESTION") @unique(map: "UQ_QUESTION_ID") @db.VarChar(150)
+  content String   @db.VarChar(250)
+  Answer  Answer[]
 
   @@map("QUESTION")
 }
