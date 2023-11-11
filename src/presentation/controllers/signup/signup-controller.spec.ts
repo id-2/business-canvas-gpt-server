@@ -16,7 +16,7 @@ const makeFakeRequest = (): HttpRequest => ({
   }
 })
 
-const makeValidationComposite = (): Validation => {
+const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
     validate (input: any): Either<Error, null> {
       return right(null)
@@ -41,7 +41,7 @@ interface SutTypes {
 }
 
 const makeSut = (): SutTypes => {
-  const validationStub = makeValidationComposite()
+  const validationStub = makeValidation()
   const addUserStub = makeAddUser()
   const sut = new SignUpController(validationStub, addUserStub)
   return { sut, validationStub, addUserStub }
