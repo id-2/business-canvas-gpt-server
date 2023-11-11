@@ -169,4 +169,10 @@ describe('Auth UseCase', () => {
     const promise = sut.perform(makeFakeAuthDto())
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should return AccessTokenModel if AccessTokenBuilder is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform(makeFakeAuthDto())
+    expect(result.value).toEqual({ token: 'any_token' })
+  })
 })
