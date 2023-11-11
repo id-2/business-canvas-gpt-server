@@ -44,4 +44,13 @@ describe('FetchQuestions UseCase', () => {
     const result = await sut.perform()
     expect(result.value).toEqual(new QuestionsNotFoundError())
   })
+
+  it('Should throw if QuestionsNotFoundError throws', async () => {
+    const { sut, fetchAllQuestionsRepoStub } = makeSut()
+    jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
 })
