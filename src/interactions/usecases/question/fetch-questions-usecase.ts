@@ -11,6 +11,6 @@ export class FetchQuestionsUseCase implements FetchQuestions {
     if (questions.length === 0) {
       return left(new QuestionsNotFoundError())
     }
-    return right([])
+    return right(questions)
   }
 }
