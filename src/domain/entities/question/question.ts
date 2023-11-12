@@ -1,4 +1,4 @@
-import { BusinessDescription, TypeOfBusiness } from './value-objects'
+import { BusinessDescription, LocationOrTargetAudience, TypeOfBusiness } from './value-objects'
 
 export class Question {
   private constructor (
@@ -12,8 +12,9 @@ export class Question {
   }
 
   static createMany (): Question[] {
-    BusinessDescription.create()
     TypeOfBusiness.create()
+    LocationOrTargetAudience.create()
+    BusinessDescription.create()
     return [new Question('')]
   }
 }
