@@ -3,11 +3,11 @@ import type { AddManyQuestionsRepo, FetchAllQuestionsRepo } from '@/interactions
 import { RedisHelper } from './helpers/redis-helper'
 
 export class QuestionRedisCache implements FetchAllQuestionsRepo, AddManyQuestionsRepo {
-  async fetchAll (): Promise<null | QuestionModel[]> {
+  async fetchAll (): Promise<QuestionModel[]> {
     const redis = RedisHelper.getInstance()
     const questionsJson = await redis.get('questions')
     if (!questionsJson) {
-      return null
+      return []
     }
     const questions: QuestionModel[] = JSON.parse(questionsJson)
     return questions

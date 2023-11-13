@@ -14,7 +14,7 @@ export class QuestionPrismaRepo implements AddManyQuestionsRepo, FetchAllQuestio
     }
   }
 
-  async fetchAll (): Promise<null | QuestionModel[]> {
+  async fetchAll (): Promise<QuestionModel[]> {
     const prismaCli = await prisma.getCli()
     const questions = await prismaCli.question.findMany({
       include: { Alternative: true }

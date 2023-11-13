@@ -22,7 +22,7 @@ const makeFakeQuestions = (): QuestionModel[] => ([
 
 const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
   class FetchAllQuestionsRepoStub implements FetchAllQuestionsRepo {
-    async fetchAll (): Promise<null | QuestionModel[]> {
+    async fetchAll (): Promise<QuestionModel[]> {
       return await Promise.resolve(makeFakeQuestions())
     }
   }
@@ -57,15 +57,6 @@ describe('ReplyQuestions UseCase', () => {
     const fetchAllSpy = jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll')
     await sut.perform()
     expect(fetchAllSpy).toHaveBeenCalled()
-  })
-
-  it('Should throw QuestionsNotFoundError if FetchAllQuestionsRepo returns null', async () => {
-    const { sut, fetchAllQuestionsRepoStub } = makeSut()
-    jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll').mockReturnValueOnce(
-      Promise.resolve(null)
-    )
-    const promise = sut.perform()
-    await expect(promise).rejects.toThrow(QuestionsNotFoundError)
   })
 
   it('Should throw QuestionsNotFoundError if FetchAllQuestionsRepo returns empty list', async () => {

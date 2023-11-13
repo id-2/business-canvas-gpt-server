@@ -75,7 +75,7 @@ describe('QuestionPrisma Repo', () => {
 
     it('Should return empty list if no question found', async () => {
       const sut = new QuestionPrismaRepo()
-      const questions = await sut.fetchAll() as QuestionModel[]
+      const questions = await sut.fetchAll()
       expect(questions.length).toBe(0)
     })
   })
