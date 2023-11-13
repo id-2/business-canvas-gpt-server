@@ -5,8 +5,20 @@ import { RedisHelper } from './helpers/redis-helper'
 import RedisMock from 'ioredis-mock'
 
 const makeFakeQuestions = (): QuestionModel[] => ([
-  { id: 'any_id', content: 'any_content' },
-  { id: 'other_id', content: 'other_content' }
+  {
+    id: 'any_question_id',
+    content: 'any_content',
+    alternatives: [{
+      id: 'any_alternative_id',
+      description: 'any_alternative',
+      questionId: 'any_question_id'
+    }, {
+      id: 'other_alternative_id',
+      description: 'other_alternative',
+      questionId: 'any_question_id'
+    }]
+  },
+  { id: 'other_question_id', content: 'other_content' }
 ])
 
 const makeSut = (): QuestionRedisCache => {
@@ -29,23 +41,35 @@ describe('StockSymbolsRedis Cache', () => {
     await redis.flushall()
   })
 
-  it('Should fetch all questions on success', async () => {
-    const sut = makeSut()
-    await redis.set('questions', JSON.stringify(makeFakeQuestions()))
-    const questions = await sut.fetchAll()
-    expect(questions).toEqual(makeFakeQuestions())
+  describe('fetchAll()', () => {
+    it('Should fetch all questions on success', async () => {
+      const sut = makeSut()
+      await redis.set('questions', JSON.stringify(makeFakeQuestions()))
+      const questions = await sut.fetchAll()
+      expect(questions).toEqual(makeFakeQuestions())
+    })
+
+    it('Should return null if no question is found', async () => {
+      const sut = makeSut()
+      const questions = await sut.fetchAll() as QuestionModel[]
+      expect(questions).toEqual(null)
+    })
+
+    it('Should return empty list if questions is empty list', async () => {
+      const sut = makeSut()
+      await redis.set('questions', JSON.stringify([]))
+      const questions = await sut.fetchAll() as QuestionModel[]
+      expect(questions.length).toBe(0)
+    })
   })
 
-  it('Should return null if no question is found', async () => {
-    const sut = makeSut()
-    const questions = await sut.fetchAll() as QuestionModel[]
-    expect(questions).toEqual(null)
-  })
-
-  it('Should return empty list if questions is empty list', async () => {
-    const sut = makeSut()
-    await redis.set('questions', JSON.stringify([]))
-    const questions = await sut.fetchAll() as QuestionModel[]
-    expect(questions.length).toBe(0)
+  describe('addMany()', () => {
+    it('Should add many questions with alternatives on success', async () => {
+      const sut = makeSut()
+      await sut.addMany(makeFakeQuestions())
+      const questionsJson = await redis.get('questions') as string
+      const questions = JSON.parse(questionsJson)
+      expect(questions).toEqual(makeFakeQuestions())
+    })
   })
 })
