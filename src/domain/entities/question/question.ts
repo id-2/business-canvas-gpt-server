@@ -32,10 +32,8 @@ export class Question {
 
   private static createQuestionWithAlternatives (): Question {
     const alternatives: Alternative[] = [
-      Alternative.create('Presencial'),
-      Alternative.create('Online')
-    ].filter(result => result.isRight()).map(result => result.value) as Alternative[]
-
+      Alternative.create('Presencial'), Alternative.create('Online')
+    ]
     const question = this.create({
       content: TypeOfBusiness.getContent(), alternatives
     })
