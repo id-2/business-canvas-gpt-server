@@ -77,6 +77,15 @@ describe('ReplyQuestions UseCase', () => {
     await expect(promise).rejects.toThrow(QuestionsNotFoundError)
   })
 
+  it('Should throw if FetchAllQuestionsRepo throws', async () => {
+    const { sut, fetchAllQuestionsRepoStub } = makeSut()
+    jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
+
   it('Should call AddManyQuestionsRepo with correct values', async () => {
     const { sut, addManyQuestionsRepoStub } = makeSut()
     const addSpy = jest.spyOn(addManyQuestionsRepoStub, 'addMany')
