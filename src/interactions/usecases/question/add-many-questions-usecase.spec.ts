@@ -1,40 +1,78 @@
-import { Question } from '@/domain/entities/question/question'
-import { AddManyQuestionsUseCase } from './add-many-questions-usecase'
 import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
 import type { IdModel } from '@/domain/models/output-models'
+import type { AddManyQuestionsRepo } from '@/interactions/contracts/db'
+import type { QuestionModel } from '@/domain/models/db-models'
+import { AddManyQuestionsUseCase } from './add-many-questions-usecase'
+import { Question } from '@/domain/entities/question/question'
+
+jest.mock('@/domain/entities/question/question', () => ({
+  Question: {
+    createMany: jest.fn(() => ([
+      { content: 'any_content' }, { content: 'other_content' }
+    ]))
+  }
+}))
+
+const makeFakeQuestionsModel = (): QuestionModel[] => ([
+  { id: 'any_id', content: 'any_content' },
+  { id: 'other_id', content: 'other_content' }
+])
 
 const makeIdBuilder = (): IdBuilder => {
-  class IdBuilderStub implements IdBuilder {
+  class IdBuilderSpy implements IdBuilder {
+    private callsCount = 0
     build (): IdModel {
-      return { id: 'any_id' }
+      if (this.callsCount === 0) {
+        this.callsCount++
+        return { id: 'any_id' }
+      }
+      return { id: 'other_id' }
     }
   }
-  return new IdBuilderStub()
+  return new IdBuilderSpy()
+}
+
+const makeAddManyQuestionsRepo = (): AddManyQuestionsRepo => {
+  class AddManyQuestionsRepoStub implements AddManyQuestionsRepo {
+    async add (data: QuestionModel[]): Promise<void> {
+      await Promise.resolve()
+    }
+  }
+  return new AddManyQuestionsRepoStub()
 }
 
 interface SutTypes {
   sut: AddManyQuestionsUseCase
-  idBuilderStub: IdBuilder
+  idBuilderSpy: IdBuilder
+  addManyQuestionsRepoStub: AddManyQuestionsRepo
 }
 
 const makeSut = (): SutTypes => {
-  const idBuilderStub = makeIdBuilder()
-  const sut = new AddManyQuestionsUseCase(idBuilderStub)
-  return { sut, idBuilderStub }
+  const idBuilderSpy = makeIdBuilder()
+  const addManyQuestionsRepoStub = makeAddManyQuestionsRepo()
+  const sut = new AddManyQuestionsUseCase(idBuilderSpy, addManyQuestionsRepoStub)
+  return { sut, idBuilderSpy, addManyQuestionsRepoStub }
 }
 
 describe('AddManyQuestions UseCase', () => {
-  it('Should call IdBuilder', async () => {
-    const { sut, idBuilderStub } = makeSut()
-    const buildSpy = jest.spyOn(idBuilderStub, 'build')
-    await sut.perform()
-    expect(buildSpy).toHaveBeenCalled()
-  })
-
   it('Should call Question Entity ', async () => {
     const { sut } = makeSut()
     const createManySpy = jest.spyOn(Question, 'createMany')
     await sut.perform()
     expect(createManySpy).toHaveBeenCalled()
+  })
+
+  it('Should call IdBuilder', async () => {
+    const { sut, idBuilderSpy } = makeSut()
+    const buildSpy = jest.spyOn(idBuilderSpy, 'build')
+    await sut.perform()
+    expect(buildSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it('Should call AddManyQuestionsRepo with correct values', async () => {
+    const { sut, addManyQuestionsRepoStub } = makeSut()
+    const addSpy = jest.spyOn(addManyQuestionsRepoStub, 'add')
+    await sut.perform()
+    expect(addSpy).toHaveBeenCalledWith(makeFakeQuestionsModel())
   })
 })
