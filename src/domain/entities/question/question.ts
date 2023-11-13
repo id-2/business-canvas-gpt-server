@@ -12,9 +12,15 @@ export class Question {
   }
 
   static createMany (): Question[] {
-    TypeOfBusiness.getContent()
-    LocationOrTargetAudience.getContent()
-    BusinessDescription.getContent()
-    return [new Question('')]
+    const contents = [
+      TypeOfBusiness.getContent(),
+      LocationOrTargetAudience.getContent(),
+      BusinessDescription.getContent()
+    ]
+    const questions = []
+    for (const content of contents) {
+      questions.push(this.create(content))
+    }
+    return questions
   }
 }
