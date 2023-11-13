@@ -1,7 +1,5 @@
-import type { QuestionEntityModel } from './question-entity-model'
-import { BusinessDescription, LocationOrTargetAudience, TypeOfBusiness } from './value-objects'
 import { Alternative } from '../alternative/alternative'
-import { QuestionContent } from './value-objects/question-content'
+import type { QuestionEntityModel } from './question-entity-model'
 
 export class Question {
   private static readonly contents: string[] = []
@@ -22,23 +20,17 @@ export class Question {
   }
 
   static createMany (): Question[] {
-    QuestionContent.create('Qual o tipo do seu negócio?')
     const contents = [
-      LocationOrTargetAudience.getContent(),
-      BusinessDescription.getContent()
+      'Qual a localização ou público para o qual deseja trabalhar (Cidade, estado ou país)?',
+      'Descreva seu negócio:'
     ]
     const questions = contents.map(content => this.create({ content }))
-    const question = this.createQuestionWithAlternatives()
-    return [question, ...questions]
-  }
-
-  private static createQuestionWithAlternatives (): Question {
     const alternatives: Alternative[] = [
       Alternative.create('Presencial'), Alternative.create('Online')
     ]
     const question = this.create({
-      content: TypeOfBusiness.getContent(), alternatives
+      content: 'Qual o tipo do seu negócio?', alternatives
     })
-    return question
+    return [question, ...questions]
   }
 }
