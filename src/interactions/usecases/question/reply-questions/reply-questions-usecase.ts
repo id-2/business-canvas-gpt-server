@@ -7,7 +7,7 @@ export class ReplyQuestionsUseCase implements ReplyQuestions {
 
   async perform (): Promise<void> {
     const questions = await this.fetchAllQuestionsRepo.fetchAll()
-    if (!questions) {
+    if (!questions || questions.length === 0) {
       throw new QuestionsNotFoundError()
     }
   }
