@@ -94,4 +94,13 @@ describe('AddManyQuestions UseCase', () => {
     await sut.perform()
     expect(addSpy).toHaveBeenCalledWith(makeFakeQuestionsModel())
   })
+
+  it('Should throw if AddUserRepo throws', async () => {
+    const { sut, addManyQuestionsRepoStub } = makeSut()
+    jest.spyOn(addManyQuestionsRepoStub, 'add').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
 })
