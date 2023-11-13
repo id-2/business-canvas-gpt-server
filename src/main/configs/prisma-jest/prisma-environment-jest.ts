@@ -1,6 +1,5 @@
 import type { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment'
 import NodeEnvironment from 'jest-environment-node'
-import { v4 as uuid } from 'uuid'
 import { execSync } from 'child_process'
 import { resolve } from 'path'
 import { Client } from 'pg'
@@ -16,7 +15,7 @@ class CustomEnvironment extends NodeEnvironment {
 
   constructor (config: JestEnvironmentConfig, context: EnvironmentContext) {
     super(config, context)
-    this.schema = `code_schema_${uuid()}`
+    this.schema = `code_schema_${Math.random()}`
     this.connectionString = `${process.env.DATABASE_URL}${this.schema}`
   }
 
