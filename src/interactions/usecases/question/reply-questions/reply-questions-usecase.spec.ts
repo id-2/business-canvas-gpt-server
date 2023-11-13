@@ -1,6 +1,7 @@
 import type { QuestionModel } from '@/domain/models/db-models'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import { ReplyQuestionsUseCase } from './reply-questions-usecase'
+import { QuestionsNotFoundError } from '@/domain/errors'
 
 const makeFakeQuestions = (): QuestionModel[] => ([
   { id: 'any_id', content: 'any_content' },
@@ -33,5 +34,14 @@ describe('ReplyQuestions UseCase', () => {
     const fetchAllSpy = jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll')
     await sut.perform()
     expect(fetchAllSpy).toHaveBeenCalled()
+  })
+
+  it('Should throw QuestionsNotFoundError if FetchAllQuestionsRepo returns null', async () => {
+    const { sut, fetchAllQuestionsRepoStub } = makeSut()
+    jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll').mockReturnValueOnce(
+      Promise.resolve(null)
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow(QuestionsNotFoundError)
   })
 })
