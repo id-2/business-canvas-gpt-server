@@ -83,4 +83,13 @@ describe('ReplyQuestions UseCase', () => {
     await sut.perform()
     expect(addSpy).toHaveBeenCalledWith(makeFakeQuestions())
   })
+
+  it('Should throw if AddManyQuestionsRepo throws', async () => {
+    const { sut, addManyQuestionsRepoStub } = makeSut()
+    jest.spyOn(addManyQuestionsRepoStub, 'addMany').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
 })
