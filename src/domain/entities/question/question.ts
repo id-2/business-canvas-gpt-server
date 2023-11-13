@@ -1,13 +1,20 @@
 import { BusinessDescription, LocationOrTargetAudience, TypeOfBusiness } from './value-objects'
 
 export class Question {
+  private static readonly contents: string[] = []
+
   private constructor (
-    readonly content: string
+    private readonly content: string
   ) {
+    Question.contents.push(this.content)
     Object.freeze(this)
   }
 
-  private static create (content: string): Question {
+  static getContent (question: Question): string | undefined {
+    return Question.contents.find((content) => content === question.content)
+  }
+
+  static create (content: string): Question {
     return new Question(content)
   }
 
