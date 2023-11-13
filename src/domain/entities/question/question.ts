@@ -1,33 +1,44 @@
+import type { QuestionEntityModel } from './question-entity-model'
 import { BusinessDescription, LocationOrTargetAudience, TypeOfBusiness } from './value-objects'
+import { Alternative } from '../alternative/alternative'
 
 export class Question {
   private static readonly contents: string[] = []
 
   private constructor (
-    private readonly content: string
+    private readonly question: QuestionEntityModel
   ) {
-    Question.contents.push(this.content)
+    Question.contents.push(this.question.content)
     Object.freeze(this)
   }
 
-  static getContent (question: Question): string | undefined {
-    return Question.contents.find((content) => content === question.content)
+  static getContent (data: Question): string | undefined {
+    return Question.contents.find((content) => content === data.question.content)
   }
 
-  static create (content: string): Question {
-    return new Question(content)
+  static create (data: QuestionEntityModel): Question {
+    return new Question(data)
   }
 
   static createMany (): Question[] {
     const contents = [
-      TypeOfBusiness.getContent(),
       LocationOrTargetAudience.getContent(),
       BusinessDescription.getContent()
     ]
-    const questions = []
-    for (const content of contents) {
-      questions.push(this.create(content))
-    }
-    return questions
+    const questions = contents.map(content => this.create({ content }))
+    const question = this.createQuestionWithAlternatives()
+    return [question, ...questions]
+  }
+
+  private static createQuestionWithAlternatives (): Question {
+    const alternatives: Alternative[] = [
+      Alternative.create('Presencial'),
+      Alternative.create('Online')
+    ].filter(result => result.isRight()).map(result => result.value) as Alternative[]
+
+    const question = this.create({
+      content: TypeOfBusiness.getContent(), alternatives
+    })
+    return question
   }
 }
