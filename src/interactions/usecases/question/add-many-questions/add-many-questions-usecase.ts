@@ -13,36 +13,25 @@ export class AddManyQuestionsUseCase implements AddManyQuestions {
 
   async perform (): Promise<void> {
     const questions = Question.createMany()
-    const questionsModel = this.getQuestionsModel(questions)
+    const questionsModel = this.createQuestionsModel(questions)
     await this.addManyQuestionsRepo.addMany(questionsModel)
   }
 
-  private getQuestionsModel (questions: Question[]): QuestionModel[] {
-    const questionsModel: QuestionModel[] = []
-    for (const question of questions) {
+  private createQuestionsModel (questions: Question[]): QuestionModel[] {
+    const questionsModel: QuestionModel[] = questions.map((question) => {
       const questionId = this.idBuilder.build().id
       const alternatives = Question.getQuestion(question)?.alternatives
-      const alternativesModel: AlternativeModel[] = []
-      if (alternatives && alternatives.length > 0) {
-        alternatives.forEach((alternative) => {
-          alternativesModel.push({
-            id: this.idBuilder.build().id,
-            description: Alternative.getDescription(alternative) as string,
-            questionId
-          })
-        })
-        questionsModel.push({
-          id: questionId,
-          content: Question.getQuestion(question)?.content as string,
-          alternatives: alternativesModel
-        })
-      } else {
-        questionsModel.push({
-          id: questionId,
-          content: Question.getQuestion(question)?.content as string
-        })
+      const alternativesModel: AlternativeModel[] = alternatives?.map((alternative) => ({
+        id: this.idBuilder.build().id,
+        description: Alternative.getDescription(alternative) as string,
+        questionId
+      })) ?? []
+      return {
+        id: questionId,
+        content: Question.getQuestion(question)?.content as string,
+        ...(alternativesModel.length > 0 && { alternatives: alternativesModel })
       }
-    }
+    })
     return questionsModel
   }
 }
