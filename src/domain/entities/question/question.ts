@@ -2,7 +2,7 @@ import { BusinessDescription, LocationOrTargetAudience, TypeOfBusiness } from '.
 
 export class Question {
   private constructor (
-    private readonly content: string
+    readonly content: string
   ) {
     Object.freeze(this)
   }
