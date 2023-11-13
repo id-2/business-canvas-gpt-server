@@ -12,4 +12,9 @@ describe('Alternative Entity', () => {
     const sut = Alternative.create(description)
     expect(sut.value).toEqual(new InvalidAlternativeError(description))
   })
+
+  it('Should return new Alternative if is valid description', () => {
+    const sut = Alternative.create('any_description')
+    expect(sut.value).toEqual({ description: 'any_description' })
+  })
 })
