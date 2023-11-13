@@ -13,7 +13,7 @@ import addAndReplyQuestionsSeed from './add-and-reply-questions-seed'
 let redis: Redis
 let prisma: PrismaClient
 
-describe('AddManyQuestionsPrisma Seed', () => {
+describe('AddAndReplyQuestions Seed', () => {
   beforeAll(async () => {
     redis = new RedisMock()
     jest.spyOn(RedisHelper, 'getInstance').mockReturnValue(redis)
