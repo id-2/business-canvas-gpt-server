@@ -9,7 +9,8 @@ jest.mock('@/domain/entities/question/question', () => ({
   Question: {
     createMany: jest.fn(() => ([
       { content: 'any_content' }, { content: 'other_content' }
-    ]))
+    ])),
+    getContent: jest.fn((question: { content: string }) => question.content)
   }
 }))
 

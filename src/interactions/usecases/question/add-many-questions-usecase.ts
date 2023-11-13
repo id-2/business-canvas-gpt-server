@@ -16,7 +16,7 @@ export class AddManyQuestionsUseCase implements AddManyQuestions {
     for (const question of questions) {
       questionsModel.push({
         id: this.idBuilder.build().id,
-        content: question.content
+        content: Question.getContent(question) as string
       })
     }
     await this.addManyQuestionsRepo.add(questionsModel)
