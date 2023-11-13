@@ -49,6 +49,12 @@ describe('StockSymbolsRedis Cache', () => {
       expect(questions).toEqual(makeFakeQuestions())
     })
 
+    it('Should return empty list if questions not exist', async () => {
+      const sut = makeSut()
+      const questions = await sut.fetchAll()
+      expect(questions.length).toBe(0)
+    })
+
     it('Should return empty list if questions is empty list', async () => {
       const sut = makeSut()
       await redis.set('questions', JSON.stringify([]))
