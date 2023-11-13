@@ -15,6 +15,7 @@ model Answer {
   answerContent String    @map("answer_content") @db.VarChar(500)
   Question      Question? @relation(fields: [questionId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_QUESTION_ANSWER")
   User          User?     @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_USER_ANSWER")
+  alternativeId String?   @db.VarChar(150)
 
   @@map("ANSWER")
 }
@@ -51,18 +52,28 @@ model Component {
 }
 
 model Question {
-  id      String   @id(map: "PK_QUESTION") @unique(map: "UQ_QUESTION_ID") @db.VarChar(150)
-  content String   @db.VarChar(250)
-  Answer  Answer[]
+  id          String        @id(map: "PK_QUESTION") @unique(map: "UQ_QUESTION_ID") @db.VarChar(150)
+  content     String        @db.VarChar(250)
+  Answer      Answer[]
+  Alternative Alternative[]
 
   @@map("QUESTION")
+}
+
+model Alternative {
+  id          String   @id(map: "PK_ALTERNATIVE") @unique(map: "UQ_ALTERNATIVE_ID") @db.VarChar(150)
+  description String   @db.VarChar(100)
+  questionId  String   @map("question_id") @db.VarChar(150)
+  Question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_QUESTION_ALTERNATIVE")
+
+  @@map("ALTERNATIVE")
 }
 
 model Topic {
   id                        String                  @id(map: "PK_TOPIC") @unique(map: "UQ_TOPIC_ID") @db.VarChar(150)
   businessCanvasComponentId String                  @map("business_canvas_component_id") @db.VarChar(150)
   content                   String                  @db.VarChar(500)
-  BusinessCanvasComponent   BusinessCanvasComponent @relation(fields: [businessCanvasComponentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_BUSINESS_CANVAS_COMPONENT")
+  BusinessCanvasComponent   BusinessCanvasComponent @relation(fields: [businessCanvasComponentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_BUSINESS_CANVAS_COMPONENT_TOPIC")
 
   @@map("TOPIC")
 }
