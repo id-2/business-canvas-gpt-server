@@ -16,7 +16,7 @@ export class Alternative {
   }
 
   private static validate (description: string): boolean {
-    if (description.length < 3) {
+    if (description.length < 3 || description.length > 100) {
       return false
     }
     return true
