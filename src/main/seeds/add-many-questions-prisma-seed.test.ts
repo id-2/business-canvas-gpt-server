@@ -4,7 +4,7 @@
 
 import type { PrismaClient } from '@prisma/client'
 import { PrismaHelper } from '@/infra/db/prisma/helpers/prisma-helper'
-import { addManyQuestionsPrismaSeed } from './add-many-questions-prisma-seed'
+import addManyQuestionsPrismaSeed from './add-many-questions-prisma-seed'
 
 let prisma: PrismaClient
 
@@ -16,17 +16,22 @@ describe('AddManyQuestionsPrisma Seed', () => {
 
   beforeEach(async () => {
     await prisma.question.deleteMany()
+    await prisma.alternative.deleteMany()
   })
 
   afterAll(async () => {
     await PrismaHelper.disconnect()
   })
 
-  it('Should create many questions on success', async () => {
+  it('Should create many questions with alternatives on success', async () => {
     const questionsEmpty = await prisma.question.findMany()
-    await addManyQuestionsPrismaSeed()
+    const alternativesEmpty = await prisma.alternative.findMany()
+    await addManyQuestionsPrismaSeed
     const questions = await prisma.question.findMany()
+    const alternatives = await prisma.alternative.findMany()
     expect(questionsEmpty.length).toBe(0)
+    expect(alternativesEmpty.length).toBe(0)
     expect(questions.length).toBe(3)
+    expect(alternatives.length).toBe(2)
   })
 })
