@@ -2,44 +2,65 @@ import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
 import type { IdModel } from '@/domain/models/output-models'
 import type { AddManyQuestionsRepo } from '@/interactions/contracts/db'
 import type { QuestionModel } from '@/domain/models/db-models'
-import { type Alternative } from '@/domain/entities/alternative/alternative'
+import type { QuestionEntityModel } from '@/domain/entities/question/question-entity-model'
+import { Alternative } from '@/domain/entities/alternative/alternative'
 import { AddManyQuestionsUseCase } from './add-many-questions-usecase'
 import { Question } from '@/domain/entities/question/question'
 
-jest.mock('@/domain/entities/alternative/alternative', () => ({
-  Alternative: {
-    create: jest.fn((description: string) => ({ description }))
-  }
-}))
-
 jest.mock('@/domain/entities/question/question', () => ({
   Question: {
-    createMany: jest.fn(() => ([
-      { question: { content: 'any_content' } },
-      { question: { content: 'other_content' } }
-    ])),
+    createMany: jest.fn(() => (makeFakeQuestionsEntityModel())),
     getQuestion: jest.fn((
-      values: { question: { content: string, alternatives?: Alternative[] } }
-    ) => (
-      { content: values.question.content, alternatives: values.question.alternatives }
-    ))
+      question: { content: string, alternatives?: Alternative[] }
+    ) => ({
+      content: question.content,
+      alternatives: question.alternatives
+    }))
   }
 }))
 
-const makeFakeQuestionsModel = (): QuestionModel[] => ([
-  { id: 'any_id', content: 'any_content' },
-  { id: 'other_id', content: 'other_content' }
+jest.mock('@/domain/entities/alternative/alternative', () => ({
+  Alternative: {
+    create: jest.fn((description: string) => ({ description })),
+    getDescription: jest.fn(
+      (alternative: { description: string }) => (alternative.description)
+    )
+  }
+}))
+
+const makeFakeQuestionsEntityModel = (): QuestionEntityModel[] => ([{
+  content: 'any_content',
+  alternatives: [
+    Alternative.create('any_alternative'),
+    Alternative.create('other_alternative')
+  ]
+}, {
+  content: 'other_content'
+}
 ])
+
+const makeFakeQuestionsModel = (): QuestionModel[] => ([{
+  id: 'any_id_1',
+  content: 'any_content',
+  alternatives: [{
+    id: 'any_id_2',
+    description: 'any_alternative',
+    questionId: 'any_id_1'
+  }, {
+    id: 'any_id_3',
+    description: 'other_alternative',
+    questionId: 'any_id_1'
+  }]
+}, {
+  id: 'any_id_4', content: 'other_content'
+}])
 
 const makeIdBuilder = (): IdBuilder => {
   class IdBuilderSpy implements IdBuilder {
     private callsCount = 0
     build (): IdModel {
-      if (this.callsCount === 0) {
-        this.callsCount++
-        return { id: 'any_id' }
-      }
-      return { id: 'other_id' }
+      this.callsCount++
+      return { id: `any_id_${this.callsCount}` }
     }
   }
   return new IdBuilderSpy()
@@ -88,7 +109,7 @@ describe('AddManyQuestions UseCase', () => {
     const { sut, idBuilderSpy } = makeSut()
     const buildSpy = jest.spyOn(idBuilderSpy, 'build')
     await sut.perform()
-    expect(buildSpy).toHaveBeenCalledTimes(2)
+    expect(buildSpy).toHaveBeenCalledTimes(4)
   })
 
   it('Should throw if IdBuilder throws', async () => {
