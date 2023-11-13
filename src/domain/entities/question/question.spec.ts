@@ -1,5 +1,6 @@
 import { Question, Question as sut } from './question'
 import { BusinessDescription, LocationOrTargetAudience, TypeOfBusiness } from './value-objects'
+import { QuestionContent } from './value-objects/question-content'
 
 jest.mock('@/domain/entities/question/value-objects/contents/type-of-business/type-of-business', () => ({
   TypeOfBusiness: {
@@ -19,7 +20,19 @@ jest.mock('@/domain/entities/question/value-objects/contents/business-descriptio
   }
 }))
 
+jest.mock('@/domain/entities/question/value-objects/question-content', () => ({
+  QuestionContent: {
+    create: jest.fn()
+  }
+}))
+
 describe('Question Entity', () => {
+  it('Should call QuestionContent with correct value', async () => {
+    const createSpy = jest.spyOn(QuestionContent, 'create')
+    sut.createMany()
+    expect(createSpy).toHaveBeenCalledWith('Qual o tipo do seu negócio?')
+  })
+
   it('Should call TypeOfBusiness', () => {
     const getContentSpy = jest.spyOn(TypeOfBusiness, 'getContent')
     sut.createMany()
