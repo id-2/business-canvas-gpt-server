@@ -2,15 +2,27 @@ import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
 import type { IdModel } from '@/domain/models/output-models'
 import type { AddManyQuestionsRepo } from '@/interactions/contracts/db'
 import type { QuestionModel } from '@/domain/models/db-models'
+import { type Alternative } from '@/domain/entities/alternative/alternative'
 import { AddManyQuestionsUseCase } from './add-many-questions-usecase'
 import { Question } from '@/domain/entities/question/question'
+
+jest.mock('@/domain/entities/alternative/alternative', () => ({
+  Alternative: {
+    create: jest.fn((description: string) => ({ description }))
+  }
+}))
 
 jest.mock('@/domain/entities/question/question', () => ({
   Question: {
     createMany: jest.fn(() => ([
-      { content: 'any_content' }, { content: 'other_content' }
+      { question: { content: 'any_content' } },
+      { question: { content: 'other_content' } }
     ])),
-    getContent: jest.fn((question: { content: string }) => question.content)
+    getQuestion: jest.fn((
+      values: { question: { content: string, alternatives?: Alternative[] } }
+    ) => (
+      { content: values.question.content, alternatives: values.question.alternatives }
+    ))
   }
 }))
 

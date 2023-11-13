@@ -3,8 +3,8 @@ import { Question, Question as sut } from './question'
 describe('Question Entity', () => {
   it('Should return the correct content for a Question', () => {
     const question = Question.create({ content: 'any_content' })
-    const content = Question.getContent(question)
-    expect(content).toBe('any_content')
+    const result = Question.getQuestion(question)
+    expect(result?.content).toBe('any_content')
   })
 
   it('Should create many Questions', () => {

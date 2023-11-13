@@ -2,17 +2,17 @@ import { Alternative } from '../alternative/alternative'
 import type { QuestionEntityModel } from './question-entity-model'
 
 export class Question {
-  private static readonly contents: string[] = []
+  private static readonly values: QuestionEntityModel[] = []
 
   private constructor (
     private readonly question: QuestionEntityModel
   ) {
-    Question.contents.push(this.question.content)
+    Question.values.push(this.question)
     Object.freeze(this)
   }
 
-  static getContent (data: Question): string | undefined {
-    return Question.contents.find((content) => content === data.question.content)
+  static getQuestion (data: Question): undefined | QuestionEntityModel {
+    return Question.values.find((question) => question === data.question)
   }
 
   static create (data: QuestionEntityModel): Question {
