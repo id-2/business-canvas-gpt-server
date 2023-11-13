@@ -15,7 +15,7 @@ export class Question {
     return Question.values.find((question) => question === data.question)
   }
 
-  static create (data: QuestionEntityModel): Question {
+  private static create (data: QuestionEntityModel): Question {
     return new Question(data)
   }
 

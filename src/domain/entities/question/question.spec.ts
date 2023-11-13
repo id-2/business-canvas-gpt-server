@@ -2,9 +2,9 @@ import { Question, Question as sut } from './question'
 
 describe('Question Entity', () => {
   it('Should return the correct content for a Question', () => {
-    const question = Question.create({ content: 'any_content' })
-    const result = Question.getQuestion(question)
-    expect(result?.content).toBe('any_content')
+    const question = Question.createMany()
+    const result = Question.getQuestion(question[0])
+    expect(result?.content).toBe('Qual o tipo do seu negócio?')
   })
 
   it('Should create many Questions', () => {
