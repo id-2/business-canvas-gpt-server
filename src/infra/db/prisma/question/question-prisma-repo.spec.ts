@@ -67,10 +67,16 @@ describe('QuestionPrisma Repo', () => {
       )
       await prismock.question.createMany({ data })
       await prismock.alternative.createMany({ data: makeFakeAlternativesModel() })
-      const questions = await sut.fetchAll() as QuestionModel[]
+      const questions = await sut.fetchAll()
       const alternatives = await prismock.alternative.findMany()
       expect(questions).toEqual(makeFakeQuestionsModel())
       expect(alternatives).toEqual(makeFakeAlternativesModel())
+    })
+
+    it('Should return empty list if no question found', async () => {
+      const sut = new QuestionPrismaRepo()
+      const questions = await sut.fetchAll() as QuestionModel[]
+      expect(questions.length).toBe(0)
     })
   })
 })
