@@ -29,7 +29,7 @@ describe('QuestionPrisma Repo', () => {
 
   it('Should create many Questions on success', async () => {
     const sut = new QuestionPrismaRepo()
-    await sut.add(makeFakeQuestionsModel())
+    await sut.addMany(makeFakeQuestionsModel())
     const user = await prismock.question.findMany()
     expect(user).toEqual(makeFakeQuestionsModel())
   })

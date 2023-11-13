@@ -19,6 +19,6 @@ export class AddManyQuestionsUseCase implements AddManyQuestions {
         content: Question.getContent(question) as string
       })
     }
-    await this.addManyQuestionsRepo.add(questionsModel)
+    await this.addManyQuestionsRepo.addMany(questionsModel)
   }
 }

@@ -35,7 +35,7 @@ const makeIdBuilder = (): IdBuilder => {
 
 const makeAddManyQuestionsRepo = (): AddManyQuestionsRepo => {
   class AddManyQuestionsRepoStub implements AddManyQuestionsRepo {
-    async add (data: QuestionModel[]): Promise<void> {
+    async addMany (data: QuestionModel[]): Promise<void> {
       await Promise.resolve()
     }
   }
@@ -90,14 +90,14 @@ describe('AddManyQuestions UseCase', () => {
 
   it('Should call AddManyQuestionsRepo with correct values', async () => {
     const { sut, addManyQuestionsRepoStub } = makeSut()
-    const addSpy = jest.spyOn(addManyQuestionsRepoStub, 'add')
+    const addSpy = jest.spyOn(addManyQuestionsRepoStub, 'addMany')
     await sut.perform()
     expect(addSpy).toHaveBeenCalledWith(makeFakeQuestionsModel())
   })
 
   it('Should throw if AddUserRepo throws', async () => {
     const { sut, addManyQuestionsRepoStub } = makeSut()
-    jest.spyOn(addManyQuestionsRepoStub, 'add').mockReturnValueOnce(
+    jest.spyOn(addManyQuestionsRepoStub, 'addMany').mockReturnValueOnce(
       Promise.reject(new Error())
     )
     const promise = sut.perform()
