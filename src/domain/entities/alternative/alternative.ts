@@ -1,6 +1,13 @@
 export class Alternative {
+  private static readonly descriptions: string[] = []
+
   private constructor (private readonly description: string) {
+    Alternative.descriptions.push(description)
     Object.freeze(this)
+  }
+
+  static getDescription (alternative: Alternative): undefined | string {
+    return Alternative.descriptions.find((desc) => desc === alternative.description)
   }
 
   static create (description: string): Alternative {
