@@ -1,11 +1,23 @@
 import type { QuestionModel } from '@/domain/models/db-models'
-import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
+import type { AddManyQuestionsRepo, FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import { ReplyQuestionsUseCase } from './reply-questions-usecase'
 import { QuestionsNotFoundError } from '@/domain/errors'
 
 const makeFakeQuestions = (): QuestionModel[] => ([
-  { id: 'any_id', content: 'any_content' },
-  { id: 'other_id', content: 'other_content' }
+  {
+    id: 'any_question_id',
+    content: 'any_content',
+    alternatives: [{
+      id: 'any_alternative_id',
+      description: 'any_alternative',
+      questionId: 'any_question_id'
+    }, {
+      id: 'other_alternative_id',
+      description: 'other_alternative',
+      questionId: 'any_question_id'
+    }]
+  },
+  { id: 'other_question_id', content: 'other_content' }
 ])
 
 const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
@@ -17,15 +29,26 @@ const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
   return new FetchAllQuestionsRepoStub()
 }
 
+const makeAddManyQuestionsRepo = (): AddManyQuestionsRepo => {
+  class AddManyQuestionsRepoStub implements AddManyQuestionsRepo {
+    async addMany (data: QuestionModel[]): Promise<void> {
+      await Promise.resolve()
+    }
+  }
+  return new AddManyQuestionsRepoStub()
+}
+
 interface SutTypes {
   sut: ReplyQuestionsUseCase
   fetchAllQuestionsRepoStub: FetchAllQuestionsRepo
+  addManyQuestionsRepoStub: AddManyQuestionsRepo
 }
 
 const makeSut = (): SutTypes => {
   const fetchAllQuestionsRepoStub = makeFetchAllQuestionsRepo()
-  const sut = new ReplyQuestionsUseCase(fetchAllQuestionsRepoStub)
-  return { sut, fetchAllQuestionsRepoStub }
+  const addManyQuestionsRepoStub = makeAddManyQuestionsRepo()
+  const sut = new ReplyQuestionsUseCase(fetchAllQuestionsRepoStub, addManyQuestionsRepoStub)
+  return { sut, fetchAllQuestionsRepoStub, addManyQuestionsRepoStub }
 }
 
 describe('ReplyQuestions UseCase', () => {
@@ -52,5 +75,12 @@ describe('ReplyQuestions UseCase', () => {
     )
     const promise = sut.perform()
     await expect(promise).rejects.toThrow(QuestionsNotFoundError)
+  })
+
+  it('Should call AddManyQuestionsRepo with correct values', async () => {
+    const { sut, addManyQuestionsRepoStub } = makeSut()
+    const addSpy = jest.spyOn(addManyQuestionsRepoStub, 'addMany')
+    await sut.perform()
+    expect(addSpy).toHaveBeenCalledWith(makeFakeQuestions())
   })
 })
