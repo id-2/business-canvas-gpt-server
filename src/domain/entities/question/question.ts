@@ -1,6 +1,7 @@
 import type { QuestionEntityModel } from './question-entity-model'
 import { BusinessDescription, LocationOrTargetAudience, TypeOfBusiness } from './value-objects'
 import { Alternative } from '../alternative/alternative'
+import { QuestionContent } from './value-objects/question-content'
 
 export class Question {
   private static readonly contents: string[] = []
@@ -21,6 +22,7 @@ export class Question {
   }
 
   static createMany (): Question[] {
+    QuestionContent.create('Qual o tipo do seu negócio?')
     const contents = [
       LocationOrTargetAudience.getContent(),
       BusinessDescription.getContent()
