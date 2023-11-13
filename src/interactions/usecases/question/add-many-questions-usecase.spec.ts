@@ -63,6 +63,15 @@ describe('AddManyQuestions UseCase', () => {
     expect(createManySpy).toHaveBeenCalled()
   })
 
+  it('Should throw if Question Entity throws', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(Question, 'createMany').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
+
   it('Should call IdBuilder', async () => {
     const { sut, idBuilderSpy } = makeSut()
     const buildSpy = jest.spyOn(idBuilderSpy, 'build')
