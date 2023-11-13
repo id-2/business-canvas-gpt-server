@@ -4,15 +4,13 @@ import type { QuestionEntityModel } from './question-entity-model'
 export class Question {
   private static readonly values: QuestionEntityModel[] = []
 
-  private constructor (
-    private readonly question: QuestionEntityModel
-  ) {
+  private constructor (private readonly question: QuestionEntityModel) {
     Question.values.push(this.question)
     Object.freeze(this)
   }
 
   static getQuestion (data: Question): undefined | QuestionEntityModel {
-    return Question.values.find((question) => question === data.question)
+    return Question.values.find(question => question === data.question)
   }
 
   private static create (data: QuestionEntityModel): Question {

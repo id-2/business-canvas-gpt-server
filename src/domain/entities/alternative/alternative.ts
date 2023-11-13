@@ -7,7 +7,9 @@ export class Alternative {
   }
 
   static getDescription (alternative: Alternative): undefined | string {
-    return Alternative.descriptions.find((desc) => desc === alternative.description)
+    return Alternative.descriptions.find(
+      description => description === alternative.description
+    )
   }
 
   static create (description: string): Alternative {
