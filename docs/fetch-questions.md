@@ -17,46 +17,40 @@ O cabeçalho da requisição deve conter o token de autenticação do usuário p
 
 ## Caso de sucesso
 
-- ❌ Recupera com sucesso um conjunto de questões relevantes já cadastradas no sistema.
+- ✅ Recupera com sucesso todas as questões já cadastradas no sistema.
 
 ### Resposta
 
-- ❌ Código de status: **200 OK**
-- ❌ Corpo da resposta: Um objeto JSON contendo as questões relevantes.
+- ✅ Código de status: **200 OK**
+- ✅ Corpo da resposta: Um objeto JSON contendo as questões relevantes.
 
 Exemplo:
 
 ```json
-{
-  "questions": [
-    {
-      "id": "123",
-      "questionContent": "Qual o tipo do seu negócio?",
-      "alternatives": [
-        {
-          "id": "123",
-          "name": "Presencial",
-        },
-        {
-          "id": "1234",
-          "name": "Online"
-        },
-      ]
-    },
-    {
-      "id": "1234",
-      "questionContent": "Onde está localizado seu público?"
-    },
-    {
-      "id": "1234",
-      "questionContent": "Qual o Público-alvo?"
-    },
-    {
-      "id": "12345",
-      "questionContent": "Descreva seu negócio."
-    },
-  ]
-}
+[
+  {
+    "id": "123",
+    "content": "Qual o tipo do seu negócio?",
+    "alternatives": [
+      {
+        "id": "123",
+        "description": "Presencial",
+      },
+      {
+        "id": "1234",
+        "description": "Online"
+      },
+    ]
+  },
+  {
+    "id": "1234",
+    "content": "Qual a localização ou público para o qual deseja trabalhar (Cidade, estado ou país)"
+  },
+  {
+    "id": "1234",
+    "content": "Descreva seu negócio:"
+  }
+]
 ```
 
 ## Casos de Exceção
@@ -67,6 +61,6 @@ Exemplo:
   - ❌ Se o token de autenticação for inválido ou expirado.
   - ❌ Se o usuário não estiver autenticado na plataforma.
 - Código de status: **404 Not Found**
-  - ❌ Se não encontrar as questões.
+  - ✅ Se não encontrar as questões.
 - Código de status: **500 Internal Server Error**
-  - ❌ Em caso de erro interno no servidor.
+  - ✅ Em caso de erro interno no servidor.
