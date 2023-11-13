@@ -44,4 +44,13 @@ describe('ReplyQuestions UseCase', () => {
     const promise = sut.perform()
     await expect(promise).rejects.toThrow(QuestionsNotFoundError)
   })
+
+  it('Should throw QuestionsNotFoundError if FetchAllQuestionsRepo returns empty list', async () => {
+    const { sut, fetchAllQuestionsRepoStub } = makeSut()
+    jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll').mockReturnValueOnce(
+      Promise.resolve([])
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow(QuestionsNotFoundError)
+  })
 })
