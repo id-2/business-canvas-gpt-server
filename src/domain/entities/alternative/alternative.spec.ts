@@ -6,4 +6,10 @@ describe('Alternative Entity', () => {
     const sut = Alternative.create('ab')
     expect(sut.value).toEqual(new InvalidAlternativeError('ab'))
   })
+
+  it('Should return InvalidAlternativeError if description greater than 100 characters', () => {
+    const description = 'a'.repeat(101)
+    const sut = Alternative.create(description)
+    expect(sut.value).toEqual(new InvalidAlternativeError(description))
+  })
 })
