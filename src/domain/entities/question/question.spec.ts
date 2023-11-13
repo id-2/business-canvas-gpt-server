@@ -1,19 +1,19 @@
 import { Question, Question as sut } from './question'
 import { BusinessDescription, LocationOrTargetAudience, TypeOfBusiness } from './value-objects'
 
-jest.mock('@/domain/entities/question/value-objects/type-of-business/type-of-business', () => ({
+jest.mock('@/domain/entities/question/value-objects/contents/type-of-business/type-of-business', () => ({
   TypeOfBusiness: {
     getContent: jest.fn().mockReturnValue('any_type_of_business')
   }
 }))
 
-jest.mock('@/domain/entities/question/value-objects/location-or-target-audience/location-or-target-audience', () => ({
+jest.mock('@/domain/entities/question/value-objects/contents/location-or-target-audience/location-or-target-audience', () => ({
   LocationOrTargetAudience: {
     getContent: jest.fn().mockReturnValue('any_location_or_target_audience')
   }
 }))
 
-jest.mock('@/domain/entities/question/value-objects/business-description/business-description', () => ({
+jest.mock('@/domain/entities/question/value-objects/contents/business-description/business-description', () => ({
   BusinessDescription: {
     getContent: jest.fn().mockReturnValue('any_business_description')
   }
