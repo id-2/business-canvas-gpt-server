@@ -2,9 +2,7 @@ import { left, type Either, right } from '@/shared/either'
 import { InvalidAlternativeError } from './errors/invalid-alternative-error'
 
 export class Alternative {
-  private constructor (
-    private readonly description: string
-  ) {
+  private constructor (private readonly description: string) {
     Object.freeze(this)
   }
 
