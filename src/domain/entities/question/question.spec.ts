@@ -3,38 +3,38 @@ import { BusinessDescription, LocationOrTargetAudience, TypeOfBusiness } from '.
 
 jest.mock('@/domain/entities/question/value-objects/type-of-business/type-of-business', () => ({
   TypeOfBusiness: {
-    create: jest.fn().mockReturnValue('any_type_of_business')
+    getContent: jest.fn().mockReturnValue('any_type_of_business')
   }
 }))
 
 jest.mock('@/domain/entities/question/value-objects/location-or-target-audience/location-or-target-audience', () => ({
   LocationOrTargetAudience: {
-    create: jest.fn().mockReturnValue('any_location_or_target_audience')
+    getContent: jest.fn().mockReturnValue('any_location_or_target_audience')
   }
 }))
 
 jest.mock('@/domain/entities/question/value-objects/business-description/business-description', () => ({
   BusinessDescription: {
-    create: jest.fn().mockReturnValue('any_business_description')
+    getContent: jest.fn().mockReturnValue('any_business_description')
   }
 }))
 
 describe('Question Entity', () => {
   it('Should call TypeOfBusiness', () => {
-    const createSpy = jest.spyOn(TypeOfBusiness, 'create')
+    const getContentSpy = jest.spyOn(TypeOfBusiness, 'getContent')
     Question.createMany()
-    expect(createSpy).toHaveBeenCalled()
+    expect(getContentSpy).toHaveBeenCalled()
   })
 
   it('Should call LocationOrTargetAudience', () => {
-    const createSpy = jest.spyOn(LocationOrTargetAudience, 'create')
+    const getContentSpy = jest.spyOn(LocationOrTargetAudience, 'getContent')
     Question.createMany()
-    expect(createSpy).toHaveBeenCalled()
+    expect(getContentSpy).toHaveBeenCalled()
   })
 
   it('Should call BusinessDescription', () => {
-    const createSpy = jest.spyOn(BusinessDescription, 'create')
+    const getContentSpy = jest.spyOn(BusinessDescription, 'getContent')
     Question.createMany()
-    expect(createSpy).toHaveBeenCalled()
+    expect(getContentSpy).toHaveBeenCalled()
   })
 })

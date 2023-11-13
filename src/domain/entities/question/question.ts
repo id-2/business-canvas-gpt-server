@@ -12,9 +12,9 @@ export class Question {
   }
 
   static createMany (): Question[] {
-    TypeOfBusiness.create()
-    LocationOrTargetAudience.create()
-    BusinessDescription.create()
+    TypeOfBusiness.getContent()
+    LocationOrTargetAudience.getContent()
+    BusinessDescription.getContent()
     return [new Question('')]
   }
 }

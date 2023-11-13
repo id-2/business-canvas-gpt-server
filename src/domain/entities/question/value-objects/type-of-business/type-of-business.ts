@@ -1,16 +1,14 @@
 export class TypeOfBusiness {
-  private static value: string
+  private static content: string
 
-  private constructor (private readonly content: string) {
-    Object.freeze(this)
+  private static setContent (): void {
+    if (!this.content) {
+      this.content = 'Qual o tipo do seu negócio?'
+    }
   }
 
-  private static setValeu (): void {
-    this.value = 'Qual o tipo do seu negócio?'
-  }
-
-  static create (): TypeOfBusiness {
-    this.setValeu()
-    return new TypeOfBusiness(this.value)
+  static getContent (): string {
+    this.setContent()
+    return this.content
   }
 }

@@ -1,16 +1,15 @@
 export class LocationOrTargetAudience {
-  private static value: string
+  private static content: string
 
-  private constructor (private readonly content: string) {
-    Object.freeze(this)
+  private static setContent (): void {
+    if (!this.content) {
+      this.content =
+      'Qual a localização ou público para o qual deseja trabalhar (Cidade, estado ou país)?'
+    }
   }
 
-  private static setValeu (): void {
-    this.value = 'Qual a localização ou público para o qual deseja trabalhar (Cidade, estado ou país)?'
-  }
-
-  static create (): LocationOrTargetAudience {
-    this.setValeu()
-    return new LocationOrTargetAudience(this.value)
+  static getContent (): string {
+    this.setContent()
+    return this.content
   }
 }

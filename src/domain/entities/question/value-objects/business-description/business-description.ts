@@ -1,16 +1,14 @@
 export class BusinessDescription {
-  private static value: string
+  private static content: string
 
-  private constructor (private readonly content: string) {
-    Object.freeze(this)
+  private static setContent (): void {
+    if (!this.content) {
+      this.content = 'Descreva seu negócio:'
+    }
   }
 
-  private static setValeu (): void {
-    this.value = 'Descreva seu negócio:'
-  }
-
-  static create (): BusinessDescription {
-    this.setValeu()
-    return new BusinessDescription(this.value)
+  static getContent (): string {
+    this.setContent()
+    return this.content
   }
 }
