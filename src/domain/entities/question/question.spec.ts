@@ -39,7 +39,7 @@ describe('Question Entity', () => {
   })
 
   it('Should return the correct content for a Question', () => {
-    const question = Question.create('any_content')
+    const question = Question.create({ content: 'any_content' })
     const content = Question.getContent(question)
     expect(content).toBe('any_content')
   })
@@ -47,9 +47,17 @@ describe('Question Entity', () => {
   it('Should create many Questions', () => {
     const questions = sut.createMany()
     expect(questions).toEqual([
-      { content: 'any_type_of_business' },
-      { content: 'any_location_or_target_audience' },
-      { content: 'any_business_description' }
+      {
+        question: {
+          content: 'any_type_of_business',
+          alternatives: [
+            { description: 'Presencial' },
+            { description: 'Online' }
+          ]
+        }
+      },
+      { question: { content: 'any_location_or_target_audience' } },
+      { question: { content: 'any_business_description' } }
     ])
   })
 })
