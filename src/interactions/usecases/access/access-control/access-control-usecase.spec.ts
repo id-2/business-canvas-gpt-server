@@ -112,4 +112,13 @@ describe('AccessControl UseCase', () => {
     const result = await sut.perform(makeFakeAccessControlDto())
     expect(result.value).toEqual(new AccessDeniedError())
   })
+
+  it('Should return an userId if the user role is admin', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform({
+      accessToken: 'any_token',
+      requiredRole: 'user'
+    })
+    expect(result.value).toEqual({ userId: 'any_id' })
+  })
 })
