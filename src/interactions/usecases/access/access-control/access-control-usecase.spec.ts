@@ -92,4 +92,13 @@ describe('AccessControl UseCase', () => {
     const result = await sut.perform(makeFakeAccessControlDto())
     expect(result.value).toEqual(new AccessDeniedError())
   })
+
+  it('Should throw if LoadUsertById throws', async () => {
+    const { sut, loadUserByIdRepoStub } = makeSut()
+    jest.spyOn(loadUserByIdRepoStub, 'loadById').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeAccessControlDto())
+    await expect(promise).rejects.toThrow()
+  })
 })
