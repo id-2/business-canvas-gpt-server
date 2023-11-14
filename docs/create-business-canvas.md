@@ -24,11 +24,11 @@ Exemplo:
 [
   {
     "questionId": "123",
-    "answerContent": "Presencial"
+    "answer": "Presencial"
   },
   {
     "questionId": "1234",
-    "answerContent": "Em São Paulo"
+    "answer": "Em São Paulo"
   },
   {
     "questionId": "1235",
@@ -36,15 +36,15 @@ Exemplo:
   },
   {
     "questionId": "1236",
-    "answerContent": "Somos um restaurante de comida italiana."
+    "answer": "Somos um restaurante de comida italiana."
   }
 ]
 ```
 
 - **questionId** (string): O ID da questão à qual a resposta está relacionada.
 - **alternativeId** (string, opcional): O ID da alternativa selecionada se a pergunta tiver alternativas.
-- **answerContent** (string, opcional): A resposta do usuário se a pergunta não tiver alternativas.
-- **alternativeId** e **answerContent** são opcionais, porém algum deve ser informado obrigatóriamente em cada resposta.
+- **answer** (string, opcional): A resposta do usuário se a pergunta não tiver alternativas.
+- **alternativeId** e **answer** são opcionais, porém algum deve ser informado obrigatóriamente em cada resposta.
 
 
 ## Caso de sucesso
