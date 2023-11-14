@@ -1,6 +1,7 @@
 import type { QuestionModel } from '@/domain/models/db-models'
 import { Answer as sut } from './answer'
 import { AnswerAndAlternativeNotProvidedError, AnswerIsNotAllowedError, InvalidQuestionIdError } from './errors'
+import { MixedAnswerError } from './errors/mixed-answer-error'
 
 const makeFakeQuestionsModel = (): QuestionModel[] => ([{
   id: 'any_question_id',
@@ -25,6 +26,18 @@ describe('Answer Entity', () => {
       questions: makeFakeQuestionsModel()
     })
     expect(result.value).toEqual(new AnswerAndAlternativeNotProvidedError())
+  })
+
+  it('Should return MixedAnswerError if answer and a alternativeId is provided', () => {
+    const result = sut.create({
+      userAnswer: {
+        questionId: 'any_question_id',
+        alternativeId: 'invalid_alternative_id',
+        answer: 'invalid_answer'
+      },
+      questions: makeFakeQuestionsModel()
+    })
+    expect(result.value).toEqual(new MixedAnswerError())
   })
 
   it('Should return InvalidQuestionIdError if user answer questionId is invalid', () => {
