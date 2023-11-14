@@ -1,6 +1,7 @@
 import type { QuestionModel } from '@/domain/models/db-models'
-import { right, type Either, left } from '@/shared/either'
+import { right, left } from '@/shared/either'
 import { AnswerAndAlternativeNotProvidedError, InvalidQuestionIdError, InvalidAnswerError, AnswerIsNotAllowedError, MixedAnswerError, AlternativeIsNotAllowedError, InvalidAlternativeIdError } from './errors'
+import type { AnswerRes, ValidateRes } from './answer-response'
 
 export interface AnswerEntityModel {
   questionId: string
@@ -18,18 +19,6 @@ export interface AnswerDto {
   userAnswer: UserAnswer
   questions: QuestionModel[]
 }
-
-export type AnswerErrors =
-InvalidQuestionIdError |
-AnswerAndAlternativeNotProvidedError |
-InvalidAnswerError |
-AnswerIsNotAllowedError |
-MixedAnswerError |
-AlternativeIsNotAllowedError |
-InvalidAlternativeIdError
-
-export type AnswerRes = Either<AnswerErrors, Answer>
-type ValidateRes = Either<AnswerErrors, null>
 
 export class Answer {
   private constructor (private readonly answer: AnswerEntityModel) {}
