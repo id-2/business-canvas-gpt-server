@@ -19,6 +19,9 @@ export class AccessControlUseCase implements AccessControl {
     if (!user) {
       return left(new AccessDeniedError())
     }
+    if (dto.role !== user.role) {
+      return left(new AccessDeniedError())
+    }
     return right({ userId: '' })
   }
 }
