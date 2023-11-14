@@ -30,8 +30,8 @@ O cabeçalho da requisição deve conter o token de autenticação do usuário p
 - Continua o fluxo da requisição.
 
 ### Resposta
-- ❌ Código de status: **200 Ok**
-- ❌ Corpo da resposta: Um objeto com o ID do usuário.
+- ✅ Código de status: **200 Ok**
+- ✅ Corpo da resposta: Um objeto com o ID do usuário.
 
 Exemplo:
 
@@ -54,8 +54,10 @@ Após o middleware ser executado, o cabeçalho de requisição será modificado 
 
 
 ## Casos de Exceção
-- Código de status: 401 Unauthorized
-  - ❌ Se o cabeçalho de autorização estiver ausente ou inválido.
-  - ❌ Se o token de autenticação for inválido ou expirado.
-- Código de status: 500 Internal Server Error
-  - ❌ Em caso de erro interno no servidor.
+- Código de status: **401 Unauthorized**
+  - ✅ Se o cabeçalho de autorização estiver ausente ou inválido.
+  - ✅ Se o token de autenticação for inválido ou expirado.
+- Código de status: **403 Forbidden**
+  - ✅ Se o usuário não tiver permissão de acessar a rota protegida.
+- Código de status: **500 Internal Server Error**
+  - ✅ Em caso de erro interno no servidor.
