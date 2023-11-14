@@ -1,6 +1,6 @@
 import type { QuestionModel } from '@/domain/models/db-models'
 import { right, type Either, left } from '@/shared/either'
-import { AnswerAndAlternativeNotProvidedError, InvalidQuestionIdError, type InvalidAnswerError, AnswerIsNotAllowedError, MixedAnswerError, AlternativeIsNotAllowedError, InvalidAlternativeIdError } from './errors'
+import { AnswerAndAlternativeNotProvidedError, InvalidQuestionIdError, InvalidAnswerError, AnswerIsNotAllowedError, MixedAnswerError, AlternativeIsNotAllowedError, InvalidAlternativeIdError } from './errors'
 
 export interface AnswerEntityModel {
   questionId: string
@@ -68,6 +68,11 @@ export class Answer {
       )
       if (!alternative) {
         return left(new InvalidAlternativeIdError(userAnswer.alternativeId))
+      }
+    }
+    if (!question.alternatives && userAnswer.answer) {
+      if (userAnswer.answer.length < 3) {
+        return left(new InvalidAnswerError(userAnswer.answer))
       }
     }
     return right(null)
