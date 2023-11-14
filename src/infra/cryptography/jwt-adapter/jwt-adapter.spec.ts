@@ -125,5 +125,11 @@ describe('Jwt Adapter', () => {
       const decryptResult = await sut.decrypt('any_token')
       expect(decryptResult).toBeNull()
     })
+
+    it('Should return decrypted value if verify is a success', async () => {
+      const sut = makeSut()
+      const decryptedValue = await sut.decrypt('any_token')
+      expect(decryptedValue).toBe('any_value')
+    })
   })
 })
