@@ -11,17 +11,17 @@ export class AccessControlUseCase implements AccessControl {
   ) {}
 
   async perform (dto: AccessControlDto): Promise<AccessControlRes> {
-    const id = await this.decrypter.decrypt(dto.accessToken)
-    if (!id) {
+    const userId = await this.decrypter.decrypt(dto.accessToken)
+    if (!userId) {
       return left(new InvalidTokenError())
     }
-    const user = await this.loadUserById.loadById(id)
+    const user = await this.loadUserById.loadById(userId)
     if (!user) {
       return left(new AccessDeniedError())
     }
-    if (dto.requiredRole !== user.role) {
+    if (user.role !== 'admin' && dto.requiredRole !== user.role) {
       return left(new AccessDeniedError())
     }
-    return right({ userId: '' })
+    return right({ userId })
   }
 }
