@@ -71,7 +71,7 @@ export class Answer {
       }
     }
     if (!question.alternatives && userAnswer.answer) {
-      if (userAnswer.answer.length < 3) {
+      if (userAnswer.answer.length < 3 || userAnswer.answer.length > 750) {
         return left(new InvalidAnswerError(userAnswer.answer))
       }
     }
