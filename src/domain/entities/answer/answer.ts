@@ -1,13 +1,8 @@
+import { AnswerAndAlternativeNotProvidedError, InvalidQuestionIdError, InvalidAnswerError, AnswerIsNotAllowedError, MixedAnswerError, AlternativeIsNotAllowedError, InvalidAlternativeIdError } from './errors'
 import type { AnswerDto } from './answer-dto'
 import type { AnswerRes, ValidateRes } from './answer-response'
+import type { AnswerEntityModel } from './answer-entity-model'
 import { right, left } from '@/shared/either'
-import { AnswerAndAlternativeNotProvidedError, InvalidQuestionIdError, InvalidAnswerError, AnswerIsNotAllowedError, MixedAnswerError, AlternativeIsNotAllowedError, InvalidAlternativeIdError } from './errors'
-
-export interface AnswerEntityModel {
-  questionId: string
-  alternativeId?: string
-  answer?: string
-}
 
 export class Answer {
   private constructor (private readonly answer: AnswerEntityModel) {}
