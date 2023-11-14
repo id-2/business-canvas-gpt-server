@@ -3,7 +3,7 @@ import type { Middleware } from '../contracts'
 import type { AccessControl } from '@/domain/contracts'
 import type { Role } from '@/domain/models/db-models'
 import { AccessTokenNotInformedError } from '../errors'
-import { forbidden, serverError, unauthorized } from '../helpers/http/http-helpers'
+import { forbidden, ok, serverError, unauthorized } from '../helpers/http/http-helpers'
 import { InvalidTokenError } from '@/domain/errors'
 
 export class AccessControlMiddleware implements Middleware {
@@ -27,7 +27,7 @@ export class AccessControlMiddleware implements Middleware {
         }
         return forbidden(accessControlResul.value)
       }
-      return { body: '', statusCode: 0 }
+      return ok(accessControlResul.value)
     } catch (error: any) {
       return serverError(error)
     }
