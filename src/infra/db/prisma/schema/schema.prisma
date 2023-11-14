@@ -8,23 +8,26 @@ datasource db {
 }
 
 model Answer {
-  id            String    @id(map: "PK_ANSWER") @unique(map: "UQ_ANSWER_ID") @db.VarChar(150)
-  userId        String?   @map("user_id") @db.VarChar(150)
-  questionId    String?   @map("question_id") @db.VarChar(150)
-  createdAt     DateTime  @map("created_at") @db.Timestamp(6)
-  answerContent String    @map("answer_content") @db.VarChar(500)
-  Question      Question? @relation(fields: [questionId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_QUESTION_ANSWER")
-  User          User?     @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_USER_ANSWER")
-  alternativeId String?   @db.VarChar(150)
+  id          String   @id(map: "PK_ANSWER") @unique(map: "UQ_ANSWER_ID") @db.VarChar(150)
+  description String   @db.VarChar(750)
+  createdAt   DateTime @map("created_at") @db.Timestamp(6)
+
+  userId     String? @map("user_id") @db.VarChar(150)
+  questionId String? @map("question_id") @db.VarChar(150)
+
+  Question Question? @relation(fields: [questionId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_QUESTION_ANSWER")
+  User     User?     @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_USER_ANSWER")
 
   @@map("ANSWER")
 }
 
 model BusinessCanvas {
-  id                      String                    @id(map: "PK_BUSINESS_CANVAS") @unique(map: "UQ_BUSINESS_CANVAS_ID") @db.VarChar(150)
-  userId                  String?                   @map("user_id") @db.VarChar(150)
-  name                    String                    @db.VarChar(50)
-  createdAt               DateTime                  @map("created_at") @db.Timestamp(6)
+  id        String   @id(map: "PK_BUSINESS_CANVAS") @unique(map: "UQ_BUSINESS_CANVAS_ID") @db.VarChar(150)
+  name      String   @db.VarChar(50)
+  createdAt DateTime @map("created_at") @db.Timestamp(6)
+
+  userId String? @map("user_id") @db.VarChar(150)
+
   User                    User?                     @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_USER_BUSINESS_CANVAS")
   BusinessCanvasComponent BusinessCanvasComponent[]
 
@@ -32,28 +35,32 @@ model BusinessCanvas {
 }
 
 model BusinessCanvasComponent {
-  id               String          @id(map: "PK_BUSINESS_CANVAS_COMPONENT") @unique(map: "UQ_BUSINESS_CANVAS_COMPONENT_ID") @db.VarChar(150)
-  businessCanvasId String?         @map("business_canvas_id") @db.VarChar(150)
-  componentId      String?         @map("component_id") @db.VarChar(150)
-  BusinessCanvas   BusinessCanvas? @relation(fields: [businessCanvasId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_BUSINESS_CANVAS_BUSINESS_CANVAS_COMPONENT")
-  Component        Component?      @relation(fields: [componentId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_COMPONENT_BUSINESS_CANVAS_COMPONENT")
-  Topic            Topic[]
+  id String @id(map: "PK_BUSINESS_CANVAS_COMPONENT") @unique(map: "UQ_BUSINESS_CANVAS_COMPONENT_ID") @db.VarChar(150)
+
+  businessCanvasId String? @map("business_canvas_id") @db.VarChar(150)
+  componentId      String? @map("component_id") @db.VarChar(150)
+
+  BusinessCanvas BusinessCanvas? @relation(fields: [businessCanvasId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_BUSINESS_CANVAS_BUSINESS_CANVAS_COMPONENT")
+  Component      Component?      @relation(fields: [componentId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_COMPONENT_BUSINESS_CANVAS_COMPONENT")
+  Topic          Topic[]
 
   @@unique([businessCanvasId, componentId], map: "UQ_BUSINESS_CANVAS_COMPONENT_BUSINESS_CANVAS_ID_COMPONENT_ID")
   @@map("BUSINESS_CANVAS_COMPONENT")
 }
 
 model Component {
-  id                      String                    @id(map: "PK_COMPONENT") @unique(map: "UQ_COMPONENT_ID") @db.VarChar(150)
-  name                    String                    @unique(map: "UQ_COMPONENT_NAME") @db.VarChar(40)
+  id   String @id(map: "PK_COMPONENT") @unique(map: "UQ_COMPONENT_ID") @db.VarChar(150)
+  name String @unique(map: "UQ_COMPONENT_NAME") @db.VarChar(40)
+
   BusinessCanvasComponent BusinessCanvasComponent[]
 
   @@map("COMPONENT")
 }
 
 model Question {
-  id          String        @id(map: "PK_QUESTION") @unique(map: "UQ_QUESTION_ID") @db.VarChar(150)
-  content     String        @db.VarChar(250)
+  id      String @id(map: "PK_QUESTION") @unique(map: "UQ_QUESTION_ID") @db.VarChar(150)
+  content String @db.VarChar(250)
+
   Answer      Answer[]
   Alternative Alternative[]
 
@@ -61,31 +68,36 @@ model Question {
 }
 
 model Alternative {
-  id          String   @id(map: "PK_ALTERNATIVE") @unique(map: "UQ_ALTERNATIVE_ID") @db.VarChar(150)
-  description String   @db.VarChar(100)
-  questionId  String   @map("question_id") @db.VarChar(150)
-  Question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_QUESTION_ALTERNATIVE")
+  id          String @id(map: "PK_ALTERNATIVE") @unique(map: "UQ_ALTERNATIVE_ID") @db.VarChar(150)
+  description String @db.VarChar(100)
+
+  questionId String @map("question_id") @db.VarChar(150)
+
+  Question Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_QUESTION_ALTERNATIVE")
 
   @@map("ALTERNATIVE")
 }
 
 model Topic {
-  id                        String                  @id(map: "PK_TOPIC") @unique(map: "UQ_TOPIC_ID") @db.VarChar(150)
-  businessCanvasComponentId String                  @map("business_canvas_component_id") @db.VarChar(150)
-  content                   String                  @db.VarChar(500)
-  BusinessCanvasComponent   BusinessCanvasComponent @relation(fields: [businessCanvasComponentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_BUSINESS_CANVAS_COMPONENT_TOPIC")
+  id      String @id(map: "PK_TOPIC") @unique(map: "UQ_TOPIC_ID") @db.VarChar(150)
+  content String @db.VarChar(500)
+
+  businessCanvasComponentId String @map("business_canvas_component_id") @db.VarChar(150)
+
+  BusinessCanvasComponent BusinessCanvasComponent @relation(fields: [businessCanvasComponentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_BUSINESS_CANVAS_COMPONENT_TOPIC")
 
   @@map("TOPIC")
 }
 
 model User {
-  id             String           @id(map: "PK_USER") @unique(map: "UQ_USER_ID") @db.VarChar(150)
-  email          String           @unique(map: "UQ_USER_EMAIL") @db.VarChar(150)
-  name           String           @db.VarChar(50)
-  password       String           @db.VarChar(200)
-  role           Role
-  createdAt      DateTime         @map("created_at") @db.Timestamp(6)
-  updatedAt      DateTime         @map("updated_at") @db.Timestamp(6)
+  id        String   @id(map: "PK_USER") @unique(map: "UQ_USER_ID") @db.VarChar(150)
+  email     String   @unique(map: "UQ_USER_EMAIL") @db.VarChar(150)
+  name      String   @db.VarChar(50)
+  password  String   @db.VarChar(200)
+  role      Role
+  createdAt DateTime @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @map("updated_at") @db.Timestamp(6)
+
   Answer         Answer[]
   BusinessCanvas BusinessCanvas[]
 
