@@ -7,7 +7,7 @@ import { AccessDeniedError, InvalidTokenError } from '@/domain/errors'
 
 const makeFakeAccessControlDto = (): AccessControlDto => ({
   accessToken: 'any_token',
-  role: 'user'
+  role: 'admin'
 })
 
 const makeFakeUserModel = (): UserModel => ({
@@ -100,5 +100,16 @@ describe('AccessControl UseCase', () => {
     )
     const promise = sut.perform(makeFakeAccessControlDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should return AccessDeniedError if the user role is different from the required role', async () => {
+    const { sut, loadUserByIdRepoStub } = makeSut()
+    const user = makeFakeUserModel()
+    user.role = 'user'
+    jest.spyOn(loadUserByIdRepoStub, 'loadById').mockReturnValueOnce(
+      Promise.resolve(user)
+    )
+    const result = await sut.perform(makeFakeAccessControlDto())
+    expect(result.value).toEqual(new AccessDeniedError())
   })
 })
