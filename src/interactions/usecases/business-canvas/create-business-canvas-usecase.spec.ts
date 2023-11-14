@@ -46,4 +46,13 @@ describe('CreateBusinessCanvas UseCase', () => {
     const result = await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(result.value).toEqual(new Error('any_message'))
   })
+
+  it('Should throw if AddAnswer throws', async () => {
+    const { sut, addAnswerStub } = makeSut()
+    jest.spyOn(addAnswerStub, 'perform').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
+    await expect(promise).rejects.toThrow()
+  })
 })
