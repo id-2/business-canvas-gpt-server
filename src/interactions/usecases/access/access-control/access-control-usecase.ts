@@ -1,5 +1,5 @@
 import type { AccessControl, AccessControlDto, AccessControlRes } from '@/domain/contracts'
-import type { LoadUserByIdRepo } from '@/interactions/contracts/db/load-user-by-id-repo'
+import type { FetchUserByIdRepo } from '@/interactions/contracts/db/fetch-user-by-id-repo'
 import type { Decrypter } from '@/interactions/contracts/cryptography'
 import { AccessDeniedError, InvalidTokenError } from '@/domain/errors'
 import { left, right } from '@/shared/either'
@@ -7,7 +7,7 @@ import { left, right } from '@/shared/either'
 export class AccessControlUseCase implements AccessControl {
   constructor (
     private readonly decrypter: Decrypter,
-    private readonly loadUserById: LoadUserByIdRepo
+    private readonly fetchUsertByIdRepo: FetchUserByIdRepo
   ) {}
 
   async perform (dto: AccessControlDto): Promise<AccessControlRes> {
@@ -15,7 +15,7 @@ export class AccessControlUseCase implements AccessControl {
     if (!userId) {
       return left(new InvalidTokenError())
     }
-    const user = await this.loadUserById.loadById(userId)
+    const user = await this.fetchUsertByIdRepo.fetchById(userId)
     if (!user) {
       return left(new AccessDeniedError())
     }
