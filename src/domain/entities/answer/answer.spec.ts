@@ -88,4 +88,17 @@ describe('Answer Entity', () => {
     })
     expect(result.value).toEqual(new InvalidAnswerError(answer))
   })
+
+  it('Should return a new Answer if validations is a success', () => {
+    const result = sut.create({
+      userAnswer: { questionId: 'any_question_id', alternativeId: 'any_alternative_id' },
+      questions: makeFakeQuestionsModel()
+    })
+    expect(result.value).toEqual({
+      answer: {
+        questionId: 'any_question_id',
+        alternativeId: 'any_alternative_id'
+      }
+    })
+  })
 })
