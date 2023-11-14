@@ -1,23 +1,12 @@
-import type { QuestionModel } from '@/domain/models/db-models'
+import type { AnswerDto } from './answer-dto'
+import type { AnswerRes, ValidateRes } from './answer-response'
 import { right, left } from '@/shared/either'
 import { AnswerAndAlternativeNotProvidedError, InvalidQuestionIdError, InvalidAnswerError, AnswerIsNotAllowedError, MixedAnswerError, AlternativeIsNotAllowedError, InvalidAlternativeIdError } from './errors'
-import type { AnswerRes, ValidateRes } from './answer-response'
 
 export interface AnswerEntityModel {
   questionId: string
   alternativeId?: string
   answer?: string
-}
-
-export interface UserAnswer {
-  questionId: string
-  alternativeId?: string
-  answer?: string
-}
-
-export interface AnswerDto {
-  userAnswer: UserAnswer
-  questions: QuestionModel[]
 }
 
 export class Answer {
