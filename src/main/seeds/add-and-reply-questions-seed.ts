@@ -1,7 +1,7 @@
 import 'module-alias/register'
 import { PrismaHelper } from '@/infra/db/prisma/helpers/prisma-helper'
-import { addManyQuestionsUseCaseFactory } from '../factories/usecases/add-many-questions-usecase-factory'
-import { replyQuestionsUseCaseFactory } from '../factories/usecases/reply-questions-usecase-factory'
+import { addManyQuestionsUseCaseFactory } from '../factories/usecases/question/add-many-questions-usecase-factory'
+import { replyQuestionsUseCaseFactory } from '../factories/usecases/question/reply-questions-usecase-factory'
 
 const addAndReplyQuestionsSeed = async (): Promise<void> => {
   await PrismaHelper.connect()
