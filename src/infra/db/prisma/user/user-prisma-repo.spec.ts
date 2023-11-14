@@ -57,4 +57,13 @@ describe('UserPrisma Repo', () => {
       expect(user).toBeNull()
     })
   })
+
+  describe('fetchById()', () => {
+    it('Should return an User if findUnique() is a success', async () => {
+      const sut = new UserPrismaRepo()
+      await prismock.user.create({ data: makeFakeUserModel() })
+      const user = await sut.fetchById('any_id')
+      expect(user).toEqual(makeFakeUserModel())
+    })
+  })
 })
