@@ -89,7 +89,7 @@ describe('Answer Entity', () => {
     expect(result.value).toEqual(new InvalidAnswerError(answer))
   })
 
-  it('Should return a new Answer if validations is a success', () => {
+  it('Should return a new Answer with answer alternativeId if validations is a success', () => {
     const result = sut.create({
       userAnswer: { questionId: 'any_question_id', alternativeId: 'any_alternative_id' },
       questions: makeFakeQuestionsModel()
@@ -98,6 +98,19 @@ describe('Answer Entity', () => {
       answer: {
         questionId: 'any_question_id',
         alternativeId: 'any_alternative_id'
+      }
+    })
+  })
+
+  it('Should return a new Answer with answer field if validations is a success', () => {
+    const result = sut.create({
+      userAnswer: { questionId: 'other_question_id', answer: 'any_answer' },
+      questions: makeFakeQuestionsModel()
+    })
+    expect(result.value).toEqual({
+      answer: {
+        questionId: 'other_question_id',
+        answer: 'any_answer'
       }
     })
   })
