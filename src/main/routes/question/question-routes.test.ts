@@ -32,7 +32,7 @@ const makeUserModel = (): UserModel => ({
 })
 
 const makeAccessToken = async (): Promise<string> => {
-  const accessToken = sign({ id: userId }, env.jwtSecretKey)
+  const accessToken = sign({ value: userId }, env.jwtSecretKey)
   return accessToken
 }
 
