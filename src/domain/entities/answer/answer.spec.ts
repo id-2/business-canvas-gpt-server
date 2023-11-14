@@ -1,6 +1,6 @@
 import type { QuestionModel } from '@/domain/models/db-models'
-import { type UserAnswer, Answer as sut } from './answer'
-import { AnswerAndAlternativeNotProvidedError, InvalidAnswerError, InvalidQuestionIdError } from './errors'
+import { Answer as sut } from './answer'
+import { AnswerAndAlternativeNotProvidedError, AnswerIsNotAllowedError, InvalidQuestionIdError } from './errors'
 
 const makeFakeQuestionsModel = (): QuestionModel[] => ([{
   id: 'any_question_id',
@@ -18,11 +18,6 @@ const makeFakeQuestionsModel = (): QuestionModel[] => ([{
   id: 'other_question_id', content: 'other_content'
 }])
 
-const makeFakeUserAnswer = (): UserAnswer => ({
-  questionId: 'any_question_id',
-  alternativeId: 'any_alternative_id'
-})
-
 describe('Answer Entity', () => {
   it('Should return AnswerAndAlternativeNotProvidedError if answer and a alternativeId not provided', () => {
     const result = sut.create({
@@ -38,5 +33,13 @@ describe('Answer Entity', () => {
       questions: makeFakeQuestionsModel()
     })
     expect(result.value).toEqual(new InvalidQuestionIdError('invalid_question_id'))
+  })
+
+  it('Should return AnswerIsNotAllowedError if the answer field is sent for a question that does not require it', () => {
+    const result = sut.create({
+      userAnswer: { questionId: 'any_question_id', answer: 'any_answer' },
+      questions: makeFakeQuestionsModel()
+    })
+    expect(result.value).toEqual(new AnswerIsNotAllowedError())
   })
 })
