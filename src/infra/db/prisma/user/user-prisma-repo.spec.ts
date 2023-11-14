@@ -65,5 +65,11 @@ describe('UserPrisma Repo', () => {
       const user = await sut.fetchById('any_id')
       expect(user).toEqual(makeFakeUserModel())
     })
+
+    it('Should return null if findUnique() not found User', async () => {
+      const sut = new UserPrismaRepo()
+      const user = await sut.fetchById('any_id')
+      expect(user).toBeNull()
+    })
   })
 })
