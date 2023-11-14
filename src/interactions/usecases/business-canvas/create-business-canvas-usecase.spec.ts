@@ -1,4 +1,6 @@
 import type { AddAnswer, AddAnswerDto, AddAnswerRes, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
+import type { QuestionModel } from '@/domain/models/db-models'
+import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
 
@@ -9,6 +11,20 @@ const makeFakeCreateBusinessCanvasDto = (): CreateBusinessCanvasDto => ({
     { questionId: 'other_question_id', answer: 'any_answer' }
   ]
 })
+
+const makeFakeQuestions = (): QuestionModel[] => ([
+  { id: 'any_id', content: 'any_content' },
+  { id: 'other_id', content: 'other_content' }
+])
+
+const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
+  class FetchAllQuestionsRepoStub implements FetchAllQuestionsRepo {
+    async fetchAll (): Promise<QuestionModel[]> {
+      return await Promise.resolve(makeFakeQuestions())
+    }
+  }
+  return new FetchAllQuestionsRepoStub()
+}
 
 const makeAddAnswer = (): AddAnswer => {
   class AddAnswerStub implements AddAnswer {
@@ -21,16 +37,29 @@ const makeAddAnswer = (): AddAnswer => {
 
 interface SutTypes {
   sut: CreateBusinessCanvas
+  fetchAllQuestionsRepoStub: FetchAllQuestionsRepo
   addAnswerStub: AddAnswer
 }
 
 const makeSut = (): SutTypes => {
+  const fetchAllQuestionsRepoStub = makeFetchAllQuestionsRepo()
   const addAnswerStub = makeAddAnswer()
-  const sut = new CreateBusinessCanvasUseCase(addAnswerStub)
-  return { sut, addAnswerStub }
+  const sut = new CreateBusinessCanvasUseCase(
+    fetchAllQuestionsRepoStub, addAnswerStub
+  )
+  return {
+    sut, fetchAllQuestionsRepoStub, addAnswerStub
+  }
 }
 
 describe('CreateBusinessCanvas UseCase', () => {
+  it('Should call FetchAllQuestionsRepo', async () => {
+    const { sut, fetchAllQuestionsRepoStub } = makeSut()
+    const fetchAllSpy = jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll')
+    await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(fetchAllSpy).toHaveBeenCalled()
+  })
+
   it('Should call AddAnswer with correct values', async () => {
     const { sut, addAnswerStub } = makeSut()
     const performSpy = jest.spyOn(addAnswerStub, 'perform')
