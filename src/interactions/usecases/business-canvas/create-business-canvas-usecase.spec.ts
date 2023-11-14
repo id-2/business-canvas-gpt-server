@@ -70,6 +70,15 @@ describe('CreateBusinessCanvas UseCase', () => {
     await expect(promise).rejects.toThrow(QuestionsNotFoundError)
   })
 
+  it('Should throw if QuestionsNotFoundError throws', async () => {
+    const { sut, fetchAllQuestionsRepoStub } = makeSut()
+    jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
+    await expect(promise).rejects.toThrow()
+  })
+
   it('Should call AddAnswer with correct values', async () => {
     const { sut, addAnswerStub } = makeSut()
     const performSpy = jest.spyOn(addAnswerStub, 'perform')
