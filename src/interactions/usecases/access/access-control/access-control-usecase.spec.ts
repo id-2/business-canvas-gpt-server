@@ -1,6 +1,7 @@
 import type { AccessControlDto } from '@/domain/contracts'
 import type { Decrypter } from '@/interactions/contracts/cryptography'
 import { AccessControlUseCase } from './access-control-usecase'
+import { InvalidTokenError } from '@/domain/errors'
 
 const makeFakeAccessControlDto = (): AccessControlDto => ({
   accessToken: 'any_token',
@@ -33,5 +34,12 @@ describe('AccessControl UseCase', () => {
     const decryptSpy = jest.spyOn(decrypterStub, 'decrypt')
     await sut.perform(makeFakeAccessControlDto())
     expect(decryptSpy).toHaveBeenCalledWith('any_token')
+  })
+
+  it('Should return InvalidTokenError if Decrypter returns null', async () => {
+    const { sut, decrypterStub } = makeSut()
+    jest.spyOn(decrypterStub, 'decrypt').mockReturnValueOnce(Promise.resolve(null))
+    const result = await sut.perform(makeFakeAccessControlDto())
+    expect(result.value).toEqual(new InvalidTokenError())
   })
 })
