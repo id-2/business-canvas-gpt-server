@@ -41,7 +41,8 @@ export class Answer {
     }
     const answer: AnswerEntityModel = {
       questionId: dto.userAnswer.questionId,
-      ...(dto.userAnswer.alternativeId && { alternativeId: dto.userAnswer.alternativeId })
+      ...(dto.userAnswer.alternativeId && { alternativeId: dto.userAnswer.alternativeId }),
+      ...(dto.userAnswer.answer && { answer: dto.userAnswer.answer })
     }
     return right(new Answer(answer))
   }
