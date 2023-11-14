@@ -1,6 +1,6 @@
 import type { QuestionModel } from '@/domain/models/db-models'
 import { Answer as sut } from './answer'
-import { AnswerAndAlternativeNotProvidedError, AnswerIsNotAllowedError, InvalidQuestionIdError } from './errors'
+import { AlternativeIsNotAllowedError, AnswerAndAlternativeNotProvidedError, AnswerIsNotAllowedError, InvalidQuestionIdError } from './errors'
 import { MixedAnswerError } from './errors/mixed-answer-error'
 
 const makeFakeQuestionsModel = (): QuestionModel[] => ([{
@@ -54,5 +54,13 @@ describe('Answer Entity', () => {
       questions: makeFakeQuestionsModel()
     })
     expect(result.value).toEqual(new AnswerIsNotAllowedError())
+  })
+
+  it('Should return AlternativeIsNotAllowedError if the alternativeId field is sent for a question that does not require it', () => {
+    const result = sut.create({
+      userAnswer: { questionId: 'other_question_id', alternativeId: 'any_alternative_id' },
+      questions: makeFakeQuestionsModel()
+    })
+    expect(result.value).toEqual(new AlternativeIsNotAllowedError())
   })
 })
