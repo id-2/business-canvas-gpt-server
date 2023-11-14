@@ -1,10 +1,10 @@
 import type { AccessControl, AccessControlDto, AccessControlRes } from '@/domain/contracts'
 import type { HttpRequest } from '../http/http'
 import { AccessTokenNotInformedError } from '../errors'
-import { unauthorized } from '../helpers/http/http-helpers'
+import { forbidden, unauthorized } from '../helpers/http/http-helpers'
 import { AccessControlMiddleware } from './access-control-middleware'
 import { left, right } from '@/shared/either'
-import { InvalidTokenError } from '@/domain/errors'
+import { AccessDeniedError, InvalidTokenError } from '@/domain/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
   headers: { 'x-access-token': 'any_token' }
@@ -56,5 +56,14 @@ describe('AccessControl Middleware', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(unauthorized(new InvalidTokenError()))
+  })
+
+  it('Should return 403 if AccessControl return AccessDeniedError', async () => {
+    const { sut, accessControlStub } = makeSut()
+    jest.spyOn(accessControlStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new AccessDeniedError()))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
   })
 })
