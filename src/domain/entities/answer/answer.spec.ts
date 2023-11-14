@@ -1,6 +1,6 @@
 import type { QuestionModel } from '@/domain/models/db-models'
 import { Answer as sut } from './answer'
-import { AlternativeIsNotAllowedError, AnswerAndAlternativeNotProvidedError, AnswerIsNotAllowedError, InvalidAlternativeIdError, InvalidQuestionIdError } from './errors'
+import { AlternativeIsNotAllowedError, AnswerAndAlternativeNotProvidedError, AnswerIsNotAllowedError, InvalidAlternativeIdError, InvalidAnswerError, InvalidQuestionIdError } from './errors'
 import { MixedAnswerError } from './errors/mixed-answer-error'
 
 const makeFakeQuestionsModel = (): QuestionModel[] => ([{
@@ -70,5 +70,13 @@ describe('Answer Entity', () => {
       questions: makeFakeQuestionsModel()
     })
     expect(result.value).toEqual(new InvalidAlternativeIdError('invalid_alternative_id'))
+  })
+
+  it('Should return InvalidAnswerError if answer proveided is less than 3 characters', () => {
+    const result = sut.create({
+      userAnswer: { questionId: 'other_question_id', answer: 'ab' },
+      questions: makeFakeQuestionsModel()
+    })
+    expect(result.value).toEqual(new InvalidAnswerError('ab'))
   })
 })
