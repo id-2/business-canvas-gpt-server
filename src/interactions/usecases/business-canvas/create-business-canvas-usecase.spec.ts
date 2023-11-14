@@ -1,6 +1,6 @@
 import type { AddAnswer, AddAnswerDto, AddAnswerRes, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
 import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
-import { right } from '@/shared/either'
+import { left, right } from '@/shared/either'
 
 const makeFakeCreateBusinessCanvasDto = (): CreateBusinessCanvasDto => ({
   userId: 'any_user_id',
@@ -36,5 +36,14 @@ describe('CreateBusinessCanvas UseCase', () => {
     const performSpy = jest.spyOn(addAnswerStub, 'perform')
     await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(performSpy).toHaveBeenCalledWith(makeFakeCreateBusinessCanvasDto())
+  })
+
+  it('Should return the same error as AddAnswer if it returns an error', async () => {
+    const { sut, addAnswerStub } = makeSut()
+    jest.spyOn(addAnswerStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new Error('any_message')))
+    )
+    const result = await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(result.value).toEqual(new Error('any_message'))
   })
 })
