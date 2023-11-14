@@ -3,7 +3,8 @@ import type { Middleware } from '../contracts'
 import type { AccessControl } from '@/domain/contracts'
 import type { Role } from '@/domain/models/db-models'
 import { AccessTokenNotInformedError } from '../errors'
-import { unauthorized } from '../helpers/http/http-helpers'
+import { forbidden, unauthorized } from '../helpers/http/http-helpers'
+import { InvalidTokenError } from '@/domain/errors'
 
 export class AccessControlMiddleware implements Middleware {
   constructor (
@@ -20,7 +21,10 @@ export class AccessControlMiddleware implements Middleware {
       accessToken, requiredRole: this.requiredRole
     })
     if (accessControlResul.isLeft()) {
-      return unauthorized(accessControlResul.value)
+      if (accessControlResul.value instanceof InvalidTokenError) {
+        return unauthorized(accessControlResul.value)
+      }
+      return forbidden(accessControlResul.value)
     }
     return { body: '', statusCode: 0 }
   }
