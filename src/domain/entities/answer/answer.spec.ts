@@ -72,11 +72,20 @@ describe('Answer Entity', () => {
     expect(result.value).toEqual(new InvalidAlternativeIdError('invalid_alternative_id'))
   })
 
-  it('Should return InvalidAnswerError if answer proveided is less than 3 characters', () => {
+  it('Should return InvalidAnswerError if answer is less than 3 characters', () => {
     const result = sut.create({
       userAnswer: { questionId: 'other_question_id', answer: 'ab' },
       questions: makeFakeQuestionsModel()
     })
     expect(result.value).toEqual(new InvalidAnswerError('ab'))
+  })
+
+  it('Should return InvalidAnswerError if answer greater than 750 characters', () => {
+    const answer = 'a'.repeat(751)
+    const result = sut.create({
+      userAnswer: { questionId: 'other_question_id', answer },
+      questions: makeFakeQuestionsModel()
+    })
+    expect(result.value).toEqual(new InvalidAnswerError(answer))
   })
 })
