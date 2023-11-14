@@ -1,11 +1,23 @@
 import type { AccessControlDto } from '@/domain/contracts'
 import type { Decrypter } from '@/interactions/contracts/cryptography'
+import type { UserModel } from '@/domain/models/db-models'
+import type { LoadUserByIdRepo } from '@/interactions/contracts/db/load-user-by-id-repo'
 import { AccessControlUseCase } from './access-control-usecase'
 import { InvalidTokenError } from '@/domain/errors'
 
 const makeFakeAccessControlDto = (): AccessControlDto => ({
   accessToken: 'any_token',
   role: 'user'
+})
+
+const makeFakeUserModel = (): UserModel => ({
+  id: 'any_id',
+  name: 'any name',
+  email: 'any_email@mail.com',
+  password: 'hashed_password',
+  role: 'admin',
+  createdAt: new Date(),
+  updatedAt: new Date()
 })
 
 const makeDecrypter = (): Decrypter => {
@@ -17,15 +29,26 @@ const makeDecrypter = (): Decrypter => {
   return new DecrypterStub()
 }
 
+const makeLoadUserByIdRepo = (): LoadUserByIdRepo => {
+  class LoadUserByIdRepoStub implements LoadUserByIdRepo {
+    async loadById (id: string): Promise<null | UserModel> {
+      return await Promise.resolve(makeFakeUserModel())
+    }
+  }
+  return new LoadUserByIdRepoStub()
+}
+
 interface SutTypes {
   sut: AccessControlUseCase
   decrypterStub: Decrypter
+  loadUserByIdRepoStub: LoadUserByIdRepo
 }
 
 const makeSut = (): SutTypes => {
   const decrypterStub = makeDecrypter()
-  const sut = new AccessControlUseCase(decrypterStub)
-  return { sut, decrypterStub }
+  const loadUserByIdRepoStub = makeLoadUserByIdRepo()
+  const sut = new AccessControlUseCase(decrypterStub, loadUserByIdRepoStub)
+  return { sut, decrypterStub, loadUserByIdRepoStub }
 }
 
 describe('AccessControl UseCase', () => {
@@ -50,5 +73,12 @@ describe('AccessControl UseCase', () => {
     )
     const promise = sut.perform(makeFakeAccessControlDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call LoadUsertById with correct Id', async () => {
+    const { sut, loadUserByIdRepoStub } = makeSut()
+    const loadByIdSpy = jest.spyOn(loadUserByIdRepoStub, 'loadById')
+    await sut.perform(makeFakeAccessControlDto())
+    expect(loadByIdSpy).toHaveBeenCalledWith('any_id')
   })
 })
