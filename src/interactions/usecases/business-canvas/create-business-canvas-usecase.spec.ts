@@ -3,6 +3,7 @@ import type { QuestionModel } from '@/domain/models/db-models'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
+import { QuestionsNotFoundError } from '@/domain/errors'
 
 const makeFakeCreateBusinessCanvasDto = (): CreateBusinessCanvasDto => ({
   userId: 'any_user_id',
@@ -58,6 +59,15 @@ describe('CreateBusinessCanvas UseCase', () => {
     const fetchAllSpy = jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll')
     await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(fetchAllSpy).toHaveBeenCalled()
+  })
+
+  it('Should throw if FetchAllQuestionsRepo returns empty list', async () => {
+    const { sut, fetchAllQuestionsRepoStub } = makeSut()
+    jest.spyOn(fetchAllQuestionsRepoStub, 'fetchAll').mockReturnValueOnce(
+      Promise.resolve([])
+    )
+    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
+    await expect(promise).rejects.toThrow(QuestionsNotFoundError)
   })
 
   it('Should call AddAnswer with correct values', async () => {
