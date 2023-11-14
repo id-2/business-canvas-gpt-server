@@ -5,8 +5,8 @@ jest.mock('jsonwebtoken', () => ({
   sign (): string {
     return 'any_token'
   },
-  verify (): string {
-    return 'any_value'
+  verify (): { id: string } {
+    return { id: 'any_value' }
   }
 }))
 
