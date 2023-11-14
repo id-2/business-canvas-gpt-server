@@ -1,7 +1,7 @@
 import type { AccessControl, AccessControlDto, AccessControlRes } from '@/domain/contracts'
 import type { HttpRequest } from '../http/http'
 import { AccessTokenNotInformedError, ServerError } from '../errors'
-import { forbidden, serverError, unauthorized } from '../helpers/http/http-helpers'
+import { forbidden, ok, serverError, unauthorized } from '../helpers/http/http-helpers'
 import { AccessControlMiddleware } from './access-control-middleware'
 import { left, right } from '@/shared/either'
 import { AccessDeniedError, InvalidTokenError } from '@/domain/errors'
@@ -76,5 +76,11 @@ describe('AccessControl Middleware', () => {
     const error = new Error()
     error.stack = 'any_stack'
     expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
+  })
+
+  it('Should return 200 if AccessControl is a success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok({ userId: 'any_id' }))
   })
 })
