@@ -39,40 +39,42 @@ export class Answer {
     if (validateResult.isLeft()) {
       return left(validateResult.value)
     }
-    return right(
-      new Answer({ questionId: '', answer: '' })
-    )
+    const answer: AnswerEntityModel = {
+      questionId: dto.userAnswer.questionId,
+      ...(dto.userAnswer.alternativeId && { alternativeId: dto.userAnswer.alternativeId })
+    }
+    return right(new Answer(answer))
   }
 
   private static validate (dto: AnswerDto): ValidateRes {
-    const { userAnswer, questions } = dto
-    if (!userAnswer.alternativeId && !userAnswer.answer) {
+    const { userAnswer: { questionId, alternativeId, answer }, questions } = dto
+    if (!alternativeId && !answer) {
       return left(new AnswerAndAlternativeNotProvidedError())
     }
-    if (userAnswer.answer && userAnswer.alternativeId) {
+    if (answer && alternativeId) {
       return left(new MixedAnswerError())
     }
-    const question = questions.find(question => question.id === userAnswer.questionId)
+    const question = questions.find(question => question.id === questionId)
     if (!question) {
-      return left(new InvalidQuestionIdError(userAnswer.questionId))
+      return left(new InvalidQuestionIdError(questionId))
     }
-    if (question?.alternatives && userAnswer.answer) {
+    if (question?.alternatives && answer) {
       return left(new AnswerIsNotAllowedError())
     }
-    if (!question?.alternatives && userAnswer.alternativeId) {
+    if (!question?.alternatives && alternativeId) {
       return left(new AlternativeIsNotAllowedError())
     }
-    if (question.alternatives && userAnswer.alternativeId) {
+    if (question.alternatives && alternativeId) {
       const alternative = question.alternatives.find(
-        alternative => alternative.id === userAnswer.alternativeId
+        alternative => alternative.id === alternativeId
       )
       if (!alternative) {
-        return left(new InvalidAlternativeIdError(userAnswer.alternativeId))
+        return left(new InvalidAlternativeIdError(alternativeId))
       }
     }
-    if (!question.alternatives && userAnswer.answer) {
-      if (userAnswer.answer.length < 3 || userAnswer.answer.length > 750) {
-        return left(new InvalidAnswerError(userAnswer.answer))
+    if (!question.alternatives && answer) {
+      if (answer.length < 3 || answer.length > 750) {
+        return left(new InvalidAnswerError(answer))
       }
     }
     return right(null)
