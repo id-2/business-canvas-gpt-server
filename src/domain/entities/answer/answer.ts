@@ -1,6 +1,6 @@
 import type { QuestionModel } from '@/domain/models/db-models'
 import { right, type Either, left } from '@/shared/either'
-import { AnswerAndAlternativeNotProvidedError, InvalidQuestionIdError, type InvalidAnswerError, AnswerIsNotAllowedError } from './errors'
+import { AnswerAndAlternativeNotProvidedError, InvalidQuestionIdError, type InvalidAnswerError, AnswerIsNotAllowedError, MixedAnswerError } from './errors'
 
 export interface AnswerEntityModel {
   questionId: string
@@ -23,7 +23,8 @@ export type AnswerErrors =
 InvalidQuestionIdError |
 AnswerAndAlternativeNotProvidedError |
 InvalidAnswerError |
-AnswerIsNotAllowedError
+AnswerIsNotAllowedError |
+MixedAnswerError
 
 export type AnswerRes = Either<AnswerErrors, Answer>
 type ValidateRes = Either<AnswerErrors, null>
@@ -45,6 +46,9 @@ export class Answer {
     const { userAnswer, questions } = dto
     if (!userAnswer.alternativeId && !userAnswer.answer) {
       return left(new AnswerAndAlternativeNotProvidedError())
+    }
+    if (userAnswer.answer && userAnswer.alternativeId) {
+      return left(new MixedAnswerError())
     }
     if (!questions.some(question => question.id === userAnswer.questionId)) {
       return left(new InvalidQuestionIdError(userAnswer.questionId))
