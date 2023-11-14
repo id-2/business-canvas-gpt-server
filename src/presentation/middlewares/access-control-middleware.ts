@@ -3,7 +3,7 @@ import type { Middleware } from '../contracts'
 import type { AccessControl } from '@/domain/contracts'
 import type { Role } from '@/domain/models/db-models'
 import { AccessTokenNotInformedError } from '../errors'
-import { forbidden, unauthorized } from '../helpers/http/http-helpers'
+import { forbidden, serverError, unauthorized } from '../helpers/http/http-helpers'
 import { InvalidTokenError } from '@/domain/errors'
 
 export class AccessControlMiddleware implements Middleware {
@@ -13,19 +13,23 @@ export class AccessControlMiddleware implements Middleware {
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    const accessToken = httpRequest.headers?.['x-access-token']
-    if (!accessToken) {
-      return unauthorized(new AccessTokenNotInformedError())
-    }
-    const accessControlResul = await this.accessControl.perform({
-      accessToken, requiredRole: this.requiredRole
-    })
-    if (accessControlResul.isLeft()) {
-      if (accessControlResul.value instanceof InvalidTokenError) {
-        return unauthorized(accessControlResul.value)
+    try {
+      const accessToken = httpRequest.headers?.['x-access-token']
+      if (!accessToken) {
+        return unauthorized(new AccessTokenNotInformedError())
       }
-      return forbidden(accessControlResul.value)
+      const accessControlResul = await this.accessControl.perform({
+        accessToken, requiredRole: this.requiredRole
+      })
+      if (accessControlResul.isLeft()) {
+        if (accessControlResul.value instanceof InvalidTokenError) {
+          return unauthorized(accessControlResul.value)
+        }
+        return forbidden(accessControlResul.value)
+      }
+      return { body: '', statusCode: 0 }
+    } catch (error: any) {
+      return serverError(error)
     }
-    return { body: '', statusCode: 0 }
   }
 }
