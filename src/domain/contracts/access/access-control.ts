@@ -4,7 +4,7 @@ import type { Either } from '@/shared/either'
 
 export interface AccessControlDto {
   accessToken: string
-  role: Role
+  requiredRole: Role
 }
 
 export interface UserId {

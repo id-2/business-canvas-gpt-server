@@ -7,7 +7,7 @@ import { AccessDeniedError, InvalidTokenError } from '@/domain/errors'
 
 const makeFakeAccessControlDto = (): AccessControlDto => ({
   accessToken: 'any_token',
-  role: 'admin'
+  requiredRole: 'admin'
 })
 
 const makeFakeUserModel = (): UserModel => ({
