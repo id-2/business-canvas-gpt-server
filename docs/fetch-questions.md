@@ -57,9 +57,9 @@ Exemplo:
 
 ### Respostas
 - Código de status: **401 Unauthorized**
-  - ❌ Se o cabeçalho de autorização estiver ausente ou inválido.
-  - ❌ Se o token de autenticação for inválido ou expirado.
-  - ❌ Se o usuário não estiver autenticado na plataforma.
+  - ✅ Se o cabeçalho de autorização estiver ausente ou inválido.
+  - ✅ Se o token de autenticação for inválido ou expirado.
+  - ✅ Se o usuário não estiver autenticado na plataforma.
 - Código de status: **404 Not Found**
   - ✅ Se não encontrar as questões.
 - Código de status: **500 Internal Server Error**
