@@ -21,11 +21,11 @@ export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
     if (answerResult.isLeft()) {
       return left(answerResult.value)
     }
-    let userId = ''
+    let userId = dto.userId as string
     if (!dto.userId) {
-      await this.addRandomUser.perform()
+      const { id } = await this.addRandomUser.perform()
+      userId = id
     }
-    userId = dto.userId as string
     const addAnswerDto = { userId, answers: dto.answers }
     const addAnswerResult = await this.addAnswer.perform(addAnswerDto)
     if (addAnswerResult.isLeft()) {
