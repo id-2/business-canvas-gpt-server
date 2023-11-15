@@ -4,6 +4,16 @@ import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
 import { QuestionsNotFoundError } from '@/domain/errors'
+import type { CreateManyAnswersDto } from '@/domain/entities/answer/answer-dto'
+import { Answer } from '@/domain/entities/answer/answer'
+
+jest.mock('@/domain/entities/answer/answer', () => ({
+  Answer: {
+    createMany: jest.fn((dto: CreateManyAnswersDto) => (
+      makeFakeCreateBusinessCanvasDto().answers
+    ))
+  }
+}))
 
 const makeFakeCreateBusinessCanvasDto = (): CreateBusinessCanvasDto => ({
   userId: 'any_user_id',
@@ -13,9 +23,20 @@ const makeFakeCreateBusinessCanvasDto = (): CreateBusinessCanvasDto => ({
   ]
 })
 
-const makeFakeQuestions = (): QuestionModel[] => ([
-  { id: 'any_id', content: 'any_content' },
-  { id: 'other_id', content: 'other_content' }
+const makeFakeQuestions = (): QuestionModel[] => ([{
+  id: 'any_question_id',
+  content: 'any_content',
+  alternatives: [{
+    id: 'any_alternative_id',
+    description: 'any_description',
+    questionId: 'any_question_id'
+  }, {
+    id: 'other_alternative_id',
+    description: 'other_description',
+    questionId: 'any_question_id'
+  }]
+},
+{ id: 'other_question_id', content: 'other_content' }
 ])
 
 const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
@@ -77,6 +98,16 @@ describe('CreateBusinessCanvas UseCase', () => {
     )
     const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call Answer Entity with correct values', async () => {
+    const { sut } = makeSut()
+    const createManySpy = jest.spyOn(Answer, 'createMany')
+    await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(createManySpy).toHaveBeenCalledWith({
+      userAnswers: makeFakeCreateBusinessCanvasDto().answers,
+      questions: makeFakeQuestions()
+    })
   })
 
   it('Should call AddAnswer with correct values', async () => {
