@@ -159,18 +159,22 @@ describe('Answer Entity', () => {
       expect(result.value).toEqual(new Error('any_message'))
     })
 
-    it('Should return the first errro if create method returns more than one error', () => {
-      jest.spyOn(Answer, 'create').mockReturnValueOnce(
-        left(new Error('any_message'))
-      )
-      jest.spyOn(Answer, 'create').mockReturnValueOnce(
-        left(new Error('other_message'))
-      )
+    it('Should return many new Answer if validations is a success', () => {
       const result = Answer.createMany({
         userAnswers: makeFakeUserAnswers(),
         questions: makeFakeQuestionsModel()
       })
-      expect(result.value).toEqual(new Error('any_message'))
+      expect(result.value).toEqual([{
+        answer: {
+          questionId: 'any_question_id',
+          alternativeId: 'other_alternative_id'
+        }
+      }, {
+        answer: {
+          questionId: 'other_question_id',
+          answer: 'any_answer'
+        }
+      }])
     })
   })
 })
