@@ -1,10 +1,10 @@
 import type { AddAnswer, AddBusinessCanvas, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto, CreateBusinessCanvasRes } from '@/domain/contracts'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import type { CreateBusinessCanvasApi } from '@/interactions/contracts/api'
+import { BusinessCanvasDataBuilder, GenerateInputToCreateBusinessCanvas } from '@/domain/processes'
 import { QuestionsNotFoundError } from '@/domain/errors'
 import { left, right } from '@/shared/either'
 import { Answer } from '@/domain/entities/answer/answer'
-import { BusinessCanvasDataBuilder, GenerateInputToCreateBusinessCanvas } from '@/domain/processes'
 
 export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
   constructor (
