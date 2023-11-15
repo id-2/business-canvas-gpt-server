@@ -1,4 +1,3 @@
-import type { GenerateInputToCreateBusinessCanvasDto } from '../contracts'
 import type { UserAnswer } from '../entities/answer/answer-dto'
 import type { QuestionModel } from '../models/db-models'
 
@@ -7,7 +6,11 @@ export interface BusinessCanvasDataBuilderDto {
   questions: QuestionModel[]
 }
 
-export type BusinessCanvasDataBuilderRes = GenerateInputToCreateBusinessCanvasDto
+export interface BusinessCanvasDataBuilderRes {
+  typeOfBusiness: string
+  businessDescription: string
+  locationOrTargetAudience?: string
+}
 
 export class BusinessCanvasDataBuilder {
   static execute (dto: BusinessCanvasDataBuilderDto): BusinessCanvasDataBuilderRes {
