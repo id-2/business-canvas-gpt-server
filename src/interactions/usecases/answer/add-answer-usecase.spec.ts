@@ -2,6 +2,7 @@ import type { IdModel } from '@/domain/models/output-models'
 import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
 import type { AddAnswerDto } from '@/domain/contracts'
 import { AddAnswerUseCase } from './add-answer-usecase'
+import { type AddAnswerRepo, type AddAnswerRepoDto } from '@/interactions/contracts/db'
 
 const makeFakeAddAnswerDto = (): AddAnswerDto => ({
   userId: 'any_user_id',
@@ -21,15 +22,26 @@ const makeIdBuilder = (): IdBuilder => {
   return new IdBuilderStub()
 }
 
+const makeAddAnswerRepo = (): AddAnswerRepo => {
+  class AddAnswerRepoStub implements AddAnswerRepo {
+    async add (dto: AddAnswerRepoDto): Promise<void> {
+      await Promise.resolve()
+    }
+  }
+  return new AddAnswerRepoStub()
+}
+
 interface SutTypes {
   sut: AddAnswerUseCase
   idBuilderStub: IdBuilder
+  addAnswerRepoStub: AddAnswerRepo
 }
 
 const makeSut = (): SutTypes => {
   const idBuilderStub = makeIdBuilder()
-  const sut = new AddAnswerUseCase(idBuilderStub)
-  return { sut, idBuilderStub }
+  const addAnswerRepoStub = makeAddAnswerRepo()
+  const sut = new AddAnswerUseCase(idBuilderStub, addAnswerRepoStub)
+  return { sut, idBuilderStub, addAnswerRepoStub }
 }
 
 describe('AddAnswer UseCase', () => {
@@ -47,5 +59,16 @@ describe('AddAnswer UseCase', () => {
     })
     const promise = sut.perform(makeFakeAddAnswerDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call AddAnswerRepo with correct values', async () => {
+    const { sut, addAnswerRepoStub } = makeSut()
+    const addSpy = jest.spyOn(addAnswerRepoStub, 'add')
+    await sut.perform(makeFakeAddAnswerDto())
+    expect(addSpy).toHaveBeenCalledWith({
+      id: 'any_id',
+      userId: 'any_user_id',
+      answers: makeFakeAddAnswerDto().answers
+    })
   })
 })
