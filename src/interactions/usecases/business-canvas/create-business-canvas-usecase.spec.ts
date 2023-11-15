@@ -7,7 +7,7 @@ import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
 import { QuestionsNotFoundError } from '@/domain/errors'
 import { Answer } from '@/domain/entities/answer/answer'
-import { BusinessCanvasDataBuilder, type BusinessCanvasDataBuilderRes, type BusinessCanvasDataBuilderDto } from '@/domain/processes/business-canvas-data-builder'
+import { BusinessCanvasDataBuilder, type BusinessCanvasDataBuilderRes, type BusinessCanvasDataBuilderDto } from '@/domain/processes/business-canvas-data-builder/business-canvas-data-builder'
 import { GenerateInputToCreateBusinessCanvas } from '@/domain/processes/generate-input-to-create-business-canvas'
 
 jest.mock('@/domain/entities/answer/answer', () => ({
@@ -18,7 +18,7 @@ jest.mock('@/domain/entities/answer/answer', () => ({
   }
 }))
 
-jest.mock('@/domain/processes/business-canvas-data-builder', () => ({
+jest.mock('@/domain/processes/business-canvas-data-builder/business-canvas-data-builder', () => ({
   BusinessCanvasDataBuilder: {
     execute: jest.fn((dto: BusinessCanvasDataBuilderDto) => (
       makeFakeBusinessCanvasDataBuilderRes()

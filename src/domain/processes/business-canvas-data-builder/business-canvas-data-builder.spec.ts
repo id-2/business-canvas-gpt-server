@@ -1,5 +1,5 @@
-import type { UserAnswer } from '../entities/answer/answer-dto'
-import type { QuestionModel } from '../models/db-models'
+import type { UserAnswer } from '../../entities/answer/answer-dto'
+import type { QuestionModel } from '../../models/db-models'
 import { BusinessCanvasDataBuilder as sut } from './business-canvas-data-builder'
 
 const makeFakeQuestionsModel = (): QuestionModel[] => ([{

@@ -1,5 +1,5 @@
-import type { UserAnswer } from '../entities/answer/answer-dto'
-import type { QuestionModel } from '../models/db-models'
+import type { UserAnswer } from '../../entities/answer/answer-dto'
+import type { QuestionModel } from '../../models/db-models'
 
 export interface BusinessCanvasDataBuilderDto {
   userAnswers: UserAnswer[]
