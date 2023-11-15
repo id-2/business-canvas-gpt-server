@@ -8,6 +8,7 @@ import { left, right } from '@/shared/either'
 import { QuestionsNotFoundError } from '@/domain/errors'
 import { Answer } from '@/domain/entities/answer/answer'
 import { BusinessCanvasDataBuilder, type BusinessCanvasDataBuilderRes, type BusinessCanvasDataBuilderDto } from '@/domain/processes/business-canvas-data-builder'
+import { GenerateInputToCreateBusinessCanvas } from '@/domain/processes/generate-input-to-create-business-canvas'
 
 jest.mock('@/domain/entities/answer/answer', () => ({
   Answer: {
@@ -158,25 +159,6 @@ describe('CreateBusinessCanvas UseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  it('Should call BusinessCanvasDataBuilder with correct values', async () => {
-    const { sut } = makeSut()
-    const createManySpy = jest.spyOn(BusinessCanvasDataBuilder, 'execute')
-    await sut.perform(makeFakeCreateBusinessCanvasDto())
-    expect(createManySpy).toHaveBeenCalledWith({
-      userAnswers: makeFakeCreateBusinessCanvasDto().answers,
-      questions: makeFakeQuestionsModel()
-    })
-  })
-
-  it('Should throw if BusinessCanvasDataBuilder throws', async () => {
-    const { sut } = makeSut()
-    jest.spyOn(BusinessCanvasDataBuilder, 'execute').mockImplementationOnce(() => {
-      throw new Error()
-    })
-    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
-    await expect(promise).rejects.toThrow()
-  })
-
   it('Should call AddRandomUser if userId not provided', async () => {
     const { sut, addRandomUserStub } = makeSut()
     const performSpy = jest.spyOn(addRandomUserStub, 'perform')
@@ -233,5 +215,31 @@ describe('CreateBusinessCanvas UseCase', () => {
       userId: 'any_random_user_id',
       answers: makeFakeCreateBusinessCanvasDto().answers
     })
+  })
+
+  it('Should call BusinessCanvasDataBuilder with correct values', async () => {
+    const { sut } = makeSut()
+    const createManySpy = jest.spyOn(BusinessCanvasDataBuilder, 'execute')
+    await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(createManySpy).toHaveBeenCalledWith({
+      userAnswers: makeFakeCreateBusinessCanvasDto().answers,
+      questions: makeFakeQuestionsModel()
+    })
+  })
+
+  it('Should throw if BusinessCanvasDataBuilder throws', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(BusinessCanvasDataBuilder, 'execute').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
+    await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call GenerateInputToCreateBusinessCanvas with correct values', async () => {
+    const { sut } = makeSut()
+    const executeSpy = jest.spyOn(GenerateInputToCreateBusinessCanvas, 'execute')
+    await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(executeSpy).toHaveBeenCalledWith(makeFakeBusinessCanvasDataBuilderRes())
   })
 })
