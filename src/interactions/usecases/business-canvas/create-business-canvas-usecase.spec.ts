@@ -338,4 +338,10 @@ describe('CreateBusinessCanvas UseCase', () => {
     const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should return BusinessCanvasOutputModel if AddBusinessCanvas is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(result.value).toEqual(makeFakeBusinessCanvasOutputModel())
+  })
 })
