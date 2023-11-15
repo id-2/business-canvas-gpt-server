@@ -317,8 +317,7 @@ describe('CreateBusinessCanvas UseCase', () => {
     const performSpy = jest.spyOn(addBusinessCanvasStub, 'perform')
     await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(performSpy).toHaveBeenCalledWith({
-      userId: 'any_user_id',
-      businessCanvasData: makeFakeBusinessCanvasOutputModel()
+      userId: 'any_user_id', ...makeFakeBusinessCanvasOutputModel()
     })
   })
 

@@ -33,11 +33,11 @@ export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
     await this.addAnswer.perform(addAnswerDto)
     const dataToInput = BusinessCanvasDataBuilder.execute({ userAnswers: dto.answers, questions })
     const { text: input } = GenerateInputToCreateBusinessCanvas.execute(dataToInput)
-    const businessCanvasData = await this.createBusinessCanvasApi.create({ input })
-    await this.addBusinessCanvas.perform({ userId, businessCanvasData })
+    const businessCanvasOutputModel = await this.createBusinessCanvasApi.create({ input })
+    await this.addBusinessCanvas.perform({ userId, ...businessCanvasOutputModel })
     if (!dto.userId) {
-      return right({ userId, ...businessCanvasData })
+      return right({ userId, ...businessCanvasOutputModel })
     }
-    return right(businessCanvasData)
+    return right(businessCanvasOutputModel)
   }
 }
