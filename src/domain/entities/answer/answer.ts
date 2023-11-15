@@ -57,7 +57,10 @@ export class Answer {
   static createMany (dto: CreateManyAnswersDto): ManyAnswersRes {
     const { userAnswers, questions } = dto
     for (const userAnswer of userAnswers) {
-      this.create({ userAnswer, questions })
+      const createResult = this.create({ userAnswer, questions })
+      if (createResult.isLeft()) {
+        return left(createResult.value)
+      }
     }
     return right([new Answer({ questionId: '' })])
   }
