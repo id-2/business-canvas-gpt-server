@@ -1,4 +1,5 @@
 export * from './user/add-user'
+export * from './user/add-random-user'
 export * from './access/access-token-builder'
 export * from './access/auth'
 export * from './question/fetch-all-questions'

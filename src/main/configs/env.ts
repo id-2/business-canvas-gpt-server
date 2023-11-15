@@ -8,5 +8,6 @@ export default {
   host: process.env.HOST ?? '127.0.0.1',
   redisHost: process.env.REDIS_HOST,
   redisPort: process.env.REDIS_PORT,
-  redisPassword: process.env.REDIS_PASSWORD
+  redisPassword: process.env.REDIS_PASSWORD,
+  randomUserPassword: process.env.RANDOM_USER_PASSWORD ?? 'random_password'
 }
