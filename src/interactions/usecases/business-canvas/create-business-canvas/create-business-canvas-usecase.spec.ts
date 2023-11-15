@@ -1,6 +1,6 @@
 import type { AddAnswer, AddAnswerDto, AddBusinessCanvas, AddBusinessCanvasDto, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
 import type { CreateBusinessCanvasApi, CreateBusinessCanvasApiDto } from '@/interactions/contracts/api'
-import type { BusinessCanvasOutputModel, IdModel } from '@/domain/models/output-models'
+import type { BusinessCanvasApiModel, IdModel } from '@/domain/models/output-models'
 import type { QuestionModel } from '@/domain/models/db-models'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import type { CreateManyAnswersDto } from '@/domain/entities/answer/answer-dto'
@@ -68,7 +68,7 @@ const makeFakeBusinessCanvasDataBuilderRes = (): BusinessCanvasDataBuilderRes =>
   locationOrTargetAudience: 'location_answer'
 })
 
-const makeFakeBusinessCanvasOutputModel = (): BusinessCanvasOutputModel => ({
+const makeFakeBusinessCanvasApiModel = (): BusinessCanvasApiModel => ({
   name: 'any_business_canvas_name',
   customerSegments: ['any_customer_segments'],
   valuePropositions: ['any_value_propositions'],
@@ -110,8 +110,8 @@ const makeAddAnswer = (): AddAnswer => {
 
 const makeCreateBusinessCanvasApi = (): CreateBusinessCanvasApi => {
   class CreateBusinessCanvasApiStub implements CreateBusinessCanvasApi {
-    async create (dto: CreateBusinessCanvasApiDto): Promise<BusinessCanvasOutputModel> {
-      return await Promise.resolve(makeFakeBusinessCanvasOutputModel())
+    async create (dto: CreateBusinessCanvasApiDto): Promise<BusinessCanvasApiModel> {
+      return await Promise.resolve(makeFakeBusinessCanvasApiModel())
     }
   }
   return new CreateBusinessCanvasApiStub()
@@ -317,7 +317,7 @@ describe('CreateBusinessCanvas UseCase', () => {
     const performSpy = jest.spyOn(addBusinessCanvasStub, 'perform')
     await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(performSpy).toHaveBeenCalledWith({
-      userId: 'any_user_id', ...makeFakeBusinessCanvasOutputModel()
+      userId: 'any_user_id', ...makeFakeBusinessCanvasApiModel()
     })
   })
 
@@ -330,17 +330,17 @@ describe('CreateBusinessCanvas UseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  it('Should return BusinessCanvasOutputModel if AddBusinessCanvas is a success', async () => {
+  it('Should return BusinessCanvasApiModel if AddBusinessCanvas is a success', async () => {
     const { sut } = makeSut()
     const result = await sut.perform(makeFakeCreateBusinessCanvasDto())
-    expect(result.value).toEqual(makeFakeBusinessCanvasOutputModel())
+    expect(result.value).toEqual(makeFakeBusinessCanvasApiModel())
   })
 
-  it('Should return BusinessCanvasOutputModel with userId if AddBusinessCanvas is a success and userId not provided in request', async () => {
+  it('Should return BusinessCanvasApiModel with userId if AddBusinessCanvas is a success and userId not provided in request', async () => {
     const { sut } = makeSut()
     const result = await sut.perform({ answers: makeFakeCreateBusinessCanvasDto().answers })
     expect(result.value).toEqual({
-      userId: 'any_random_user_id', ...makeFakeBusinessCanvasOutputModel()
+      userId: 'any_random_user_id', ...makeFakeBusinessCanvasApiModel()
     })
   })
 })

@@ -1,5 +1,5 @@
 import type { Either } from '@/shared/either'
-import type { BusinessCanvasOutputModel } from '@/domain/models/output-models'
+import type { BusinessCanvasApiModel } from '@/domain/models/output-models'
 import type { AnswerErrors } from '@/domain/entities/answer/answer-response'
 
 export interface BusinessCanvasAnswer {
@@ -14,7 +14,7 @@ export interface CreateBusinessCanvasDto {
 }
 
 export type CreateBusinessCanvasRes = Either<
-AnswerErrors, BusinessCanvasOutputModel & { userId?: string }
+AnswerErrors, BusinessCanvasApiModel & { userId?: string }
 >
 
 export interface CreateBusinessCanvas {
