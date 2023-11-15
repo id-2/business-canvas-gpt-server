@@ -137,5 +137,14 @@ describe('Answer Entity', () => {
         userAnswer: makeFakeUserAnswers()[1], questions: makeFakeQuestionsModel()
       })
     })
+
+    it('Should call create method twice', () => {
+      const createSpy = jest.spyOn(Answer, 'create')
+      Answer.createMany({
+        userAnswers: makeFakeUserAnswers(),
+        questions: makeFakeQuestionsModel()
+      })
+      expect(createSpy).toHaveBeenCalledTimes(2)
+    })
   })
 })
