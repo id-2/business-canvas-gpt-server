@@ -1,4 +1,4 @@
-import { TemplateForInputWithLocation as sut } from './template-for-input-with-location'
+import { TemplateForInputInPersonBusiness as sut } from './template-for-input-in-person-business'
 
 describe('TemplateForInputWithLocation', () => {
   it('Should return a TemplateInputModel', async () => {

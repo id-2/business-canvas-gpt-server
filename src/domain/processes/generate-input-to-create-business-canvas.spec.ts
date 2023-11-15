@@ -1,6 +1,6 @@
 import type { GenerateInputToCreateBusinessCanvasDto } from './generate-input-to-create-business-canvas'
 import { GenerateInputToCreateBusinessCanvas as sut } from './generate-input-to-create-business-canvas'
-import { TemplateForInputWithLocation } from './input-templates/input-with-location/template-for-input-with-location'
+import { TemplateForInputInPersonBusiness } from './input-templates'
 
 const makeFakeGenerateInputDto = (): GenerateInputToCreateBusinessCanvasDto => ({
   typeOfBusiness: 'in_person',
@@ -9,8 +9,8 @@ const makeFakeGenerateInputDto = (): GenerateInputToCreateBusinessCanvasDto => (
 })
 
 describe('GenerateInputToCreateBusinessCanvas', () => {
-  it('Should call TemplateForInputWithLocation', async () => {
-    const createSpy = jest.spyOn(TemplateForInputWithLocation, 'create')
+  it('Should call TemplateForInputInPersonBusiness', async () => {
+    const createSpy = jest.spyOn(TemplateForInputInPersonBusiness, 'create')
     sut.execute(makeFakeGenerateInputDto())
     expect(createSpy).toHaveBeenCalled()
   })

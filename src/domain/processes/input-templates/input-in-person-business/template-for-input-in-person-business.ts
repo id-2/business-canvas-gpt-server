@@ -1,6 +1,6 @@
 import type { TemplateInputModel } from '@/domain/models/output-models'
 
-export class TemplateForInputWithLocation {
+export class TemplateForInputInPersonBusiness {
   static create (): TemplateInputModel {
     const input = this.createInputModel()
     return { input }
