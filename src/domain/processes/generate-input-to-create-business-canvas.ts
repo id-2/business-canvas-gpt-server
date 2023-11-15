@@ -15,7 +15,8 @@ export class GenerateInputToCreateBusinessCanvas {
       input = input.replace('{{location}}', dto.locationOrTargetAudience)
       return { text: input }
     }
-    TemplateForInputOnlineBusiness.create()
-    return { text: '' }
+    let { input } = TemplateForInputOnlineBusiness.create()
+    input = input.replace('{{description}}', dto.businessDescription)
+    return { text: input }
   }
 }
