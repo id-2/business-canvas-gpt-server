@@ -57,4 +57,13 @@ describe('AddRandomUser UseCase', () => {
     await sut.perform()
     expect(buildSpy).toHaveBeenCalled()
   })
+
+  it('Should throw if IdBuilder throws', async () => {
+    const { sut, idBuilderStub } = makeSut()
+    jest.spyOn(idBuilderStub, 'build').mockImplementation(() => {
+      throw new Error()
+    })
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
 })
