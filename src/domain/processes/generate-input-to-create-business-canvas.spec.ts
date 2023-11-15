@@ -12,7 +12,9 @@ jest.mock('@/domain/processes/input-templates/input-in-person-business/template-
 
 jest.mock('@/domain/processes/input-templates/input-online-business/template-for-input-online-business', () => ({
   TemplateForInputOnlineBusiness: {
-    create: jest.fn(() => ('other_input'))
+    create: jest.fn(() => ({
+      input: 'any_description_{{description}}'
+    }))
   }
 }))
 
@@ -56,5 +58,13 @@ describe('GenerateInputToCreateBusinessCanvas', () => {
     const createSpy = jest.spyOn(TemplateForInputOnlineBusiness, 'create')
     sut.execute(makeFakeGenerateInputDto())
     expect(createSpy).not.toHaveBeenCalled()
+  })
+
+  it('Should return InputToCreateBusinessCanvas formatted no location if locationOrTargetAudience not provided', async () => {
+    const result = sut.execute({
+      typeOfBusiness: 'in_person',
+      businessDescription: 'description_answer'
+    })
+    expect(result.text).toBe('any_description_description_answer')
   })
 })
