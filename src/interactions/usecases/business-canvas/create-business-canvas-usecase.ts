@@ -1,4 +1,4 @@
-import type { AddAnswer, CreateBusinessCanvas, CreateBusinessCanvasDto, CreateBusinessCanvasRes } from '@/domain/contracts'
+import type { AddAnswer, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto, CreateBusinessCanvasRes } from '@/domain/contracts'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import { QuestionsNotFoundError } from '@/domain/errors'
 import { left, right } from '@/shared/either'
@@ -8,6 +8,7 @@ import { BusinessCanvasDataBuilder } from '@/domain/processes/business-canvas-da
 export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
   constructor (
     private readonly fetchAllQuestionsRepo: FetchAllQuestionsRepo,
+    private readonly addRandomUser: AddRandomUser,
     private readonly addAnswer: AddAnswer
   ) {}
 
@@ -20,7 +21,13 @@ export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
     if (answerResult.isLeft()) {
       return left(answerResult.value)
     }
-    const addAnswerResult = await this.addAnswer.perform(dto)
+    let userId = ''
+    if (!dto.userId) {
+      await this.addRandomUser.perform()
+    }
+    userId = dto.userId as string
+    const addAnswerDto = { userId, answers: dto.answers }
+    const addAnswerResult = await this.addAnswer.perform(addAnswerDto)
     if (addAnswerResult.isLeft()) {
       return left(addAnswerResult.value)
     }

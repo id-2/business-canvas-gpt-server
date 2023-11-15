@@ -1,8 +1,11 @@
 import type { AnswerErrors } from '@/domain/entities/answer/answer-response'
 import type { Either } from '@/shared/either'
-import type { CreateBusinessCanvasDto } from '../business-canvas/create-business-canvas'
+import type { BusinessCanvasAnswer } from '../business-canvas/create-business-canvas'
 
-export interface AddAnswerDto extends CreateBusinessCanvasDto {}
+export interface AddAnswerDto {
+  userId: string
+  answers: BusinessCanvasAnswer[]
+}
 
 export type AddAnswerRes = Either<AnswerErrors, null>
 

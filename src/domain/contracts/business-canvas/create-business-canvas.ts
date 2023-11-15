@@ -9,7 +9,7 @@ export interface BusinessCanvasAnswer {
 }
 
 export interface CreateBusinessCanvasDto {
-  userId: string
+  userId?: string
   answers: BusinessCanvasAnswer[]
 }
 
