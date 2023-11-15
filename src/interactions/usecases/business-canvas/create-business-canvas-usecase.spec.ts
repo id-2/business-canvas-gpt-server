@@ -7,7 +7,7 @@ import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
 import { QuestionsNotFoundError } from '@/domain/errors'
 import { Answer } from '@/domain/entities/answer/answer'
-import { BusinessCanvasDataBuilder, GenerateInputToCreateBusinessCanvas, type BusinessCanvasDataBuilderRes, type BusinessCanvasDataBuilderDto } from '@/domain/processes'
+import { BusinessCanvasDataBuilder, GenerateInputToCreateBusinessCanvas, type BusinessCanvasDataBuilderRes, type BusinessCanvasDataBuilderDto, type GenerateInputToCreateBusinessCanvasDto } from '@/domain/processes'
 
 jest.mock('@/domain/entities/answer/answer', () => ({
   Answer: {
@@ -22,6 +22,14 @@ jest.mock('@/domain/processes/business-canvas-data-builder/business-canvas-data-
     execute: jest.fn((dto: BusinessCanvasDataBuilderDto) => (
       makeFakeBusinessCanvasDataBuilderRes()
     ))
+  }
+}))
+
+jest.mock('@/domain/processes/generate-input-to-create-business-canvas/generate-input-to-create-business-canvas', () => ({
+  GenerateInputToCreateBusinessCanvas: {
+    execute: jest.fn((dto: GenerateInputToCreateBusinessCanvasDto) => ({
+      text: 'any_input_text'
+    }))
   }
 }))
 
@@ -240,5 +248,14 @@ describe('CreateBusinessCanvas UseCase', () => {
     const executeSpy = jest.spyOn(GenerateInputToCreateBusinessCanvas, 'execute')
     await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(executeSpy).toHaveBeenCalledWith(makeFakeBusinessCanvasDataBuilderRes())
+  })
+
+  it('Should throw if GenerateInputToCreateBusinessCanvas throws', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(GenerateInputToCreateBusinessCanvas, 'execute').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
+    await expect(promise).rejects.toThrow()
   })
 })
