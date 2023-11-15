@@ -1,5 +1,5 @@
 import type { InputToCreateBusinessCanvas } from '../models/output-models'
-import { TemplateForInputInPersonBusiness } from './input-templates'
+import { TemplateForInputInPersonBusiness, TemplateForInputOnlineBusiness } from './input-templates'
 
 export interface GenerateInputToCreateBusinessCanvasDto {
   typeOfBusiness: string
@@ -9,7 +9,11 @@ export interface GenerateInputToCreateBusinessCanvasDto {
 
 export class GenerateInputToCreateBusinessCanvas {
   static execute (dto: GenerateInputToCreateBusinessCanvasDto): InputToCreateBusinessCanvas {
-    TemplateForInputInPersonBusiness.create()
+    if (dto.locationOrTargetAudience) {
+      TemplateForInputInPersonBusiness.create()
+      return { text: '' }
+    }
+    TemplateForInputOnlineBusiness.create()
     return { text: '' }
   }
 }
