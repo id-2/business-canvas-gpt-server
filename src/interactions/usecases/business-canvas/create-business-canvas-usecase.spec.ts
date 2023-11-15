@@ -296,4 +296,13 @@ describe('CreateBusinessCanvas UseCase', () => {
     await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(createSpy).toHaveBeenCalledWith({ input: 'any_input_text' })
   })
+
+  it('Should throw if CreateBusinessCanvasApi throws', async () => {
+    const { sut, createBusinessCanvasApiStub } = makeSut()
+    jest.spyOn(createBusinessCanvasApiStub, 'create').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
+    await expect(promise).rejects.toThrow()
+  })
 })
