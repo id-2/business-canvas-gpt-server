@@ -1,4 +1,4 @@
-import type { AddAnswer, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto, CreateBusinessCanvasRes } from '@/domain/contracts'
+import type { AddAnswer, AddBusinessCanvas, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto, CreateBusinessCanvasRes } from '@/domain/contracts'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import type { CreateBusinessCanvasApi } from '@/interactions/contracts/api'
 import { QuestionsNotFoundError } from '@/domain/errors'
@@ -11,7 +11,8 @@ export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
     private readonly fetchAllQuestionsRepo: FetchAllQuestionsRepo,
     private readonly addRandomUser: AddRandomUser,
     private readonly addAnswer: AddAnswer,
-    private readonly createBusinessCanvasApi: CreateBusinessCanvasApi
+    private readonly createBusinessCanvasApi: CreateBusinessCanvasApi,
+    private readonly addBusinessCanvas: AddBusinessCanvas
   ) {}
 
   async perform (dto: CreateBusinessCanvasDto): Promise<CreateBusinessCanvasRes> {
@@ -35,7 +36,8 @@ export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
     }
     const dataToInput = BusinessCanvasDataBuilder.execute({ userAnswers: dto.answers, questions })
     const { text: input } = GenerateInputToCreateBusinessCanvas.execute(dataToInput)
-    await this.createBusinessCanvasApi.create({ input })
+    const businessCanvasData = await this.createBusinessCanvasApi.create({ input })
+    await this.addBusinessCanvas.perform({ userId, businessCanvasData })
     const object: any = ''
     return right(object)
   }

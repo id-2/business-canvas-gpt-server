@@ -9,4 +9,4 @@ export type BusinessCanvasComponent =
   | 'keyPartnerships'
   | 'costStructure'
 
-export type BusinessCanvasOutputModel = Record<BusinessCanvasComponent, string[]>
+export type BusinessCanvasOutputModel = Record<BusinessCanvasComponent, string[]> & { name: string }
