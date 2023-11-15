@@ -7,8 +7,7 @@ import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
 import { QuestionsNotFoundError } from '@/domain/errors'
 import { Answer } from '@/domain/entities/answer/answer'
-import { BusinessCanvasDataBuilder, type BusinessCanvasDataBuilderRes, type BusinessCanvasDataBuilderDto } from '@/domain/processes/business-canvas-data-builder/business-canvas-data-builder'
-import { GenerateInputToCreateBusinessCanvas } from '@/domain/processes/generate-input-to-create-business-canvas/generate-input-to-create-business-canvas'
+import { BusinessCanvasDataBuilder, GenerateInputToCreateBusinessCanvas, type BusinessCanvasDataBuilderRes, type BusinessCanvasDataBuilderDto } from '@/domain/processes'
 
 jest.mock('@/domain/entities/answer/answer', () => ({
   Answer: {
