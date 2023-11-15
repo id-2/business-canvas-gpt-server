@@ -191,6 +191,15 @@ describe('CreateBusinessCanvas UseCase', () => {
     expect(performSpy).not.toHaveBeenCalled()
   })
 
+  it('Should throw if AddRandomUser throws', async () => {
+    const { sut, addRandomUserStub } = makeSut()
+    jest.spyOn(addRandomUserStub, 'perform').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform({ answers: makeFakeCreateBusinessCanvasDto().answers })
+    await expect(promise).rejects.toThrow()
+  })
+
   it('Should call AddAnswer with correct values', async () => {
     const { sut, addAnswerStub } = makeSut()
     const performSpy = jest.spyOn(addAnswerStub, 'perform')
