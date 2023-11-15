@@ -7,9 +7,9 @@ import { AddRandomUserUseCase } from './add-random-user-usecase'
 import MockDate from 'mockdate'
 
 const makeFakeUserModel = (): UserModel => ({
-  id: 'any_id_1',
+  id: 'any_id',
   name: 'Convidado',
-  email: 'any_id_2@convidado.com',
+  email: 'any_id@convidado.com',
   password: 'hashed_password',
   role: 'user',
   createdAt: new Date(),
@@ -26,14 +26,12 @@ const makeHasher = (): Hasher => {
 }
 
 const makeIdBuilder = (): IdBuilder => {
-  class IdBuilderSpy implements IdBuilder {
-    private callsCount = 0
+  class IdBuilderStub implements IdBuilder {
     build (): IdModel {
-      this.callsCount++
-      return { id: `any_id_${this.callsCount}` }
+      return { id: 'any_id' }
     }
   }
-  return new IdBuilderSpy()
+  return new IdBuilderStub()
 }
 
 const makeAddUserRepo = (): AddUserRepo => {
@@ -106,5 +104,20 @@ describe('AddRandomUser UseCase', () => {
     const addSpy = jest.spyOn(addUserRepoStub, 'add')
     await sut.perform()
     expect(addSpy).toHaveBeenCalledWith(makeFakeUserModel())
+  })
+
+  it('Should throw if AddUserRepo throws', async () => {
+    const { sut, addUserRepoStub } = makeSut()
+    jest.spyOn(addUserRepoStub, 'add').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
+
+  it('Should return an Id if AddUserRepo is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform()
+    expect(result).toEqual({ id: 'any_id' })
   })
 })
