@@ -158,5 +158,19 @@ describe('Answer Entity', () => {
       })
       expect(result.value).toEqual(new Error('any_message'))
     })
+
+    it('Should return the first errro if create method returns more than one error', () => {
+      jest.spyOn(Answer, 'create').mockReturnValueOnce(
+        left(new Error('any_message'))
+      )
+      jest.spyOn(Answer, 'create').mockReturnValueOnce(
+        left(new Error('other_message'))
+      )
+      const result = Answer.createMany({
+        userAnswers: makeFakeUserAnswers(),
+        questions: makeFakeQuestionsModel()
+      })
+      expect(result.value).toEqual(new Error('any_message'))
+    })
   })
 })
