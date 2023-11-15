@@ -15,13 +15,12 @@ export class AddRandomUserUseCase implements AddRandomUser {
   async perform (): Promise<IdModel> {
     const { hash: password } = await this.hasher.hashing(env.randomUserPassword)
     const { id } = this.idBuilder.build()
-    const { id: random } = this.idBuilder.build()
-    const email = `${random}@convidado.com`
+    const email = `${id}@convidado.com`
     const date = new Date()
     const createdAt = date; const updatedAt = date
     await this.addUserRepo.add({
       id, password, email, name: 'Convidado', createdAt, updatedAt, role: 'user'
     })
-    return { id: '' }
+    return { id }
   }
 }
