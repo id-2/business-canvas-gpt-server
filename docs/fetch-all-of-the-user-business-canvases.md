@@ -31,12 +31,12 @@ Exemplo:
   "businessCanvas": [
     {
       "id": "123",
-      "businessType": "Barbearia em São Paulo",
+      "name": "Barbearia em São Paulo",
       "createdAt": "2023-11-06"
     },
     {
       "id": "124",
-      "businessType": "Loja de Roupas Virtual",
+      "name": "Loja Virtual de Roupas",
       "createdAt": "2023-11-07"
     }
   ]
@@ -44,7 +44,7 @@ Exemplo:
 ```
 
 - **id** (string): O ID único do Business Canvas.
-- **businessType** (string): O nome do tipo de negócio associado ao Business Canvas.
+- **name** (string): O nome do tipo de negócio associado ao Business Canvas.
 - **createdAt** (string): A data de criação do Business Canvas.
 
 
