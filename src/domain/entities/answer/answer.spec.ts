@@ -3,6 +3,7 @@ import type { QuestionModel } from '@/domain/models/db-models'
 import type { UserAnswer } from './answer-dto'
 import { Answer, Answer as sut } from './answer'
 import { MixedAnswerError } from './errors/mixed-answer-error'
+import { left } from '@/shared/either'
 
 const makeFakeQuestionsModel = (): QuestionModel[] => ([{
   id: 'any_question_id',
@@ -145,6 +146,17 @@ describe('Answer Entity', () => {
         questions: makeFakeQuestionsModel()
       })
       expect(createSpy).toHaveBeenCalledTimes(2)
+    })
+
+    it('Should return an errro if create method returns any error', () => {
+      jest.spyOn(Answer, 'create').mockReturnValueOnce(
+        left(new Error('any_message'))
+      )
+      const result = Answer.createMany({
+        userAnswers: makeFakeUserAnswers(),
+        questions: makeFakeQuestionsModel()
+      })
+      expect(result.value).toEqual(new Error('any_message'))
     })
   })
 })
