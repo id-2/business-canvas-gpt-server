@@ -32,22 +32,40 @@ Exemplo:
 
 ```json
 {
-  "component_1": [
-    "Resposta 1.",
-    "Resposta 2."
+  "customerSegments": [
+    "Respostas 1.",
+    "Respostas 2."
   ],
-  "component_2": [
-    "Resposta 1.",
-    "Resposta 2.",
-    "Resposta 3."
+  "valuePropositions": [
+    "Respostas 1.",
+    "Respostas 2.",
+    "Respostas 3."
   ],
-  "component_3": [
-    "Resposta 1."
+  "channels": [
+    "Respostas 1."
+  ],
+  "customerRelationships": [
+    "Respostas 1."
+  ],
+  "revenueStreams": [
+    "Respostas 1."
+  ],
+  "keyResources": [
+    "Respostas 1."
+  ],
+  "keyActivities": [
+    "Respostas 1."
+  ],
+  "keyPartnerships": [
+    "Respostas 1."
+  ],
+  "costStructure": [
+    "Respostas 1."
   ]
 }
 ```
 
-- Os **componentes** (***component_1***, ***component_2***, ***component_3***) representam as seções do Business Canvas.
+- Os **componentes** (***costStructure***, ***keyPartnerships***, ***keyActivities***) representam as seções do Business Canvas.
 - Cada seção contém um array de respostas correspondentes.
 
 ## Casos de Exceção
