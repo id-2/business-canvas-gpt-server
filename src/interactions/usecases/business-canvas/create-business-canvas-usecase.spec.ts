@@ -126,6 +126,15 @@ describe('CreateBusinessCanvas UseCase', () => {
     expect(performSpy).toHaveBeenCalledWith(makeFakeCreateBusinessCanvasDto())
   })
 
+  it('Should throw if Answer Entity throws', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(Answer, 'createMany').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
+    await expect(promise).rejects.toThrow()
+  })
+
   it('Should return the same error as AddAnswer if it returns an error', async () => {
     const { sut, addAnswerStub } = makeSut()
     jest.spyOn(addAnswerStub, 'perform').mockReturnValueOnce(
