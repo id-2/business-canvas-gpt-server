@@ -3,6 +3,7 @@ import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import { QuestionsNotFoundError } from '@/domain/errors'
 import { left, right } from '@/shared/either'
 import { Answer } from '@/domain/entities/answer/answer'
+import { BusinessCanvasDataBuilder } from '@/domain/processes/business-canvas-data-builder'
 
 export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
   constructor (
@@ -23,6 +24,7 @@ export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
     if (addAnswerResult.isLeft()) {
       return left(addAnswerResult.value)
     }
+    BusinessCanvasDataBuilder.execute({ userAnswers: dto.answers, questions })
     const object: any = ''
     return right(object)
   }
