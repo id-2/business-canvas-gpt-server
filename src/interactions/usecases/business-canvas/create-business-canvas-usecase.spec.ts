@@ -6,6 +6,7 @@ import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
 import { QuestionsNotFoundError } from '@/domain/errors'
 import { Answer } from '@/domain/entities/answer/answer'
+import { BusinessCanvasDataBuilder, type BusinessCanvasDataBuilderRes, type BusinessCanvasDataBuilderDto } from '@/domain/processes/business-canvas-data-builder'
 
 jest.mock('@/domain/entities/answer/answer', () => ({
   Answer: {
@@ -15,34 +16,51 @@ jest.mock('@/domain/entities/answer/answer', () => ({
   }
 }))
 
+jest.mock('@/domain/processes/business-canvas-data-builder', () => ({
+  BusinessCanvasDataBuilder: {
+    execute: jest.fn((dto: BusinessCanvasDataBuilderDto) => (
+      makeFakeBusinessCanvasDataBuilderRes()
+    ))
+  }
+}))
+
 const makeFakeCreateBusinessCanvasDto = (): CreateBusinessCanvasDto => ({
   userId: 'any_user_id',
   answers: [
-    { questionId: 'any_question_id', alternativeId: 'any_alternative_id' },
-    { questionId: 'other_question_id', answer: 'any_answer' }
+    { questionId: 'type_question_id', alternativeId: 'in_person_alternative_id' },
+    { questionId: 'location_question_id', answer: 'location_answer' },
+    { questionId: 'description_question_id', answer: 'description_answer' }
   ]
 })
 
-const makeFakeQuestions = (): QuestionModel[] => ([{
-  id: 'any_question_id',
-  content: 'any_content',
+const makeFakeQuestionsModel = (): QuestionModel[] => ([{
+  id: 'type_question_id',
+  content: 'Qual o tipo do seu negócio?',
   alternatives: [{
-    id: 'any_alternative_id',
-    description: 'any_description',
-    questionId: 'any_question_id'
+    id: 'in_person_alternative_id',
+    description: 'in_person',
+    questionId: 'type_question_id'
   }, {
-    id: 'other_alternative_id',
-    description: 'other_description',
-    questionId: 'any_question_id'
+    id: 'online_alternative_id',
+    description: 'online',
+    questionId: 'type_question_id'
   }]
-},
-{ id: 'other_question_id', content: 'other_content' }
-])
+}, {
+  id: 'location_question_id', content: 'Qual a localização ou público para o qual deseja trabalhar (Cidade, estado ou país)?'
+}, {
+  id: 'description_question_id', content: 'Descreva seu negócio:'
+}])
+
+const makeFakeBusinessCanvasDataBuilderRes = (): BusinessCanvasDataBuilderRes => ({
+  businessDescription: 'description_answer',
+  typeOfBusiness: 'in_person',
+  locationOrTargetAudience: 'location_answer'
+})
 
 const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
   class FetchAllQuestionsRepoStub implements FetchAllQuestionsRepo {
     async fetchAll (): Promise<QuestionModel[]> {
-      return await Promise.resolve(makeFakeQuestions())
+      return await Promise.resolve(makeFakeQuestionsModel())
     }
   }
   return new FetchAllQuestionsRepoStub()
@@ -106,7 +124,7 @@ describe('CreateBusinessCanvas UseCase', () => {
     await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(createManySpy).toHaveBeenCalledWith({
       userAnswers: makeFakeCreateBusinessCanvasDto().answers,
-      questions: makeFakeQuestions()
+      questions: makeFakeQuestionsModel()
     })
   })
 
@@ -119,13 +137,6 @@ describe('CreateBusinessCanvas UseCase', () => {
     expect(result.value).toEqual(new Error('any_message'))
   })
 
-  it('Should call AddAnswer with correct values', async () => {
-    const { sut, addAnswerStub } = makeSut()
-    const performSpy = jest.spyOn(addAnswerStub, 'perform')
-    await sut.perform(makeFakeCreateBusinessCanvasDto())
-    expect(performSpy).toHaveBeenCalledWith(makeFakeCreateBusinessCanvasDto())
-  })
-
   it('Should throw if Answer Entity throws', async () => {
     const { sut } = makeSut()
     jest.spyOn(Answer, 'createMany').mockImplementationOnce(() => {
@@ -133,6 +144,23 @@ describe('CreateBusinessCanvas UseCase', () => {
     })
     const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call BusinessCanvasDataBuilder with correct values', async () => {
+    const { sut } = makeSut()
+    const createManySpy = jest.spyOn(BusinessCanvasDataBuilder, 'execute')
+    await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(createManySpy).toHaveBeenCalledWith({
+      userAnswers: makeFakeCreateBusinessCanvasDto().answers,
+      questions: makeFakeQuestionsModel()
+    })
+  })
+
+  it('Should call AddAnswer with correct values', async () => {
+    const { sut, addAnswerStub } = makeSut()
+    const performSpy = jest.spyOn(addAnswerStub, 'perform')
+    await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(performSpy).toHaveBeenCalledWith(makeFakeCreateBusinessCanvasDto())
   })
 
   it('Should return the same error as AddAnswer if it returns an error', async () => {
