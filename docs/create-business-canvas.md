@@ -44,7 +44,7 @@ Exemplo:
 - **questionId** (string): O ID da questão à qual a resposta está relacionada.
 - **alternativeId** (string, opcional): O ID da alternativa selecionada se a pergunta tiver alternativas.
 - **answer** (string, opcional): A resposta do usuário se a pergunta não tiver alternativas.
-- **alternativeId** e **answer** são opcionais, porém algum deve ser informado obrigatóriamente em cada resposta.
+- **alternativeId** e **answer** são opcionais, porém um deles deve ser informado obrigatóriamente em cada resposta.
 
 
 ## Caso de sucesso
@@ -68,21 +68,42 @@ Exemplo:
 Exemplo:
 ```json
 {
+  "name": "Escola de Inglês",
   "customerSegments": [
-    "Respostas 1."
+    "Respostas 1.",
     "Respostas 2."
   ],
-  "valueProposition": [
-    "Respostas 1."
+  "valuePropositions": [
+    "Respostas 1.",
     "Respostas 2.",
     "Respostas 3."
+  ],
+  "channels": [
+    "Respostas 1."
+  ],
+  "customerRelationships": [
+    "Respostas 1."
   ],
   "revenueStreams": [
     "Respostas 1."
   ],
+  "keyResources": [
+    "Respostas 1."
+  ],
+  "keyActivities": [
+    "Respostas 1."
+  ],
+  "keyPartnerships": [
+    "Respostas 1."
+  ],
+  "costStructure": [
+    "Respostas 1."
+  ]
 }
 ```
-- Os *Componentes* (***customerSegments***, ***valueProposition***, ***revenueStreams***) representam algumas das seções do Business Canvas.
+
+- **name** (string): O nome gerado baseado na descrição e tipo de negócio associado ao Business Canvas.
+- Os *Componentes* (***customerSegments***, ***valueProposition***, ***revenueStreams*** ...) representam algumas das seções do Business Canvas.
 - Cada seção contém um array de respostas correspondentes.
 
 ## Casos de Exceção
