@@ -1,6 +1,8 @@
 import type { IdModel } from '@/domain/models/output-models'
 import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
 import type { AddBusinessCanvasDto } from '@/domain/contracts'
+import type { AddBusinessCanvasRepo } from '@/interactions/contracts/db'
+import type { BusinessCanvasModel } from '@/domain/models/db-models'
 import { AddBusinessCanvasUseCase } from './add-business-canvas-usecase'
 
 const makeFakeAddBusinessCanvasDto = (): AddBusinessCanvasDto => ({
@@ -26,15 +28,26 @@ const makeIdBuilder = (): IdBuilder => {
   return new IdBuilderStub()
 }
 
+const makeAddBusinessCanvasRepo = (): AddBusinessCanvasRepo => {
+  class AddBusinessCanvasRepoStub implements AddBusinessCanvasRepo {
+    async add (dto: BusinessCanvasModel): Promise<void> {
+      await Promise.resolve()
+    }
+  }
+  return new AddBusinessCanvasRepoStub()
+}
+
 interface SutTypes {
   sut: AddBusinessCanvasUseCase
   idBuilderStub: IdBuilder
+  addBusinessCanvasRepoStub: AddBusinessCanvasRepo
 }
 
 const makeSut = (): SutTypes => {
   const idBuilderStub = makeIdBuilder()
-  const sut = new AddBusinessCanvasUseCase(idBuilderStub)
-  return { sut, idBuilderStub }
+  const addBusinessCanvasRepoStub = makeAddBusinessCanvasRepo()
+  const sut = new AddBusinessCanvasUseCase(idBuilderStub, addBusinessCanvasRepoStub)
+  return { sut, idBuilderStub, addBusinessCanvasRepoStub }
 }
 
 describe('AddBusinessCanvas UseCase', () => {
