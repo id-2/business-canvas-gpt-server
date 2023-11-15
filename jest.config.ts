@@ -23,7 +23,8 @@ const config: Config = {
     '@/(.*)': '<rootDir>/src/$1'
   },
   setupFiles:[
-    '<rootDir>/src/infra/cache/redis/helpers/test-env-vars/jest-set-env-vars.ts'
+    '<rootDir>/src/infra/cache/redis/helpers/test-env-vars/jest-set-env-vars.ts',
+    '<rootDir>/src/interactions/usecases/user/add-random-user/env-test.ts'
   ]
 }
 
