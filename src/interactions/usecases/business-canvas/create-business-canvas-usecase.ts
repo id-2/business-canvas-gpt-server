@@ -15,7 +15,10 @@ export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
     if (questions.length === 0) {
       throw new QuestionsNotFoundError()
     }
-    Answer.createMany({ userAnswers: dto.answers, questions })
+    const answerResult = Answer.createMany({ userAnswers: dto.answers, questions })
+    if (answerResult.isLeft()) {
+      return left(answerResult.value)
+    }
     const addAnswerResult = await this.addAnswer.perform(dto)
     if (addAnswerResult.isLeft()) {
       return left(addAnswerResult.value)
