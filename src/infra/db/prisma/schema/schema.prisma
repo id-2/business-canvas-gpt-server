@@ -37,14 +37,14 @@ model BusinessCanvas {
 model BusinessCanvasComponent {
   id String @id(map: "PK_BUSINESS_CANVAS_COMPONENT") @unique(map: "UQ_BUSINESS_CANVAS_COMPONENT_ID") @db.VarChar(150)
 
-  businessCanvasId String? @map("business_canvas_id") @db.VarChar(150)
-  componentId      String? @map("component_id") @db.VarChar(150)
+  businessCanvasId String?  @map("business_canvas_id") @db.VarChar(150)
+  componentName    String?  @map("component_name") @db.VarChar(150)
+  topics           String[] @db.VarChar(1000)
 
   BusinessCanvas BusinessCanvas? @relation(fields: [businessCanvasId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_BUSINESS_CANVAS_BUSINESS_CANVAS_COMPONENT")
-  Component      Component?      @relation(fields: [componentId], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "FK_COMPONENT_BUSINESS_CANVAS_COMPONENT")
-  Topic          Topic[]
+  Component      Component?      @relation(fields: [componentName], references: [name], onDelete: SetNull, onUpdate: NoAction, map: "FK_COMPONENT_BUSINESS_CANVAS_COMPONENT")
 
-  @@unique([businessCanvasId, componentId], map: "UQ_BUSINESS_CANVAS_COMPONENT_BUSINESS_CANVAS_ID_COMPONENT_ID")
+  @@unique([businessCanvasId, componentName], map: "UQ_BUSINESS_CANVAS_COMPONENT_BUSINESS_CANVAS_ID_COMPONENT_NAME")
   @@map("BUSINESS_CANVAS_COMPONENT")
 }
 
@@ -76,17 +76,6 @@ model Alternative {
   Question Question @relation(fields: [questionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_QUESTION_ALTERNATIVE")
 
   @@map("ALTERNATIVE")
-}
-
-model Topic {
-  id      String @id(map: "PK_TOPIC") @unique(map: "UQ_TOPIC_ID") @db.VarChar(150)
-  content String @db.VarChar(500)
-
-  businessCanvasComponentId String @map("business_canvas_component_id") @db.VarChar(150)
-
-  BusinessCanvasComponent BusinessCanvasComponent @relation(fields: [businessCanvasComponentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_BUSINESS_CANVAS_COMPONENT_TOPIC")
-
-  @@map("TOPIC")
 }
 
 model User {
