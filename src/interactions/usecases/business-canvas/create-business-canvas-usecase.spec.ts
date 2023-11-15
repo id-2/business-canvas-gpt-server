@@ -224,4 +224,14 @@ describe('CreateBusinessCanvas UseCase', () => {
     const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should call AddAnswer with random user id if userId not provided', async () => {
+    const { sut, addAnswerStub } = makeSut()
+    const performSpy = jest.spyOn(addAnswerStub, 'perform')
+    await sut.perform({ answers: makeFakeCreateBusinessCanvasDto().answers })
+    expect(performSpy).toHaveBeenCalledWith({
+      userId: 'any_random_user_id',
+      answers: makeFakeCreateBusinessCanvasDto().answers
+    })
+  })
 })
