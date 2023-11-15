@@ -1,4 +1,4 @@
-import type { AddAnswer, AddAnswerDto, AddAnswerRes, AddBusinessCanvas, AddBusinessCanvasDto, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
+import type { AddAnswer, AddAnswerDto, AddBusinessCanvas, AddBusinessCanvasDto, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
 import type { CreateBusinessCanvasApi, CreateBusinessCanvasApiDto } from '@/interactions/contracts/api'
 import type { BusinessCanvasOutputModel, IdModel } from '@/domain/models/output-models'
 import type { QuestionModel } from '@/domain/models/db-models'
@@ -100,8 +100,8 @@ const makeAddRandomUser = (): AddRandomUser => {
 
 const makeAddAnswer = (): AddAnswer => {
   class AddAnswerStub implements AddAnswer {
-    async perform (dto: AddAnswerDto): Promise<AddAnswerRes> {
-      return await Promise.resolve(right(null))
+    async perform (dto: AddAnswerDto): Promise<void> {
+      await Promise.resolve()
     }
   }
   return new AddAnswerStub()
@@ -239,15 +239,6 @@ describe('CreateBusinessCanvas UseCase', () => {
     const performSpy = jest.spyOn(addAnswerStub, 'perform')
     await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(performSpy).toHaveBeenCalledWith(makeFakeCreateBusinessCanvasDto())
-  })
-
-  it('Should return the same error as AddAnswer if it returns an error', async () => {
-    const { sut, addAnswerStub } = makeSut()
-    jest.spyOn(addAnswerStub, 'perform').mockReturnValueOnce(
-      Promise.resolve(left(new Error('any_message')))
-    )
-    const result = await sut.perform(makeFakeCreateBusinessCanvasDto())
-    expect(result.value).toEqual(new Error('any_message'))
   })
 
   it('Should throw if AddAnswer throws', async () => {
