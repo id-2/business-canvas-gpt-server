@@ -1,6 +1,6 @@
 import type { GenerateInputToCreateBusinessCanvasDto } from './generate-input-to-create-business-canvas'
 import { GenerateInputToCreateBusinessCanvas as sut } from './generate-input-to-create-business-canvas'
-import { TemplateForInputInPersonBusiness, TemplateForInputOnlineBusiness } from './input-templates'
+import { TemplateForInputInPersonBusiness, TemplateForInputOnlineBusiness } from '../input-templates'
 
 jest.mock('@/domain/processes/input-templates/input-in-person-business/template-for-input-in-person-business', () => ({
   TemplateForInputInPersonBusiness: {

@@ -1,5 +1,5 @@
-import type { InputToCreateBusinessCanvas } from '../models/output-models'
-import { TemplateForInputInPersonBusiness, TemplateForInputOnlineBusiness } from './input-templates'
+import type { InputToCreateBusinessCanvas } from '../../models/output-models'
+import { TemplateForInputInPersonBusiness, TemplateForInputOnlineBusiness } from '../input-templates'
 
 export interface GenerateInputToCreateBusinessCanvasDto {
   typeOfBusiness: string

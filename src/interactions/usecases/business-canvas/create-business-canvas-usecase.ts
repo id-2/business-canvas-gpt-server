@@ -4,7 +4,7 @@ import { QuestionsNotFoundError } from '@/domain/errors'
 import { left, right } from '@/shared/either'
 import { Answer } from '@/domain/entities/answer/answer'
 import { BusinessCanvasDataBuilder } from '@/domain/processes/business-canvas-data-builder/business-canvas-data-builder'
-import { GenerateInputToCreateBusinessCanvas } from '@/domain/processes/generate-input-to-create-business-canvas'
+import { GenerateInputToCreateBusinessCanvas } from '@/domain/processes/generate-input-to-create-business-canvas/generate-input-to-create-business-canvas'
 
 export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
   constructor (
