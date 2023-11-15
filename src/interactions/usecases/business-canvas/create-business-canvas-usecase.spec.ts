@@ -344,4 +344,12 @@ describe('CreateBusinessCanvas UseCase', () => {
     const result = await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(result.value).toEqual(makeFakeBusinessCanvasOutputModel())
   })
+
+  it('Should return BusinessCanvasOutputModel with userId if AddBusinessCanvas is a success and userId not provided in request', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform({ answers: makeFakeCreateBusinessCanvasDto().answers })
+    expect(result.value).toEqual({
+      userId: 'any_random_user_id', ...makeFakeBusinessCanvasOutputModel()
+    })
+  })
 })
