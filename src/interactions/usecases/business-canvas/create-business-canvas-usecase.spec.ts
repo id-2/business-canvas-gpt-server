@@ -156,6 +156,15 @@ describe('CreateBusinessCanvas UseCase', () => {
     })
   })
 
+  it('Should throw if BusinessCanvasDataBuilder throws', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(BusinessCanvasDataBuilder, 'execute').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
+    await expect(promise).rejects.toThrow()
+  })
+
   it('Should call AddAnswer with correct values', async () => {
     const { sut, addAnswerStub } = makeSut()
     const performSpy = jest.spyOn(addAnswerStub, 'perform')
