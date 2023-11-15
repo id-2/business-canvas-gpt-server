@@ -2,12 +2,13 @@ import type { AddAnswer, AddAnswerDto, AddAnswerRes, AddRandomUser, CreateBusine
 import type { QuestionModel } from '@/domain/models/db-models'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import type { CreateManyAnswersDto } from '@/domain/entities/answer/answer-dto'
-import type { IdModel } from '@/domain/models/output-models'
+import type { BusinessCanvasOutputModel, IdModel } from '@/domain/models/output-models'
 import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
 import { QuestionsNotFoundError } from '@/domain/errors'
 import { Answer } from '@/domain/entities/answer/answer'
 import { BusinessCanvasDataBuilder, GenerateInputToCreateBusinessCanvas, type BusinessCanvasDataBuilderRes, type BusinessCanvasDataBuilderDto, type GenerateInputToCreateBusinessCanvasDto } from '@/domain/processes'
+import type { CreateBusinessCanvasApi, CreateBusinessCanvasApiDto } from '@/interactions/contracts/api'
 
 jest.mock('@/domain/entities/answer/answer', () => ({
   Answer: {
@@ -66,6 +67,18 @@ const makeFakeBusinessCanvasDataBuilderRes = (): BusinessCanvasDataBuilderRes =>
   locationOrTargetAudience: 'location_answer'
 })
 
+const makeFakeBusinessCanvasOutputModel = (): BusinessCanvasOutputModel => ({
+  customerSegments: ['any_customer_segments'],
+  valuePropositions: ['any_value_propositions'],
+  channels: ['any_channels'],
+  customerRelationships: ['any_customer_relationships'],
+  revenueStreams: ['any_revenue_streams'],
+  keyResources: ['any_key_resources'],
+  keyActivities: ['any_key_activities'],
+  keyPartnerships: ['any_key_partnerships'],
+  costStructure: ['any_cost_structure']
+})
+
 const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
   class FetchAllQuestionsRepoStub implements FetchAllQuestionsRepo {
     async fetchAll (): Promise<QuestionModel[]> {
@@ -93,22 +106,40 @@ const makeAddAnswer = (): AddAnswer => {
   return new AddAnswerStub()
 }
 
+const makeCreateBusinessCanvasApi = (): CreateBusinessCanvasApi => {
+  class CreateBusinessCanvasApiStub implements CreateBusinessCanvasApi {
+    async create (dto: CreateBusinessCanvasApiDto): Promise<BusinessCanvasOutputModel> {
+      return await Promise.resolve(makeFakeBusinessCanvasOutputModel())
+    }
+  }
+  return new CreateBusinessCanvasApiStub()
+}
+
 interface SutTypes {
   sut: CreateBusinessCanvas
   fetchAllQuestionsRepoStub: FetchAllQuestionsRepo
   addRandomUserStub: AddRandomUser
   addAnswerStub: AddAnswer
+  createBusinessCanvasApiStub: CreateBusinessCanvasApi
 }
 
 const makeSut = (): SutTypes => {
   const fetchAllQuestionsRepoStub = makeFetchAllQuestionsRepo()
   const addRandomUserStub = makeAddRandomUser()
   const addAnswerStub = makeAddAnswer()
+  const createBusinessCanvasApiStub = makeCreateBusinessCanvasApi()
   const sut = new CreateBusinessCanvasUseCase(
-    fetchAllQuestionsRepoStub, addRandomUserStub, addAnswerStub
+    fetchAllQuestionsRepoStub,
+    addRandomUserStub,
+    addAnswerStub,
+    createBusinessCanvasApiStub
   )
   return {
-    sut, fetchAllQuestionsRepoStub, addRandomUserStub, addAnswerStub
+    sut,
+    fetchAllQuestionsRepoStub,
+    addRandomUserStub,
+    addAnswerStub,
+    createBusinessCanvasApiStub
   }
 }
 
@@ -257,5 +288,12 @@ describe('CreateBusinessCanvas UseCase', () => {
     })
     const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call CreateBusinessCanvasApi with correct input', async () => {
+    const { sut, createBusinessCanvasApiStub } = makeSut()
+    const createSpy = jest.spyOn(createBusinessCanvasApiStub, 'create')
+    await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(createSpy).toHaveBeenCalledWith({ input: 'any_input_text' })
   })
 })
