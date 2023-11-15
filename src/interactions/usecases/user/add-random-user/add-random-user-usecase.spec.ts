@@ -29,4 +29,13 @@ describe('AddRandomUser UseCase', () => {
     await sut.perform()
     expect(hashingSpy).toHaveBeenCalledWith('any_password')
   })
+
+  it('Should throw if Hasher throws', async () => {
+    const { sut, hasherStub } = makeSut()
+    jest.spyOn(hasherStub, 'hashing').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
 })
