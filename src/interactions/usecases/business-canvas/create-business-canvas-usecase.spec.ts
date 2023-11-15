@@ -1,16 +1,16 @@
 import type { AddAnswer, AddAnswerDto, AddAnswerRes, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
 import type { QuestionModel } from '@/domain/models/db-models'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
+import type { CreateManyAnswersDto } from '@/domain/entities/answer/answer-dto'
 import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
 import { QuestionsNotFoundError } from '@/domain/errors'
-import type { CreateManyAnswersDto } from '@/domain/entities/answer/answer-dto'
 import { Answer } from '@/domain/entities/answer/answer'
 
 jest.mock('@/domain/entities/answer/answer', () => ({
   Answer: {
     createMany: jest.fn((dto: CreateManyAnswersDto) => (
-      makeFakeCreateBusinessCanvasDto().answers
+      right(makeFakeCreateBusinessCanvasDto().answers)
     ))
   }
 }))
@@ -108,6 +108,15 @@ describe('CreateBusinessCanvas UseCase', () => {
       userAnswers: makeFakeCreateBusinessCanvasDto().answers,
       questions: makeFakeQuestions()
     })
+  })
+
+  it('Should return a Error if create many Answers fails', async () => {
+    const { sut } = makeSut()
+    jest.spyOn(Answer, 'createMany').mockReturnValueOnce(
+      left(new Error('any_message'))
+    )
+    const result = await sut.perform(makeFakeCreateBusinessCanvasDto())
+    expect(result.value).toEqual(new Error('any_message'))
   })
 
   it('Should call AddAnswer with correct values', async () => {
