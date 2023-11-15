@@ -1,6 +1,6 @@
 import type { GenerateInputToCreateBusinessCanvasDto } from './generate-input-to-create-business-canvas'
 import { GenerateInputToCreateBusinessCanvas as sut } from './generate-input-to-create-business-canvas'
-import { TemplateForInputWithLocation } from './input-template/template-for-input-with-location'
+import { TemplateForInputWithLocation } from './input-templates/input-with-location/template-for-input-with-location'
 
 const makeFakeGenerateInputDto = (): GenerateInputToCreateBusinessCanvasDto => ({
   typeOfBusiness: 'in_person',
