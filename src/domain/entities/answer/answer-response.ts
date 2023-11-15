@@ -12,4 +12,7 @@ AlternativeIsNotAllowedError |
 InvalidAlternativeIdError
 
 export type AnswerRes = Either<AnswerErrors, Answer>
+
+export type ManyAnswersRes = Either<AnswerErrors, Answer[]>
+
 export type ValidateRes = Either<AnswerErrors, null>

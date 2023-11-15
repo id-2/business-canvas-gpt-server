@@ -10,3 +10,8 @@ export interface AnswerDto {
   userAnswer: UserAnswer
   questions: QuestionModel[]
 }
+
+export interface CreateManyAnswersDto {
+  userAnswers: UserAnswer[]
+  questions: QuestionModel[]
+}

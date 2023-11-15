@@ -1,6 +1,6 @@
 import { AnswerAndAlternativeNotProvidedError, InvalidQuestionIdError, InvalidAnswerError, AnswerIsNotAllowedError, MixedAnswerError, AlternativeIsNotAllowedError, InvalidAlternativeIdError } from './errors'
-import type { AnswerDto } from './answer-dto'
-import type { AnswerRes, ValidateRes } from './answer-response'
+import type { AnswerDto, CreateManyAnswersDto } from './answer-dto'
+import type { AnswerRes, ManyAnswersRes, ValidateRes } from './answer-response'
 import type { AnswerEntityModel } from './answer-entity-model'
 import { right, left } from '@/shared/either'
 
@@ -52,5 +52,13 @@ export class Answer {
       }
     }
     return right(null)
+  }
+
+  static createMany (dto: CreateManyAnswersDto): ManyAnswersRes {
+    const { userAnswers, questions } = dto
+    for (const userAnswer of userAnswers) {
+      this.create({ userAnswer, questions })
+    }
+    return right([new Answer({ questionId: '' })])
   }
 }
