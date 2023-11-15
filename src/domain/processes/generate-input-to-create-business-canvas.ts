@@ -10,8 +10,10 @@ export interface GenerateInputToCreateBusinessCanvasDto {
 export class GenerateInputToCreateBusinessCanvas {
   static execute (dto: GenerateInputToCreateBusinessCanvasDto): InputToCreateBusinessCanvas {
     if (dto.locationOrTargetAudience) {
-      TemplateForInputInPersonBusiness.create()
-      return { text: '' }
+      let { input } = TemplateForInputInPersonBusiness.create()
+      input = input.replace('{{description}}', dto.businessDescription)
+      input = input.replace('{{location}}', dto.locationOrTargetAudience)
+      return { text: input }
     }
     TemplateForInputOnlineBusiness.create()
     return { text: '' }
