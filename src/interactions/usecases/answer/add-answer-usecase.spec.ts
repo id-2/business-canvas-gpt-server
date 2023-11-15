@@ -71,4 +71,13 @@ describe('AddAnswer UseCase', () => {
       answers: makeFakeAddAnswerDto().answers
     })
   })
+
+  it('Should throw if AddAnswerRepo throws', async () => {
+    const { sut, addAnswerRepoStub } = makeSut()
+    jest.spyOn(addAnswerRepoStub, 'add').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeAddAnswerDto())
+    await expect(promise).rejects.toThrow()
+  })
 })
