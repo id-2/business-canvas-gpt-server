@@ -1,6 +1,6 @@
 import type { Either } from '@/shared/either'
 import type { BusinessCanvasOutputModel } from '@/domain/models/output-models'
-import type { InvalidAlternativeIdError, InvalidAnswerError, InvalidQuestionIdError } from '@/domain/errors'
+import type { AnswerErrors } from '@/domain/entities/answer/answer-response'
 
 export interface BusinessCanvasAnswer {
   questionId: string
@@ -13,9 +13,7 @@ export interface CreateBusinessCanvasDto {
   answers: BusinessCanvasAnswer[]
 }
 
-export type CreateBusinessCanvasRes = Either<
-InvalidQuestionIdError | InvalidAnswerError | InvalidAlternativeIdError, BusinessCanvasOutputModel
->
+export type CreateBusinessCanvasRes = Either<AnswerErrors, BusinessCanvasOutputModel>
 
 export interface CreateBusinessCanvas {
   perform: (dto: CreateBusinessCanvasDto) => Promise<CreateBusinessCanvasRes>
