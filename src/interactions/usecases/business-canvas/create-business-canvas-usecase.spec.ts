@@ -329,4 +329,13 @@ describe('CreateBusinessCanvas UseCase', () => {
       businessCanvasData: makeFakeBusinessCanvasOutputModel()
     })
   })
+
+  it('Should throw if AddBusinessCanvas throws', async () => {
+    const { sut, addBusinessCanvasStub } = makeSut()
+    jest.spyOn(addBusinessCanvasStub, 'perform').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
+    await expect(promise).rejects.toThrow()
+  })
 })
