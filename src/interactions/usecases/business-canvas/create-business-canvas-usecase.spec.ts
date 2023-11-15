@@ -1,7 +1,8 @@
-import type { AddAnswer, AddAnswerDto, AddAnswerRes, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
+import type { AddAnswer, AddAnswerDto, AddAnswerRes, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
 import type { QuestionModel } from '@/domain/models/db-models'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import type { CreateManyAnswersDto } from '@/domain/entities/answer/answer-dto'
+import type { IdModel } from '@/domain/models/output-models'
 import { CreateBusinessCanvasUseCase } from './create-business-canvas-usecase'
 import { left, right } from '@/shared/either'
 import { QuestionsNotFoundError } from '@/domain/errors'
@@ -66,6 +67,15 @@ const makeFetchAllQuestionsRepo = (): FetchAllQuestionsRepo => {
   return new FetchAllQuestionsRepoStub()
 }
 
+const makeAddRandomUser = (): AddRandomUser => {
+  class AddRandomUserStub implements AddRandomUser {
+    async perform (): Promise<IdModel> {
+      return await Promise.resolve({ id: 'any_random_user_id' })
+    }
+  }
+  return new AddRandomUserStub()
+}
+
 const makeAddAnswer = (): AddAnswer => {
   class AddAnswerStub implements AddAnswer {
     async perform (dto: AddAnswerDto): Promise<AddAnswerRes> {
@@ -78,17 +88,19 @@ const makeAddAnswer = (): AddAnswer => {
 interface SutTypes {
   sut: CreateBusinessCanvas
   fetchAllQuestionsRepoStub: FetchAllQuestionsRepo
+  addRandomUserStub: AddRandomUser
   addAnswerStub: AddAnswer
 }
 
 const makeSut = (): SutTypes => {
   const fetchAllQuestionsRepoStub = makeFetchAllQuestionsRepo()
+  const addRandomUserStub = makeAddRandomUser()
   const addAnswerStub = makeAddAnswer()
   const sut = new CreateBusinessCanvasUseCase(
-    fetchAllQuestionsRepoStub, addAnswerStub
+    fetchAllQuestionsRepoStub, addRandomUserStub, addAnswerStub
   )
   return {
-    sut, fetchAllQuestionsRepoStub, addAnswerStub
+    sut, fetchAllQuestionsRepoStub, addRandomUserStub, addAnswerStub
   }
 }
 
@@ -163,6 +175,13 @@ describe('CreateBusinessCanvas UseCase', () => {
     })
     const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call AddRandomUser if userId not provided', async () => {
+    const { sut, addRandomUserStub } = makeSut()
+    const performSpy = jest.spyOn(addRandomUserStub, 'perform')
+    await sut.perform({ answers: makeFakeCreateBusinessCanvasDto().answers })
+    expect(performSpy).toHaveBeenCalled()
   })
 
   it('Should call AddAnswer with correct values', async () => {
