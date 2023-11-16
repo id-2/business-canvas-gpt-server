@@ -1,13 +1,4 @@
-export type ComponentName =
-  | 'customerSegments'
-  | 'valuePropositions'
-  | 'channels'
-  | 'customerRelationships'
-  | 'revenueStreams'
-  | 'keyResources'
-  | 'keyActivities'
-  | 'keyPartnerships'
-  | 'costStructure'
+import type { ComponentName } from '@/domain/entities/component'
 
 export interface ComponentModel {
   id: string
