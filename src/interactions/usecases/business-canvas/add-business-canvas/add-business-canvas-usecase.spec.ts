@@ -4,6 +4,7 @@ import type { AddBusinessCanvasDto } from '@/domain/contracts'
 import type { AddBusinessCanvasRepo } from '@/interactions/contracts/db'
 import type { BusinessCanvasModel } from '@/domain/models/db-models'
 import { AddBusinessCanvasUseCase } from './add-business-canvas-usecase'
+import MockDate from 'mockdate'
 
 const makeFakeAddBusinessCanvasDto = (): AddBusinessCanvasDto => ({
   userId: 'any_user_id',
@@ -18,6 +19,17 @@ const makeFakeAddBusinessCanvasDto = (): AddBusinessCanvasDto => ({
   keyPartnerships: ['any_key_partnerships'],
   costStructure: ['any_cost_structure']
 })
+
+const makeFakeBusinessCanvasModel = (): BusinessCanvasModel => {
+  const { userId, name, ...components } = makeFakeAddBusinessCanvasDto()
+  return {
+    id: 'any_id',
+    createdAt: new Date(),
+    name,
+    userId,
+    components
+  }
+}
 
 const makeIdBuilder = (): IdBuilder => {
   class IdBuilderStub implements IdBuilder {
@@ -51,6 +63,14 @@ const makeSut = (): SutTypes => {
 }
 
 describe('AddBusinessCanvas UseCase', () => {
+  beforeAll(() => {
+    MockDate.set(new Date())
+  })
+
+  afterAll(() => {
+    MockDate.reset()
+  })
+
   it('Should call IdBuilder', async () => {
     const { sut, idBuilderStub } = makeSut()
     const buildSpy = jest.spyOn(idBuilderStub, 'build')
@@ -65,5 +85,12 @@ describe('AddBusinessCanvas UseCase', () => {
     })
     const promise = sut.perform(makeFakeAddBusinessCanvasDto())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call AddBusinessCanvasRepo with correct values', async () => {
+    const { sut, addBusinessCanvasRepoStub } = makeSut()
+    const addSpy = jest.spyOn(addBusinessCanvasRepoStub, 'add')
+    await sut.perform(makeFakeAddBusinessCanvasDto())
+    expect(addSpy).toHaveBeenCalledWith(makeFakeBusinessCanvasModel())
   })
 })
