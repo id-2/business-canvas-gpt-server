@@ -1,5 +1,5 @@
 import type { AddManyAnswersRepoDto } from '@/interactions/contracts/db'
-import type { PrismaClient } from '@prisma/client'
+import type { Prisma, PrismaClient } from '@prisma/client'
 import type { AlternativeModel, QuestionModel, UserModel } from '@/domain/models/db-models'
 import { PrismockClient } from 'prismock'
 import { PrismaHelper } from '../helpers/prisma-helper'
@@ -51,6 +51,22 @@ const makeFakeAddManyAnswersRepoDto = (): AddManyAnswersRepoDto => ({
   }]
 })
 
+const makeFakeAnswerCreateManyInput = (): Prisma.AnswerCreateManyInput[] => [{
+  id: 'any_answer_id',
+  userId: 'any_user_id',
+  createdAt,
+  description: null,
+  alternativeId: 'any_alternative_id',
+  questionId: 'any_question_id'
+}, {
+  id: 'other_answer_id',
+  userId: 'any_user_id',
+  createdAt,
+  alternativeId: null,
+  description: 'any_answer_description',
+  questionId: 'other_question_id'
+}]
+
 let prismock: PrismaClient
 
 describe('AnswerPrisma Repo', () => {
@@ -84,20 +100,22 @@ describe('AnswerPrisma Repo', () => {
     const sut = new AnswerPrismaRepo()
     await sut.add(makeFakeAddManyAnswersRepoDto())
     const answers = await prismock.answer.findMany()
-    expect(answers).toEqual([{
-      id: 'any_answer_id',
-      userId: 'any_user_id',
-      createdAt,
-      description: null,
-      alternativeId: 'any_alternative_id',
-      questionId: 'any_question_id'
-    }, {
-      id: 'other_answer_id',
-      userId: 'any_user_id',
-      createdAt,
-      alternativeId: null,
-      description: 'any_answer_description',
-      questionId: 'other_question_id'
-    }])
+    expect(answers).toEqual(makeFakeAnswerCreateManyInput())
+  })
+
+  it('Should relate the answers to the user', async () => {
+    await prismock.user.create({ data: makeFakeUserModel() })
+    const data: QuestionModel[] = makeFakeQuestionModels().map(
+      ({ id, content }) => ({ id, content })
+    )
+    await prismock.question.createMany({ data })
+    await prismock.alternative.createMany({ data: makeFakeAlternativeModels() })
+    const sut = new AnswerPrismaRepo()
+    await sut.add(makeFakeAddManyAnswersRepoDto())
+    const userAnswers = await prismock.user.findUnique({
+      where: { id: 'any_user_id' },
+      select: { Answer: true }
+    })
+    expect(userAnswers).toEqual({ Answer: makeFakeAnswerCreateManyInput() })
   })
 })
