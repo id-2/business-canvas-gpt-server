@@ -1,9 +1,9 @@
 import type { ComponentModel } from '@/domain/models/db-models'
 import type { AddAllComponentsRepo } from '@/interactions/contracts/db'
+import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
+import type { IdModel } from '@/domain/models/output-models'
 import { Component, type ComponentName } from '@/domain/entities/component'
 import { AddAllComponentsUseCase } from './add-all-componetns-usecase'
-import { type IdBuilder } from '@/interactions/contracts/id/id-builder'
-import { type IdModel } from '@/domain/models/output-models'
 
 jest.mock('@/domain/entities/question/question', () => ({
   Component: {
@@ -84,6 +84,15 @@ describe('AddAllComponents UseCase', () => {
     const buildSpy = jest.spyOn(idBuilderSpy, 'build')
     await sut.perform()
     expect(buildSpy).toHaveBeenCalledTimes(9)
+  })
+
+  it('Should throw if IdBuilder throws', async () => {
+    const { sut, idBuilderSpy } = makeSut()
+    jest.spyOn(idBuilderSpy, 'build').mockImplementationOnce(() => {
+      throw new Error('any_message')
+    })
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow(Error('any_message'))
   })
 
   it('Should call AddAllComponentsRepo with correct values', async () => {
