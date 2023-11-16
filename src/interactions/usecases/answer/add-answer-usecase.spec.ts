@@ -1,22 +1,47 @@
 import type { IdModel } from '@/domain/models/output-models'
 import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
 import type { AddAnswerDto } from '@/domain/contracts'
+import type { AddAnswerRepo, AddAnswerRepoDto } from '@/interactions/contracts/db'
 import { AddAnswerUseCase } from './add-answer-usecase'
-import { type AddAnswerRepo, type AddAnswerRepoDto } from '@/interactions/contracts/db'
+import MockeDate from 'mockdate'
 
 const makeFakeAddAnswerDto = (): AddAnswerDto => ({
   userId: 'any_user_id',
   answers: [
-    { questionId: 'type_question_id', alternativeId: 'in_person_alternative_id' },
-    { questionId: 'location_question_id', answer: 'location_answer' },
-    { questionId: 'description_question_id', answer: 'description_answer' }
+    { questionId: 'any_question_id', alternativeId: 'any_alternative_id' },
+    { questionId: 'other_question_id', answer: 'any_answer' },
+    { questionId: 'another_question_id', answer: 'other_answer' }
   ]
+})
+
+const date = new Date()
+
+const makeFakeAddAnswerRepoDto = (): AddAnswerRepoDto => ({
+  userId: 'any_user_id',
+  answers: [{
+    id: 'any_id_1',
+    createdAt: date,
+    questionId: 'any_question_id',
+    alternativeId: 'any_alternative_id'
+  }, {
+    id: 'any_id_2',
+    createdAt: date,
+    questionId: 'other_question_id',
+    description: 'any_answer'
+  }, {
+    id: 'any_id_3',
+    createdAt: date,
+    questionId: 'another_question_id',
+    description: 'other_answer'
+  }]
 })
 
 const makeIdBuilder = (): IdBuilder => {
   class IdBuilderStub implements IdBuilder {
+    private callsCount = 0
     build (): IdModel {
-      return { id: 'any_id' }
+      this.callsCount++
+      return { id: `any_id_${this.callsCount}` }
     }
   }
   return new IdBuilderStub()
@@ -24,7 +49,7 @@ const makeIdBuilder = (): IdBuilder => {
 
 const makeAddAnswerRepo = (): AddAnswerRepo => {
   class AddAnswerRepoStub implements AddAnswerRepo {
-    async add (dto: AddAnswerRepoDto): Promise<void> {
+    async add (data: AddAnswerRepoDto): Promise<void> {
       await Promise.resolve()
     }
   }
@@ -45,6 +70,14 @@ const makeSut = (): SutTypes => {
 }
 
 describe('AddAnswer UseCase', () => {
+  beforeAll(() => {
+    MockeDate.set(date)
+  })
+
+  afterAll(() => {
+    MockeDate.reset()
+  })
+
   it('Should call IdBuilder', async () => {
     const { sut, idBuilderStub } = makeSut()
     const buildSpy = jest.spyOn(idBuilderStub, 'build')
@@ -65,11 +98,7 @@ describe('AddAnswer UseCase', () => {
     const { sut, addAnswerRepoStub } = makeSut()
     const addSpy = jest.spyOn(addAnswerRepoStub, 'add')
     await sut.perform(makeFakeAddAnswerDto())
-    expect(addSpy).toHaveBeenCalledWith({
-      id: 'any_id',
-      userId: 'any_user_id',
-      answers: makeFakeAddAnswerDto().answers
-    })
+    expect(addSpy).toHaveBeenCalledWith(makeFakeAddAnswerRepoDto())
   })
 
   it('Should throw if AddAnswerRepo throws', async () => {
