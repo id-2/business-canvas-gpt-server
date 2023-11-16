@@ -1,4 +1,4 @@
-import type { BusinessCanvasModel, UserModel } from '@/domain/models/db-models'
+import type { BusinessCanvasModel, ComponentModel, UserModel } from '@/domain/models/db-models'
 import type { PrismaClient } from '@prisma/client'
 import { PrismockClient } from 'prismock'
 import { PrismaHelper } from '../helpers/prisma-helper'
@@ -16,6 +16,18 @@ const makeFakeUserModel = (): UserModel => ({
   createdAt,
   updatedAt: new Date()
 })
+
+const makeFakeComponentModels = (): ComponentModel[] => ([
+  { id: 'any_id_1', name: 'customerSegments' },
+  { id: 'any_id_2', name: 'valuePropositions' },
+  { id: 'any_id_3', name: 'channels' },
+  { id: 'any_id_4', name: 'customerRelationships' },
+  { id: 'any_id_5', name: 'revenueStreams' },
+  { id: 'any_id_6', name: 'keyResources' },
+  { id: 'any_id_7', name: 'keyActivities' },
+  { id: 'any_id_8', name: 'keyPartnerships' },
+  { id: 'any_id_9', name: 'costStructure' }
+])
 
 const makeFakeBusinessCanvasModel = (): BusinessCanvasModel => {
   return {
@@ -62,6 +74,7 @@ describe('BusinessCanvasPrisma Repo', () => {
 
   it('Should add BusinessCanvas to an User on success', async () => {
     await prismock.user.create({ data: makeFakeUserModel() })
+    await prismock.component.createMany({ data: makeFakeComponentModels() })
     const sut = new BusinessCanvasPrismaRepo()
     await sut.add(makeFakeBusinessCanvasModel())
     const businessCanvas = await prismock.businessCanvas.findUnique({
@@ -72,6 +85,25 @@ describe('BusinessCanvasPrisma Repo', () => {
       name: 'any_business_canvas_name',
       createdAt,
       userId: 'any_user_id'
+    })
+  })
+
+  it('Should relate the BusinessCanvas to the User', async () => {
+    await prismock.user.create({ data: makeFakeUserModel() })
+    await prismock.component.createMany({ data: makeFakeComponentModels() })
+    const sut = new BusinessCanvasPrismaRepo()
+    await sut.add(makeFakeBusinessCanvasModel())
+    const businessCanvas = await prismock.user.findUnique({
+      where: { id: 'any_user_id' },
+      select: { BusinessCanvas: true }
+    })
+    expect(businessCanvas).toEqual({
+      BusinessCanvas: [{
+        id: 'any_id',
+        name: 'any_business_canvas_name',
+        createdAt,
+        userId: 'any_user_id'
+      }]
     })
   })
 })
