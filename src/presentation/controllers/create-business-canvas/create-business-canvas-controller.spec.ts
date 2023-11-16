@@ -1,11 +1,16 @@
+import type { CreateBusinessCanvas, CreateBusinessCanvasDto, CreateBusinessCanvasRes } from '@/domain/contracts'
 import type { Validation } from '@/presentation/contracts/validation'
 import type { HttpRequest } from '@/presentation/http/http'
+import type { BusinessCanvasApiModel } from '@/domain/models/output-models'
 import { right, type Either, left } from '@/shared/either'
 import { CreateBusinessCanvasController } from './create-business-canvas-controller'
 import { badRequest, serverError } from '@/presentation/helpers/http/http-helpers'
 import { ServerError } from '@/presentation/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
+  headers: {
+    userId: 'any_user_id'
+  },
   body: [{
     questionId: 'any_question_id',
     answer: 'any_answer'
@@ -18,6 +23,19 @@ const makeFakeRequest = (): HttpRequest => ({
   }]
 })
 
+const makeFakeBusinessCanvasApiModel = (): BusinessCanvasApiModel => ({
+  name: 'any_business_canvas_name',
+  customerSegments: ['any_customer_segments'],
+  valuePropositions: ['any_value_propositions'],
+  channels: ['any_channels'],
+  customerRelationships: ['any_customer_relationships'],
+  revenueStreams: ['any_revenue_streams'],
+  keyResources: ['any_key_resources'],
+  keyActivities: ['any_key_activities'],
+  keyPartnerships: ['any_key_partnerships'],
+  costStructure: ['any_cost_structure']
+})
+
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
     validate (input: any): Either<Error, null> {
@@ -27,15 +45,26 @@ const makeValidation = (): Validation => {
   return new ValidationStub()
 }
 
+const makeCreateBusinessCanvas = (): CreateBusinessCanvas => {
+  class CreateBusinessCanvasStub implements CreateBusinessCanvas {
+    async perform (dto: CreateBusinessCanvasDto): Promise<CreateBusinessCanvasRes> {
+      return await Promise.resolve(right(makeFakeBusinessCanvasApiModel()))
+    }
+  }
+  return new CreateBusinessCanvasStub()
+}
+
 interface SutTypes {
   sut: CreateBusinessCanvasController
   validationStub: Validation
+  createBusinessCanvasStub: CreateBusinessCanvas
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidation()
-  const sut = new CreateBusinessCanvasController(validationStub)
-  return { sut, validationStub }
+  const createBusinessCanvasStub = makeCreateBusinessCanvas()
+  const sut = new CreateBusinessCanvasController(validationStub, createBusinessCanvasStub)
+  return { sut, validationStub, createBusinessCanvasStub }
 }
 
 describe('CreateBusinessCanvas Controller', () => {
@@ -64,5 +93,14 @@ describe('CreateBusinessCanvas Controller', () => {
     const error = new Error()
     error.stack = 'any_stack'
     expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
+  })
+
+  it('Should call CreateBusinessCanvas with correct values', async () => {
+    const { sut, createBusinessCanvasStub } = makeSut()
+    const performSpy = jest.spyOn(createBusinessCanvasStub, 'perform')
+    await sut.handle(makeFakeRequest())
+    expect(performSpy).toHaveBeenCalledWith({
+      userId: 'any_user_id', answers: makeFakeRequest().body
+    })
   })
 })
