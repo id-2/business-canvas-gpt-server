@@ -101,4 +101,13 @@ describe('AddAllComponents UseCase', () => {
     await sut.perform()
     expect(addAllSpy).toHaveBeenCalledWith(makeFakeComponentModels())
   })
+
+  it('Should throw if AddAllComponentsRepo throws', async () => {
+    const { sut, addAllComponentsRepoStub } = makeSut()
+    jest.spyOn(addAllComponentsRepoStub, 'addAll').mockReturnValueOnce(
+      Promise.reject(new Error('any_message'))
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow(Error('any_message'))
+  })
 })
