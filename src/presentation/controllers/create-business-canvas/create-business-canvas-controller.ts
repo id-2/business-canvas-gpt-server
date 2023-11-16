@@ -17,7 +17,7 @@ export class CreateBusinessCanvasController implements Controller {
       }
       const { userId } = httpRequest.headers
       await this.createBusinessCanvas.perform({
-        userId, answers: httpRequest.body
+        ...(userId && { userId }), answers: httpRequest.body
       })
       return { statusCode: 0, body: '' }
     } catch (error: any) {
