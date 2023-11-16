@@ -1,7 +1,7 @@
 import type { Controller, Validation } from '@/presentation/contracts'
 import type { HttpRequest, HttpResponse } from '@/presentation/http/http'
 import type { CreateBusinessCanvas } from '@/domain/contracts'
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helpers'
+import { badRequest, created, serverError } from '@/presentation/helpers/http/http-helpers'
 
 export class CreateBusinessCanvasController implements Controller {
   constructor (
@@ -22,7 +22,7 @@ export class CreateBusinessCanvasController implements Controller {
       if (createBusinessCanvasResult.isLeft()) {
         return badRequest(createBusinessCanvasResult.value)
       }
-      return { statusCode: 0, body: '' }
+      return created(createBusinessCanvasResult.value)
     } catch (error: any) {
       return serverError(error)
     }
