@@ -9,6 +9,10 @@ export class AddBusinessCanvasUseCase implements AddBusinessCanvas {
   ) {}
 
   async perform (dto: AddBusinessCanvasDto): Promise<void> {
-    this.idBuilder.build()
+    const { name, userId, ...components } = dto
+    const { id } = this.idBuilder.build()
+    await this.addBusinessCanvasRepo.add({
+      id, name, userId, createdAt: new Date(), components
+    })
   }
 }
