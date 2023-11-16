@@ -111,7 +111,16 @@ describe('CreateBusinessCanvas Controller', () => {
     expect(performSpy).toHaveBeenCalledWith({ answers: makeFakeRequest().body })
   })
 
-  it('Should return 500 if AddUser throws', async () => {
+  it('Should return 400 if CreateBusinessCanvas returns an error', async () => {
+    const { sut, createBusinessCanvasStub } = makeSut()
+    jest.spyOn(createBusinessCanvasStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new Error('any_message')))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
+
+  it('Should return 500 if CreateBusinessCanvas throws', async () => {
     const { sut, createBusinessCanvasStub } = makeSut()
     jest.spyOn(createBusinessCanvasStub, 'perform').mockImplementationOnce(() => {
       throw new Error()
