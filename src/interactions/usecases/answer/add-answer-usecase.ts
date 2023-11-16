@@ -1,4 +1,5 @@
 import type { AddAnswer, AddAnswerDto } from '@/domain/contracts'
+import type { AnswerModel } from '@/domain/models/db-models'
 import type { AddAnswerRepo } from '@/interactions/contracts/db'
 import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
 
@@ -9,7 +10,20 @@ export class AddAnswerUseCase implements AddAnswer {
   ) {}
 
   async perform (dto: AddAnswerDto): Promise<void> {
-    const { id } = this.idBuilder.build()
-    await this.addAnswerRepo.add({ id, ...dto })
+    const { userId } = dto
+    const answers: Array<Omit<AnswerModel, 'userId'>> = []
+    const createdAt = new Date()
+    for (const response of dto.answers) {
+      const { questionId, alternativeId, answer } = response
+      const { id } = this.idBuilder.build()
+      answers.push({
+        id,
+        createdAt,
+        questionId,
+        ...(alternativeId && { alternativeId }),
+        ...(answer && { description: answer })
+      })
+    }
+    await this.addAnswerRepo.add({ userId, answers })
   }
 }

@@ -1,9 +1,8 @@
-import type { BusinessCanvasAnswer } from '@/domain/contracts'
+import type { AnswerModel } from '@/domain/models/db-models'
 
 export interface AddAnswerRepoDto {
-  id: string
   userId: string
-  answers: BusinessCanvasAnswer[]
+  answers: Array<Omit<AnswerModel, 'userId'>>
 }
 
 export interface AddAnswerRepo {
