@@ -16,9 +16,12 @@ export class CreateBusinessCanvasController implements Controller {
         return badRequest(validationResult.value)
       }
       const { userId } = httpRequest.headers
-      await this.createBusinessCanvas.perform({
+      const createBusinessCanvasResult = await this.createBusinessCanvas.perform({
         ...(userId && { userId }), answers: httpRequest.body
       })
+      if (createBusinessCanvasResult.isLeft()) {
+        return badRequest(createBusinessCanvasResult.value)
+      }
       return { statusCode: 0, body: '' }
     } catch (error: any) {
       return serverError(error)
