@@ -10,8 +10,6 @@ const addAndReplyQuestionsSeed = async (): Promise<void> => {
 }
 
 export default addAndReplyQuestionsSeed()
-  .then()
+  .then(() => { console.log('Questions added to the DB and replicated to the Cache successfully!') })
   .catch(console.error)
-  .finally(async () => {
-    await PrismaHelper.disconnect()
-  })
+  .finally(async () => { await PrismaHelper.disconnect() })
