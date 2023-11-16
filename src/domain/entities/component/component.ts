@@ -10,7 +10,30 @@ export type ComponentName =
   | 'costStructure'
 
 export class Component {
-  private constructor (name: string) {
+  private constructor (private readonly name: ComponentName) {
     Object.freeze(this)
+  }
+
+  private static create (name: ComponentName): Component {
+    return new Component(name)
+  }
+
+  static createMany (): Component[] {
+    const componentNames: ComponentName[] = [
+      'customerSegments',
+      'valuePropositions',
+      'channels',
+      'customerRelationships',
+      'revenueStreams',
+      'keyResources',
+      'keyActivities',
+      'keyPartnerships',
+      'costStructure'
+    ]
+    const components: Component[] = []
+    for (const name of componentNames) {
+      components.push(this.create(name))
+    }
+    return components
   }
 }
