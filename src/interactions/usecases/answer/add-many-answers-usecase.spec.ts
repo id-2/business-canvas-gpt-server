@@ -2,7 +2,7 @@ import type { IdModel } from '@/domain/models/output-models'
 import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
 import type { AddManyAnswersDto } from '@/domain/contracts'
 import type { AddManyAnswersRepo, AddManyAnswersRepoDto } from '@/interactions/contracts/db'
-import { AddManyAnswersUseCase } from './add-answer-usecase'
+import { AddManyAnswersUseCase } from './add-many-answers-usecase'
 import MockeDate from 'mockdate'
 
 const makeFakeAddManyAnswersDto = (): AddManyAnswersDto => ({
