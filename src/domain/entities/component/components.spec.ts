@@ -2,8 +2,8 @@ import { Component as sut } from './component'
 
 describe('Component Entity', () => {
   it('Should create many Components', async () => {
-    const result = sut.createMany()
-    expect(result).toEqual([
+    const components = sut.createMany()
+    expect(components).toEqual([
       { name: 'customerSegments' },
       { name: 'valuePropositions' },
       { name: 'channels' },
@@ -14,5 +14,13 @@ describe('Component Entity', () => {
       { name: 'keyPartnerships' },
       { name: 'costStructure' }
     ])
+  })
+
+  it('Should return a Component Name if getComponent is a success', async () => {
+    const components = sut.createMany()
+    const componentName = sut.getComponent(components[0])
+    const componentName2 = sut.getComponent(components[1])
+    expect(componentName).toBe('customerSegments')
+    expect(componentName2).toBe('valuePropositions')
   })
 })
