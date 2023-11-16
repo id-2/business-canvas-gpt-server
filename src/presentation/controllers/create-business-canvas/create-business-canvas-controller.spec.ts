@@ -4,7 +4,7 @@ import type { HttpRequest } from '@/presentation/http/http'
 import type { BusinessCanvasApiModel } from '@/domain/models/output-models'
 import { right, type Either, left } from '@/shared/either'
 import { CreateBusinessCanvasController } from './create-business-canvas-controller'
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helpers'
+import { badRequest, created, serverError } from '@/presentation/helpers/http/http-helpers'
 import { ServerError } from '@/presentation/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -128,5 +128,11 @@ describe('CreateBusinessCanvas Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     const error = new Error()
     expect(httpResponse).toEqual(serverError(new ServerError(error.stack)))
+  })
+
+  it('Should return 201 if CreateBusinessCanvas is a success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(created(makeFakeBusinessCanvasApiModel()))
   })
 })
