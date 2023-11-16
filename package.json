@@ -17,7 +17,8 @@
     "test:integration": "npm test -- --watch -c jest-integration-config.ts",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:ci": "npm test -- --coverage",
-    "seed:questions": "ts-node src/main/seeds/add-and-reply-questions-seed.ts"
+    "seed:questions": "ts-node src/main/seeds/add-and-reply-questions-seed.ts",
+    "seed:components": "ts-node src/main/seeds/add-all-components-seed.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
