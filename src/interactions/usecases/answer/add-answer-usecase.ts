@@ -1,12 +1,12 @@
 import type { AddAnswer, AddAnswerDto } from '@/domain/contracts'
 import type { AnswerModel } from '@/domain/models/db-models'
-import type { AddAnswerRepo } from '@/interactions/contracts/db'
+import type { AddManyAnswersRepo } from '@/interactions/contracts/db'
 import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
 
 export class AddAnswerUseCase implements AddAnswer {
   constructor (
     private readonly idBuilder: IdBuilder,
-    private readonly addAnswerRepo: AddAnswerRepo
+    private readonly addManyAnswersRepo: AddManyAnswersRepo
   ) {}
 
   async perform (dto: AddAnswerDto): Promise<void> {
@@ -24,6 +24,6 @@ export class AddAnswerUseCase implements AddAnswer {
         ...(answer && { description: answer })
       })
     }
-    await this.addAnswerRepo.add({ userId, answers })
+    await this.addManyAnswersRepo.add({ userId, answers })
   }
 }
