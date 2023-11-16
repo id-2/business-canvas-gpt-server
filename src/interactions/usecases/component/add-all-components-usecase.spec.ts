@@ -2,6 +2,8 @@ import type { ComponentModel } from '@/domain/models/db-models'
 import type { AddAllComponentsRepo } from '@/interactions/contracts/db'
 import { Component, type ComponentName } from '@/domain/entities/component'
 import { AddAllComponentsUseCase } from './add-all-componetns-usecase'
+import { type IdBuilder } from '@/interactions/contracts/id/id-builder'
+import { type IdModel } from '@/domain/models/output-models'
 
 jest.mock('@/domain/entities/question/question', () => ({
   Component: {
@@ -36,6 +38,17 @@ const makeFakeComponentModels = (): ComponentModel[] => ([
   { id: 'any_id_9', name: 'costStructure' }
 ])
 
+const makeIdBuilder = (): IdBuilder => {
+  class IdBuilderSpy implements IdBuilder {
+    private callsCount = 0
+    build (): IdModel {
+      this.callsCount++
+      return { id: `any_id_${this.callsCount}` }
+    }
+  }
+  return new IdBuilderSpy()
+}
+
 const makeAddAllComponentsRepo = (): AddAllComponentsRepo => {
   class AddAllComponentsRepoStub implements AddAllComponentsRepo {
     async addAll (data: ComponentModel[]): Promise<void> {
@@ -47,13 +60,15 @@ const makeAddAllComponentsRepo = (): AddAllComponentsRepo => {
 
 interface SutTypes {
   sut: AddAllComponentsUseCase
+  idBuilderSpy: IdBuilder
   addAllComponentsRepoStub: AddAllComponentsRepo
 }
 
 const makeSut = (): SutTypes => {
+  const idBuilderSpy = makeIdBuilder()
   const addAllComponentsRepoStub = makeAddAllComponentsRepo()
-  const sut = new AddAllComponentsUseCase(addAllComponentsRepoStub)
-  return { sut, addAllComponentsRepoStub }
+  const sut = new AddAllComponentsUseCase(idBuilderSpy, addAllComponentsRepoStub)
+  return { sut, idBuilderSpy, addAllComponentsRepoStub }
 }
 
 describe('AddAllComponents UseCase', () => {
@@ -62,6 +77,13 @@ describe('AddAllComponents UseCase', () => {
     const createManySpy = jest.spyOn(Component, 'createMany')
     await sut.perform()
     expect(createManySpy).toHaveBeenCalled()
+  })
+
+  it('Should call IdBuilder nine times', async () => {
+    const { sut, idBuilderSpy } = makeSut()
+    const buildSpy = jest.spyOn(idBuilderSpy, 'build')
+    await sut.perform()
+    expect(buildSpy).toHaveBeenCalledTimes(9)
   })
 
   it('Should call AddAllComponentsRepo with correct values', async () => {
