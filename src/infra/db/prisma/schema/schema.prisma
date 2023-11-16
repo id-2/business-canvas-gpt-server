@@ -9,7 +9,7 @@ datasource db {
 
 model Answer {
   id          String   @id(map: "PK_ANSWER") @unique(map: "UQ_ANSWER_ID") @db.VarChar(150)
-  description String   @db.VarChar(750)
+  description String?  @db.VarChar(750)
   createdAt   DateTime @map("created_at") @db.Timestamp(6)
 
   userId        String? @map("user_id") @db.VarChar(150)
