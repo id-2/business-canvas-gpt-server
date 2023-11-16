@@ -18,6 +18,7 @@ export class Component {
   }
 
   static getComponent (data: Component): undefined | ComponentName {
+    if (!data) return undefined
     return Component.names.find(name => name === data.name)
   }
 
