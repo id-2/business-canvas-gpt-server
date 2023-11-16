@@ -23,4 +23,10 @@ describe('Component Entity', () => {
     expect(componentName).toBe('customerSegments')
     expect(componentName2).toBe('valuePropositions')
   })
+
+  it('Should return undefined if getComponent not found a Component', async () => {
+    const components = sut.createMany()
+    const result = sut.getComponent(components[20])
+    expect(result).toBeUndefined()
+  })
 })
