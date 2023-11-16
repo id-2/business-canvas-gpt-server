@@ -1,11 +1,11 @@
 import type { IdModel } from '@/domain/models/output-models'
 import type { IdBuilder } from '@/interactions/contracts/id/id-builder'
-import type { AddAnswerDto } from '@/domain/contracts'
+import type { AddManyAnswersDto } from '@/domain/contracts'
 import type { AddManyAnswersRepo, AddManyAnswersRepoDto } from '@/interactions/contracts/db'
-import { AddAnswerUseCase } from './add-answer-usecase'
+import { AddManyAnswersUseCase } from './add-answer-usecase'
 import MockeDate from 'mockdate'
 
-const makeFakeAddAnswerDto = (): AddAnswerDto => ({
+const makeFakeAddManyAnswersDto = (): AddManyAnswersDto => ({
   userId: 'any_user_id',
   answers: [
     { questionId: 'any_question_id', alternativeId: 'any_alternative_id' },
@@ -57,7 +57,7 @@ const makeAddManyAnswersRepo = (): AddManyAnswersRepo => {
 }
 
 interface SutTypes {
-  sut: AddAnswerUseCase
+  sut: AddManyAnswersUseCase
   idBuilderStub: IdBuilder
   addManyAnswersRepoStub: AddManyAnswersRepo
 }
@@ -65,11 +65,11 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const idBuilderStub = makeIdBuilder()
   const addManyAnswersRepoStub = makeAddManyAnswersRepo()
-  const sut = new AddAnswerUseCase(idBuilderStub, addManyAnswersRepoStub)
+  const sut = new AddManyAnswersUseCase(idBuilderStub, addManyAnswersRepoStub)
   return { sut, idBuilderStub, addManyAnswersRepoStub }
 }
 
-describe('AddAnswer UseCase', () => {
+describe('AddManyAnswers UseCase', () => {
   beforeAll(() => {
     MockeDate.set(date)
   })
@@ -81,7 +81,7 @@ describe('AddAnswer UseCase', () => {
   it('Should call IdBuilder', async () => {
     const { sut, idBuilderStub } = makeSut()
     const buildSpy = jest.spyOn(idBuilderStub, 'build')
-    await sut.perform(makeFakeAddAnswerDto())
+    await sut.perform(makeFakeAddManyAnswersDto())
     expect(buildSpy).toHaveBeenCalled()
   })
 
@@ -90,14 +90,14 @@ describe('AddAnswer UseCase', () => {
     jest.spyOn(idBuilderStub, 'build').mockImplementation(() => {
       throw new Error()
     })
-    const promise = sut.perform(makeFakeAddAnswerDto())
+    const promise = sut.perform(makeFakeAddManyAnswersDto())
     await expect(promise).rejects.toThrow()
   })
 
   it('Should call AddManyAnswersRepo with correct values', async () => {
     const { sut, addManyAnswersRepoStub } = makeSut()
     const addSpy = jest.spyOn(addManyAnswersRepoStub, 'add')
-    await sut.perform(makeFakeAddAnswerDto())
+    await sut.perform(makeFakeAddManyAnswersDto())
     expect(addSpy).toHaveBeenCalledWith(makeFakeAddManyAnswersRepoDto())
   })
 
@@ -106,7 +106,7 @@ describe('AddAnswer UseCase', () => {
     jest.spyOn(addManyAnswersRepoStub, 'add').mockReturnValueOnce(
       Promise.reject(new Error())
     )
-    const promise = sut.perform(makeFakeAddAnswerDto())
+    const promise = sut.perform(makeFakeAddManyAnswersDto())
     await expect(promise).rejects.toThrow()
   })
 })

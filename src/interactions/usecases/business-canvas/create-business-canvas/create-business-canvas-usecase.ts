@@ -1,4 +1,4 @@
-import type { AddAnswer, AddBusinessCanvas, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto, CreateBusinessCanvasRes } from '@/domain/contracts'
+import type { AddManyAnswers, AddBusinessCanvas, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto, CreateBusinessCanvasRes } from '@/domain/contracts'
 import type { FetchAllQuestionsRepo } from '@/interactions/contracts/db'
 import type { CreateBusinessCanvasApi } from '@/interactions/contracts/api'
 import { BusinessCanvasDataBuilder, GenerateInputToCreateBusinessCanvas } from '@/domain/processes'
@@ -10,7 +10,7 @@ export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
   constructor (
     private readonly fetchAllQuestionsRepo: FetchAllQuestionsRepo,
     private readonly addRandomUser: AddRandomUser,
-    private readonly addAnswer: AddAnswer,
+    private readonly addManyAnswers: AddManyAnswers,
     private readonly createBusinessCanvasApi: CreateBusinessCanvasApi,
     private readonly addBusinessCanvas: AddBusinessCanvas
   ) {}
@@ -29,8 +29,8 @@ export class CreateBusinessCanvasUseCase implements CreateBusinessCanvas {
       const { id } = await this.addRandomUser.perform()
       userId = id
     }
-    const addAnswerDto = { userId, answers: dto.answers }
-    await this.addAnswer.perform(addAnswerDto)
+    const addManyAnswersDto = { userId, answers: dto.answers }
+    await this.addManyAnswers.perform(addManyAnswersDto)
     const dataToInput = BusinessCanvasDataBuilder.execute({ userAnswers: dto.answers, questions })
     const { text: input } = GenerateInputToCreateBusinessCanvas.execute(dataToInput)
     const businessCanvasOutputModel = await this.createBusinessCanvasApi.create({ input })

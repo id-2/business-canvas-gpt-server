@@ -1,4 +1,4 @@
-import type { AddAnswer, AddAnswerDto, AddBusinessCanvas, AddBusinessCanvasDto, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
+import type { AddManyAnswers, AddManyAnswersDto, AddBusinessCanvas, AddBusinessCanvasDto, AddRandomUser, CreateBusinessCanvas, CreateBusinessCanvasDto } from '@/domain/contracts'
 import type { CreateBusinessCanvasApi, CreateBusinessCanvasApiDto } from '@/interactions/contracts/api'
 import type { BusinessCanvasApiModel, IdModel } from '@/domain/models/output-models'
 import type { QuestionModel } from '@/domain/models/db-models'
@@ -99,13 +99,13 @@ const makeAddRandomUser = (): AddRandomUser => {
   return new AddRandomUserStub()
 }
 
-const makeAddAnswer = (): AddAnswer => {
-  class AddAnswerStub implements AddAnswer {
-    async perform (dto: AddAnswerDto): Promise<void> {
+const makeAddManyAnswers = (): AddManyAnswers => {
+  class AddManyAnswersStub implements AddManyAnswers {
+    async perform (dto: AddManyAnswersDto): Promise<void> {
       await Promise.resolve()
     }
   }
-  return new AddAnswerStub()
+  return new AddManyAnswersStub()
 }
 
 const makeCreateBusinessCanvasApi = (): CreateBusinessCanvasApi => {
@@ -130,7 +130,7 @@ interface SutTypes {
   sut: CreateBusinessCanvas
   fetchAllQuestionsRepoStub: FetchAllQuestionsRepo
   addRandomUserStub: AddRandomUser
-  addAnswerStub: AddAnswer
+  addManyAnswersStub: AddManyAnswers
   createBusinessCanvasApiStub: CreateBusinessCanvasApi
   addBusinessCanvasStub: AddBusinessCanvas
 }
@@ -138,13 +138,13 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const fetchAllQuestionsRepoStub = makeFetchAllQuestionsRepo()
   const addRandomUserStub = makeAddRandomUser()
-  const addAnswerStub = makeAddAnswer()
+  const addManyAnswersStub = makeAddManyAnswers()
   const createBusinessCanvasApiStub = makeCreateBusinessCanvasApi()
   const addBusinessCanvasStub = makeAddBusinessCanvas()
   const sut = new CreateBusinessCanvasUseCase(
     fetchAllQuestionsRepoStub,
     addRandomUserStub,
-    addAnswerStub,
+    addManyAnswersStub,
     createBusinessCanvasApiStub,
     addBusinessCanvasStub
   )
@@ -152,7 +152,7 @@ const makeSut = (): SutTypes => {
     sut,
     fetchAllQuestionsRepoStub,
     addRandomUserStub,
-    addAnswerStub,
+    addManyAnswersStub,
     createBusinessCanvasApiStub,
     addBusinessCanvasStub
   }
@@ -235,25 +235,25 @@ describe('CreateBusinessCanvas UseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
-  it('Should call AddAnswer with correct values', async () => {
-    const { sut, addAnswerStub } = makeSut()
-    const performSpy = jest.spyOn(addAnswerStub, 'perform')
+  it('Should call AddManyAnswers with correct values', async () => {
+    const { sut, addManyAnswersStub } = makeSut()
+    const performSpy = jest.spyOn(addManyAnswersStub, 'perform')
     await sut.perform(makeFakeCreateBusinessCanvasDto())
     expect(performSpy).toHaveBeenCalledWith(makeFakeCreateBusinessCanvasDto())
   })
 
-  it('Should throw if AddAnswer throws', async () => {
-    const { sut, addAnswerStub } = makeSut()
-    jest.spyOn(addAnswerStub, 'perform').mockReturnValueOnce(
+  it('Should throw if AddManyAnswers throws', async () => {
+    const { sut, addManyAnswersStub } = makeSut()
+    jest.spyOn(addManyAnswersStub, 'perform').mockReturnValueOnce(
       Promise.reject(new Error())
     )
     const promise = sut.perform(makeFakeCreateBusinessCanvasDto())
     await expect(promise).rejects.toThrow()
   })
 
-  it('Should call AddAnswer with random user id if userId not provided', async () => {
-    const { sut, addAnswerStub } = makeSut()
-    const performSpy = jest.spyOn(addAnswerStub, 'perform')
+  it('Should call AddManyAnswers with random user id if userId not provided', async () => {
+    const { sut, addManyAnswersStub } = makeSut()
+    const performSpy = jest.spyOn(addManyAnswersStub, 'perform')
     await sut.perform({ answers: makeFakeCreateBusinessCanvasDto().answers })
     expect(performSpy).toHaveBeenCalledWith({
       userId: 'any_random_user_id',
