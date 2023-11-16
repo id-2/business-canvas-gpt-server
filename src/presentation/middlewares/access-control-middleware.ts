@@ -18,16 +18,16 @@ export class AccessControlMiddleware implements Middleware {
       if (!accessToken) {
         return unauthorized(new AccessTokenNotInformedError())
       }
-      const accessControlResul = await this.accessControl.perform({
+      const accessControlResult = await this.accessControl.perform({
         accessToken, requiredRole: this.requiredRole
       })
-      if (accessControlResul.isLeft()) {
-        if (accessControlResul.value instanceof InvalidTokenError) {
-          return unauthorized(accessControlResul.value)
+      if (accessControlResult.isLeft()) {
+        if (accessControlResult.value instanceof InvalidTokenError) {
+          return unauthorized(accessControlResult.value)
         }
-        return forbidden(accessControlResul.value)
+        return forbidden(accessControlResult.value)
       }
-      return ok(accessControlResul.value)
+      return ok(accessControlResult.value)
     } catch (error: any) {
       return serverError(error)
     }
