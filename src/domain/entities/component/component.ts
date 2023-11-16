@@ -10,8 +10,15 @@ export type ComponentName =
   | 'costStructure'
 
 export class Component {
+  private static readonly names: ComponentName[] = []
+
   private constructor (private readonly name: ComponentName) {
     Object.freeze(this)
+    Component.names.push(this.name)
+  }
+
+  static getComponent (data: Component): undefined | ComponentName {
+    return Component.names.find(name => name === data.name)
   }
 
   private static create (name: ComponentName): Component {
