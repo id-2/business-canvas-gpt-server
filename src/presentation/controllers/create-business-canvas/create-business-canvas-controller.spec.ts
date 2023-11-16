@@ -103,4 +103,11 @@ describe('CreateBusinessCanvas Controller', () => {
       userId: 'any_user_id', answers: makeFakeRequest().body
     })
   })
+
+  it('Should call CreateBusinessCanvas without user id if not provided in headers', async () => {
+    const { sut, createBusinessCanvasStub } = makeSut()
+    const performSpy = jest.spyOn(createBusinessCanvasStub, 'perform')
+    await sut.handle({ headers: {}, body: makeFakeRequest().body })
+    expect(performSpy).toHaveBeenCalledWith({ answers: makeFakeRequest().body })
+  })
 })
