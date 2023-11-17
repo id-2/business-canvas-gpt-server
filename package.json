@@ -9,6 +9,10 @@
     "doc": "docs"
   },
   "scripts": {
+    "start": "node dist/main/server.js",
+    "up": "npm run build && docker-compose up",
+    "build": "rimraf dist && tsc -p tsconfig-build.json && npm run copy-schema",
+    "copy-schema": "ncp src/infra/db/prisma/schema dist/infra/db/prisma/schema",
     "dev": "sucrase-node src/main/server.ts",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:unit": "npm test -- --watch -c jest-unit-config.ts",
@@ -17,8 +21,10 @@
     "test:integration": "npm test -- --watch -c jest-integration-config.ts",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:ci": "npm test -- --coverage",
-    "seed:questions": "ts-node src/main/seeds/add-and-reply-questions-seed.ts",
-    "seed:components": "ts-node src/main/seeds/add-all-components-seed.ts"
+    "dev-seed:questions": "ts-node src/main/seeds/add-and-reply-questions-seed.ts",
+    "dev-seed:components": "ts-node src/main/seeds/add-all-components-seed.ts",
+    "seed:questions": "node dist/main/seeds/add-and-reply-questions-seed.js",
+    "seed:components": "node dist/main/seeds/add-all-components-seed.js"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -39,9 +45,11 @@
     "ioredis-mock": "^8.9.0",
     "jest": "^29.7.0",
     "mockdate": "^3.0.5",
+    "ncp": "^2.0.0",
     "pg": "^8.11.3",
     "prisma": "^5.5.2",
     "prismock": "^1.23.0",
+    "rimraf": "^5.0.5",
     "sucrase": "^3.34.0",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
@@ -60,9 +68,9 @@
     "uuid": "^9.0.1"
   },
   "_moduleAliases": {
-    "@": "src"
+    "@": "dist"
   },
   "prisma": {
-    "schema": "./src/infra/db/prisma/schema/schema.prisma"
+    "schema": "./dist/infra/db/prisma/schema/schema.prisma"
   }
 }
