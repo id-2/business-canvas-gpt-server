@@ -39,9 +39,21 @@ describe('ListComposite Validation', () => {
   it('Should return an error if any Validation fails', () => {
     const { sut, validationsStub } = makeSut()
     jest.spyOn(validationsStub[0], 'validate').mockReturnValueOnce(
-      left(new Error('field'))
+      left(new Error('any_message'))
     )
     const result = sut.validate(makeFakeInput())
-    expect(result.value).toEqual(new Error('field'))
+    expect(result.value).toEqual(new Error('any_message'))
+  })
+
+  it('Should return the first error if more the one validation fails', () => {
+    const { sut, validationsStub } = makeSut()
+    jest.spyOn(validationsStub[0], 'validate').mockReturnValueOnce(
+      left(new Error('any_message'))
+    )
+    jest.spyOn(validationsStub[1], 'validate').mockReturnValueOnce(
+      left(new Error('other_message'))
+    )
+    const result = sut.validate(makeFakeInput())
+    expect(result.value).toEqual(new Error('any_message'))
   })
 })
