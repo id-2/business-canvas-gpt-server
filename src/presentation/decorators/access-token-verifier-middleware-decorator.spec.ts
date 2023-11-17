@@ -48,4 +48,10 @@ describe('AccessTokenVerifierMiddleware Decorator', () => {
     await sut.handle({ headers: {} })
     expect(handleSpy).not.toHaveBeenCalled()
   })
+
+  it('Should return the Middleware response if x-access-token is provided at headers', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok({ userId: 'any_id' }))
+  })
 })
