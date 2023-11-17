@@ -6,7 +6,11 @@ import env from '@/main/configs/env'
 export class BusinessCanvasOpenAiApi implements CreateBusinessCanvasApi {
   async create (dto: CreateBusinessCanvasApiDto): Promise<BusinessCanvasApiModel> {
     const openAi = new OpenAI({ apiKey: env.openAiApiKey })
-    const valeu = '' as any
-    return valeu
+    const result = await openAi.chat.completions.create({
+      messages: [{ role: 'user', content: dto.input }],
+      model: 'gpt-3.5-turbo'
+    })
+    const businessCanvas = result.choices[0].message.content as unknown as BusinessCanvasApiModel
+    return businessCanvas
   }
 }
