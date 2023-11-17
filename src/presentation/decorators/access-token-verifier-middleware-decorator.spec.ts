@@ -1,6 +1,6 @@
 import type { Middleware } from '../contracts'
 import type { HttpRequest, HttpResponse } from '../http/http'
-import { ok } from '../helpers/http/http-helpers'
+import { noContent, ok } from '../helpers/http/http-helpers'
 import { AccessTokenVerifierMiddlewareDecorator } from './access-token-verifier-middleware-decorator'
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -53,5 +53,11 @@ describe('AccessTokenVerifierMiddleware Decorator', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok({ userId: 'any_id' }))
+  })
+
+  it('Should return 204 if headers not provided', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({})
+    expect(httpResponse).toEqual(noContent())
   })
 })
