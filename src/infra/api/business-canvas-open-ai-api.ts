@@ -10,7 +10,7 @@ export class BusinessCanvasOpenAiApi implements CreateBusinessCanvasApi {
       messages: [{ role: 'user', content: dto.input }],
       model: 'gpt-3.5-turbo'
     })
-    const businessCanvas = result.choices[0].message.content as unknown as BusinessCanvasApiModel
-    return businessCanvas
+    const businessCanvas = result.choices[0].message.content as string
+    return JSON.parse(businessCanvas) as BusinessCanvasApiModel
   }
 }
