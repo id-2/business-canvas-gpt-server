@@ -1,5 +1,5 @@
 import type { Validation } from '@/presentation/contracts'
-import { right, type Either } from '@/shared/either'
+import { right, type Either, left } from '@/shared/either'
 import { ListCompositeValidation } from './list-composite-validation'
 
 const makeFakeInput = (): any => ([
@@ -34,5 +34,14 @@ describe('ListComposite Validation', () => {
     sut.validate(makeFakeInput())
     expect(validateSpy).toHaveBeenCalledWith({ anyField: 'any_value' })
     expect(validateSpy).toHaveBeenCalledWith({ otherField: 'other_value' })
+  })
+
+  it('Should return an error if any Validation fails', () => {
+    const { sut, validationsStub } = makeSut()
+    jest.spyOn(validationsStub[0], 'validate').mockReturnValueOnce(
+      left(new Error('field'))
+    )
+    const result = sut.validate(makeFakeInput())
+    expect(result.value).toEqual(new Error('field'))
   })
 })
