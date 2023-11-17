@@ -60,4 +60,11 @@ describe('AccessTokenVerifierMiddleware Decorator', () => {
     const httpResponse = await sut.handle({})
     expect(httpResponse).toEqual(noContent())
   })
+
+  it('Should return 204 if x-access-token not provided at headers', async () => {
+    const { sut, middlewareStub } = makeSut()
+    jest.spyOn(middlewareStub, 'handle')
+    const httpResponse = await sut.handle({ headers: {} })
+    expect(httpResponse).toEqual(noContent())
+  })
 })
