@@ -6,7 +6,7 @@ export class AccessTokenVerifierMiddlewareDecorator implements Middleware {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     if (httpRequest.headers?.['x-access-token']) {
-      await this.middleware.handle(httpRequest)
+      return await this.middleware.handle(httpRequest)
     }
     return { body: '', statusCode: 0 }
   }
