@@ -30,4 +30,10 @@ describe('Type Validation', () => {
     })
     expect(result.isRight()).toBe(true)
   })
+
+  it('Should return right result if fieldName not found in input', () => {
+    const sut = makeSut('string')
+    const result = sut.validate({ otherField: 'other_value' })
+    expect(result.isRight()).toBe(true)
+  })
 })
