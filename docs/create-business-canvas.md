@@ -10,7 +10,8 @@ Esta funcionalidade permite aos usuários responderem às questões relevantes c
 
 ## Cabeçalhos da Requisição
 
-O cabeçalho da requisição deve conter o token de autenticação do usuário para identificar quem está respondendo às perguntas.
+O cabeçalho da requisição pode conter o token de autenticação do usuário para identificar quem está respondendo às perguntas.
+O token não é obrigatório, caso o usuário não esteja cadastrado será possível responder as perguntas como convidado.
 
 - **x-access-token** (string): Token de autenticação do usuário.
 
@@ -51,6 +52,7 @@ Exemplo:
 - ✅ Valida o token de autenticação do usuário.
 - ✅ Valida se o ID de cada questão representam uma Question no banco de dados.
 - ✅ Valida se a questão que contém alternativas foi preenchida com um ID de alternativa válido.
+- ✅ Cria um novo usuário aleatório caso não receba um token de autenticação.
 - ✅ Cria um ID para a resposta.
 - ✅ Registra as respostas do usuário no DB.
 - ✅ Gera um Input para o GPT a partir das respostas dadas pelo usuário.
@@ -115,9 +117,7 @@ Exemplo:
   - ✅ Se o client informar mais dados do que os requeridos.
   - ✅ Se o tipo do dado informado não for válido.
 - Código de status: **401 Unauthorized**
-  - ✅ Se o cabeçalho de autorização estiver ausente ou inválido.
-  - ✅ Se o token de autenticação for inválido ou expirado.
-  - ✅ Se o usuário não estiver autenticado na plataforma.
+  - ✅ Se o existir um *x-acess-token* no headers com token inválido ou expirado.
 - Código de status: **404 Not Found**
   - ✅ Se não encontrar as questões para as respostas.
 - Código de status: **500 Internal Server Error**
