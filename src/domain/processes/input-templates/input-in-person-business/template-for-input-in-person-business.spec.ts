@@ -6,4 +6,10 @@ describe('TemplateForInputWithLocation', () => {
     expect(result.input).toBeTruthy()
     expect(typeof result.input).toBe('string')
   })
+
+  it('Should return TemplateInputModel that contains {{location}} and {{description}}', async () => {
+    const result = sut.create()
+    expect(result.input).toContain('{{location}}')
+    expect(result.input).toContain('{{description}}')
+  })
 })
