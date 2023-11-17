@@ -11,7 +11,7 @@ jest.mock('openai', () => ({
           Promise.resolve({
             choices: [{
               message: {
-                content: makeFakeBusinessCanvasApiModel()
+                content: JSON.stringify(makeFakeBusinessCanvasApiModel())
               }
             }]
           })
@@ -43,7 +43,7 @@ describe('BusinessCanvasOpenAi Api', () => {
 
   it('Should return an BusinessCanvasApiModel if OpenAi create is a success', async () => {
     const sut = new BusinessCanvasOpenAiApi()
-    const result = await sut.create({ input: 'any_input' })
+    const result = await sut.create({ input: 'any_input' }) as any
     expect(result).toEqual(makeFakeBusinessCanvasApiModel())
   })
 })
