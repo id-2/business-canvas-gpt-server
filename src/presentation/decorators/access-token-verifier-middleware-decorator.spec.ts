@@ -1,0 +1,37 @@
+import type { Middleware } from '../contracts'
+import type { HttpRequest, HttpResponse } from '../http/http'
+import { ok } from '../helpers/http/http-helpers'
+import { AccessTokenVerifierMiddlewareDecorator } from './access-token-verifier-middleware-decorator'
+
+const makeFakeRequest = (): HttpRequest => ({
+  headers: { 'x-access-token': 'any_token' }
+})
+
+const makeMiddleware = (): Middleware => {
+  class MiddlewareStub implements Middleware {
+    async handle (data: HttpRequest): Promise<HttpResponse> {
+      return await Promise.resolve(ok({ userId: 'any_id' }))
+    }
+  }
+  return new MiddlewareStub()
+}
+
+interface SutTypes {
+  sut: AccessTokenVerifierMiddlewareDecorator
+  middlewareStub: Middleware
+}
+
+const makeSut = (): SutTypes => {
+  const middlewareStub = makeMiddleware()
+  const sut = new AccessTokenVerifierMiddlewareDecorator(middlewareStub)
+  return { sut, middlewareStub }
+}
+
+describe('AccessTokenVerifierMiddleware Decorator', () => {
+  it('Should call Middleware if x-access-token is provided at headers', async () => {
+    const { sut, middlewareStub } = makeSut()
+    const handleSpy = jest.spyOn(middlewareStub, 'handle')
+    await sut.handle(makeFakeRequest())
+    expect(handleSpy).toHaveBeenCalledWith(makeFakeRequest())
+  })
+})
