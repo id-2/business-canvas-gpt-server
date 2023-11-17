@@ -1,5 +1,6 @@
-import type { Middleware } from '../contracts'
 import type { HttpRequest, HttpResponse } from '../http/http'
+import type { Middleware } from '../contracts'
+import { noContent } from '../helpers/http/http-helpers'
 
 export class AccessTokenVerifierMiddlewareDecorator implements Middleware {
   constructor (private readonly middleware: Middleware) {}
@@ -8,6 +9,6 @@ export class AccessTokenVerifierMiddlewareDecorator implements Middleware {
     if (httpRequest.headers?.['x-access-token']) {
       return await this.middleware.handle(httpRequest)
     }
-    return { body: '', statusCode: 0 }
+    return noContent()
   }
 }
