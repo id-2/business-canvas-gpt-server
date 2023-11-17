@@ -41,4 +41,11 @@ describe('AccessTokenVerifierMiddleware Decorator', () => {
     await sut.handle({})
     expect(handleSpy).not.toHaveBeenCalled()
   })
+
+  it('Should not call Middleware if x-access-token not provided at headers', async () => {
+    const { sut, middlewareStub } = makeSut()
+    const handleSpy = jest.spyOn(middlewareStub, 'handle')
+    await sut.handle({ headers: {} })
+    expect(handleSpy).not.toHaveBeenCalled()
+  })
 })
