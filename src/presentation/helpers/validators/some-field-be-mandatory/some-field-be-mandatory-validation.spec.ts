@@ -12,4 +12,13 @@ describe('SomeFieldBeMandatory Validation', () => {
     const result = sut.validate({ anotherField: 'another_value' })
     expect(result).toEqual(left(new SomeFieldBeMandatoryError("'field', 'otherField'")))
   })
+
+  it('Should return right result if any of the required fields are provided', () => {
+    const sut = makeSut()
+    const result = sut.validate({
+      anotherField: 'another_value',
+      field: 'any_value'
+    })
+    expect(result.isRight()).toBe(true)
+  })
 })
