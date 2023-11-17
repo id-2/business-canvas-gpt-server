@@ -56,4 +56,10 @@ describe('ListComposite Validation', () => {
     const result = sut.validate(makeFakeInput())
     expect(result.value).toEqual(new Error('any_message'))
   })
+
+  it('Should return right result if no validation fails', () => {
+    const { sut } = makeSut()
+    const result = sut.validate(makeFakeInput())
+    expect(result.isRight()).toBe(true)
+  })
 })
