@@ -107,6 +107,16 @@ Exemplo:
 - **name** (string): O nome gerado baseado na descrição e tipo de negócio associado ao Business Canvas.
 - Os *Componentes* (***customerSegments***, ***valueProposition***, ***revenueStreams*** ...) representam algumas das seções do Business Canvas.
 - Cada seção contém um array de respostas correspondentes.
+- Caso o usuário não esteja cadastrado será retornado junto com as respostas um **userId** como um usuário convidado.
+
+Exemplo:
+```json
+{
+  "userId": "1234",
+  ... //Dados das respostas
+}
+```
+
 
 ## Casos de Exceção
 
